@@ -1,0 +1,92 @@
+@import "../../tabbar.wxss"
+page{
+  background-color:#e05729
+}
+
+.pageTitle{
+  text-align: center;
+  color: white;
+  margin-top:30rpx;
+  font-size:small;
+  font-weight: 600;
+}
+
+.sectionTimeSelect{
+   margin:20rpx;
+   padding:20rpx;
+}
+
+.picker{
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  padding-left: 10rpx;
+  height: 94rpx;
+  border-radius: 60rpx;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 45rpx;
+  background-color: #e67954;
+  border:  2rpx solid #e67954;
+  font-size: 30rpx;
+  align-items: center;  
+  text-align: center;
+  color: white;
+}
+
+.btn1 {
+  width: 80%;
+  padding-left: 10rpx;
+  border-radius: 60rpx;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 85px;
+  background-color: #e05729;
+  border:  2rpx solid #e67954;
+  color:white;
+  text-align: centre;
+}
+
+.btn1::after {
+  border-radius: 30rpx;
+  border: none
+}
+
+
+view.itemView {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  padding-left: 10rpx;
+  height: 94rpx;
+  border-radius: 60rpx;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 15rpx;
+  background-color: #e67954;
+  border:  2rpx solid #e67954;
+  align-items: center;
+}
+
+view.itemView image {
+    height: 78rpx;
+    width: 78rpx;
+    align-self: center;
+}
+
+view.itemView input {
+    padding-top: 10rpx;
+    display: flex;
+    align-items: center;
+    font-size: 30rpx;
+    justify-content: center;    
+    text-align: center;
+    color: white;
+    
+}
+
+.center{
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,53 @@
+<!--logs.wxml-->
+<import src="../../tabbar.wxml"/>
+<template is="tabBar" data="{{tabBar}}"/>
+<view class="pageTitle">
+    <image src='../../img/bar02.png' mode="widthFix" style="width:65%;padding-bottom:20rpx;">
+    </image>
+</view>
+<view class="pageTitle">
+    SETTING
+</view>
+
+<view class='itemView'>
+  <image src='../../img/icon01.png' />
+  <input  type='digit'  bindinput='inputs' value='{{inputvalues}}' placeholder="Initial Funding" placeholder-class="center" placeholder-style="color:#ffffff;"></input>
+</view>
+
+
+<picker mode="date" value="{{date}}" start="2004-01-01" bindchange="startTime" >  
+  <view class="picker" placeholder="Start Date" >  
+    <image src="../../img/icon02.png" style="width:58rpx;height:58rpx;padding-left:10rpx;padding-top:5rpx">
+    </image>
+    <view clss="selectText" style="padding-left:70rpx;">
+    {{startDates}}  
+    </view> 
+  </view>  
+</picker>
+
+<picker mode="date" value="{{date}}" start="2004-01-01" bindchange="endTime"  >  
+  <view class="picker" placeholder="End Date">  
+    <image src="../../img/icon02.png" style="width:58rpx;height:58rpx;align-self: center;padding-left:10rpx;padding-top:5rpx;">
+    </image>
+    <view clss="selectText" style="padding-left:70rpx;">
+    {{endDates}}  
+    </view> 
+  </view>  
+</picker>
+
+<picker name="picker_hx" class="cybm_pic_1" value="{{pic_array[hx_index].id}}" data-selecthx="{{pic_array[hx_index].name}}" range="{{pic_array}}" range-key="{{'name'}}"  bindchange="bindPickerChange_hx"  >
+  <view class="picker" >
+    <image src="../../img/strategy.png" style="width:68rpx;height:68rpx;float: left;padding-left:5rpx;padding-top:4rpx">
+    </image>
+    <view clss="selectText" style="padding-left:60rpx;">
+      {{pic_array[hx_index].name}}
+    </view>
+  </view>
+</picker>
+
+
+
+
+<button class='btn1' bindtap="bindButtonTap">
+  Submit
+</button>

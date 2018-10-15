@@ -1,0 +1,15 @@
+{
+  "pages":[
+    "pages/index/login",
+    "pages/index/index",
+    "pages/regression/setting",
+    "pages/regression/currentDetail",
+    "pages/history/history"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#f96332",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle":"white"
+  }
+}

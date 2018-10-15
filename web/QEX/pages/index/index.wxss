@@ -1,0 +1,31 @@
+/**index.wxss**/
+@import "../../tabbar.wxss"
+page{
+  background-color:#e05729
+}
+
+.pageTitle{
+  text-align: center;
+  color: white;
+  margin-top:30rpx;
+  font-size:small;
+  font-weight: 600;
+}
+
+.linkImage{
+  display:flex;
+  justify-content:center;
+  margin-top:40rpx;
+}
+.linkImage image{
+  border-radius: 20px;
+  width:650rpx;
+  height:250rpx;
+}
+
+.backgroundBlock{
+  margin-bottom: 140rpx;
+  align-items: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}

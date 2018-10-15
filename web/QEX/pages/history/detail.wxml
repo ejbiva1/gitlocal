@@ -1,0 +1,25 @@
+<!--logs.wxml-->
+<import src="../../tabbar.wxml"/>
+<template is="tabBar" data="{{tabBar}}"/>
+
+<view class="pageTitle">
+    HISTORY
+</view>
+
+<view class="tableTitle">
+  <view class="ds">
+    Date / Strategy
+  </view>
+  <view class="pr">
+    Profit(%)
+  </view>
+  <view class="md">
+    Maximum Drawdown(%)
+  </view>
+</view>
+
+<view class="backgroundBlock">
+  <view class="block">
+
+  </view>
+</view>

@@ -1,0 +1,68 @@
+<!--logs.wxml-->
+<import src="../../tabbar.wxml"/>
+<template is="tabBar" data="{{tabBar}}"/>
+<view class="backgroundBlock">
+<view class="pageTitle">
+    <image src='../../img/bar03.png' mode="widthFix" style="width:65%;padding-bottom:20rpx;">
+    </image>
+</view>
+<view class="pageTitle">
+    RESULT
+</view>
+<view class="block">
+  <view class="blockTitle">
+  Markry Entry Strategy
+  </view>
+  <view class="blockDate">
+  October 10,2018 17:50
+  </view>
+
+  <view class="titleData">
+      <view class="title">
+      Exchange Pair:
+      </view>
+      <view class="data">
+      BTC/USDT
+      </view>
+  </view>
+
+<view class="titleData">
+      <view class="title">
+      Initial Funding:
+      </view>
+      <view class="data">
+      100000 USDT
+      </view>
+  </view>
+
+<view class="titleData">
+  <view class="title">
+      Regression Date:
+  </view>
+  <view class="data">
+      Octorber 10 - December 2,2018
+  </view>
+</view>
+
+ <view class="divLine"></view>
+ 
+  <view class="titleData">
+      <view class="title">
+       Strategy Profit:
+      </view>
+      <view class="data">
+      2.02 %
+      </view>
+  </view>
+  <view class="titleData">
+      <view class="title">
+      Benchmark Profit:
+      </view>
+      <view class="data">
+      4.08 %
+      </view>
+  </view>
+
+</view>
+</view>
+
