@@ -1,0 +1,50 @@
+@import "../../tabbar.wxss"
+page{
+  background-color:#e05729
+}
+
+.backgroundBlock{
+  margin-bottom: 140rpx;
+  align-items: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.pageTitle{
+  text-align: center;
+  color: white;
+  margin:20rpx;
+  padding:20rpx
+}
+.block{
+  width: 100%;
+  padding-left: 6px;
+  margin-top: 300rpx;
+  background-color: #f1f1f1;
+}
+
+.tableTitle{
+  display: flex;
+  flex-direction: row;
+  align-items:flex-start;
+  margin-top:30rpx;
+  padding-top:30rpx;
+  padding-left:15rpx;
+  padding-right:15rpx;
+  font-size: small;
+  color: #f1f1f1;
+}
+
+.ds{
+  position:absolute;
+  left:50rpx;
+}
+.pr{
+  position:absolute;
+  left:400rpx;
+  font-size: small;
+}
+.md{
+  position:absolute;
+  left:550rpx;
+  font-size: small;
+}
