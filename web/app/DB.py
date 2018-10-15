@@ -127,4 +127,4 @@ class StrategyInstanceLog:
         return self.createTime
 
     
-getStrategyInstanceList()
+#getStrategyInstanceList()
