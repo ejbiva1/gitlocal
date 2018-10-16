@@ -7,6 +7,7 @@ app = Flask(__name__)
 def startStrategy():
 
     strategyId = request.form.get("strategyId")
+    startTime = request.args.get("startTime")
     startTime = request.json.get("startTime")
     endTime = request.json.get("endTime")
     initBalance = request.json.get("initBalance")
