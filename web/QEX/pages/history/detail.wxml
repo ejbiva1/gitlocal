@@ -3,23 +3,54 @@
 <template is="tabBar" data="{{tabBar}}"/>
 
 <view class="pageTitle">
-    HISTORY
+  Market Entry Strategy
+</view>
+<view class="titleDate">
+  October 10, 2018 17:50
 </view>
 
-<view class="tableTitle">
-  <view class="ds">
-    Date / Strategy
+<view class="titleData">
+  <view class="title">
+    Exchange Pair:
   </view>
-  <view class="pr">
-    Profit(%)
+  <view class="data">
+    BTC/USDT
+    </view>
   </view>
-  <view class="md">
-    Maximum Drawdown(%)
+
+<view class="titleData">
+  <view class="title">
+    Initial Funding:
+  </view>
+  <view class="data">
+    100000 USDT
+  </view>
+  </view>
+
+<view class="titleData">
+  <view class="title">
+      Regression Date:
+  </view>
+  <view class="data">
+      Octorber 10 - December 2,2018
   </view>
 </view>
-
-<view class="backgroundBlock">
-  <view class="block">
-
-  </view>
+<view class="bg">
+<view class="divLine"></view>
+</view>
+<view class="titleData">
+    <view class="title">
+      Strategy Profit:
+    </view>
+    <view class="data">
+    2.02 %
+    </view>
+</view>
+<view class="titleData">
+    <view class="title">
+    Benchmark Profit:
+    </view>
+    <view class="data">
+    4.08 %
+    </view>
 </view>
