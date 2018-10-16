@@ -109,22 +109,53 @@ class StrategyInstance:
     def setMarginReturn(self,marginReturn):
         self.marginReturn
 
-class StrategyInstanceLog:
-    strategyInstanceLogId = 0
-    strategyInstanceId = 0
-    transactionDirection = 0
-    coinCategory = 0
-    createTime = ""
-    def getStrategyInstanceLogId(self):
-        return self.strategyInstanceLogId
-    def getStrategyInstanceId(self):
-        return self.strategyInstanceId
-    def getTransactionDirection(self):
-        return self.transactionDirection
-    def getCoinCategory(self):
-        return self.coinCategory
-    def getCreateTime(self):
-        return self.createTime
+class Strategy:
+    strategy_id = 0
+    strategy_name = ""
+    description = ""
+    create_time = ""
+    update_time = ""
+    loading_times = 0
+    creator = 0
+    script_url = ""
+    peroid = 0
+    def __init__(self,strategy_id,strategy_name,description,create_time,update_time,loading_times,creator,script_url,peroid):
 
-    
+    def get_strategy_id(self):
+        return self.strategy_id
+    def get_strategy_name(self):
+        return self.strategy_name
+    def get_description(self):
+        return self.description
+    def get_create_time(self):
+        return self.create_time
+    def get_update_time(self):
+        return self.update_time
+    def get_loading_times(self):
+        return self.loading_times
+    def get_creator(self):
+        return self.creator
+    def get_script_url(self):
+        return self.script_url
+    def get_peroid(self):
+        return self.peroid
+
+    def set_strategy_id(self,strategy_id):
+        self.strategy_id = strategy_id
+    def set_strategy_name(self,strategy_name):
+        self.strategy_name = strategy_name
+    def set_description(self,description):
+        self.description = description
+    def set_create_time(self,create_time):
+        self.create_time = create_time
+    def set_update_time(self,update_time):
+        self.update_time = update_time
+    def set_loading_times(self,loading_times):
+        self.loading_times = loading_times
+    def set_creator(self,creator):
+        self.creator = creator
+    def set_script_url(self,script_url):
+        self.script_url = script_url
+    def set_peroid(self,peroid):
+        self.peroid = peroid
 #getStrategyInstanceList()
