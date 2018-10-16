@@ -1,24 +1,15 @@
 <!--logs.wxml-->
 <import src="../../tabbar.wxml"/>
 <template is="tabBar" data="{{tabBar}}"/>
-<view class="titleBackground">
+
 <view class="pageTitle">
-    HISTORY
+  HISTORY
 </view>
 <view class="tableTitle">
-  <view class="ds">
-    Date / Strategy
-  </view>
-  <view class="pr">
-    Profit(%)
-  </view>
-  <view class="bm">
-    Benchmark(%)
-  </view>
-  <view class="md">
-    Maximum Drawdown(%)
-  </view>
-</view>
+  <view class="ds">Date / Strategy</view>
+  <view class="pr">Profit(%)</view>
+  <view class="bm">Benchmark(%)</view>
+  <view class="md">Maximum Drawdown(%)</view>
 </view>
 
 <view class="backgroundBlock">
@@ -26,27 +17,18 @@
     <view class="smallBlockDate">
     October 10,2018
     </view>
+    <navigator url="detail">
     <view class="smallBlock">
       <view class="smallBlockTitle">
-        <view class="smallBlockStrategy">
-        Market Entry Strategy
-        </view>
-        <view class="period">
-        10 Jan, 2018 - 2 Dec, 2018
-        </view>
+        <view class="smallBlockStrategy">Market Entry Strategy</view>
+        <view class="period">10 Jan, 2018 - 2 Dec, 2018</view>
       </view>
       <view class="smallBlockData">
-        <view class="profit">
-        2.30
-        </view>
-        <view class="benchmark">
-        4.80
-        </view>
-        <view class="maxDrawdown">
-        8.34
-        </view>
-
+        <view class="profit">2.30</view>
+        <view class="benchmark">4.80</view>
+        <view class="maxDrawdown">8.34</view>
       </view>
     </view>
+    </navigator>
   </view>
 </view>

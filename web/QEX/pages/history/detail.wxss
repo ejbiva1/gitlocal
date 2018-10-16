@@ -1,28 +1,23 @@
-@import "../../tabbar.wxss"
+@import "../../tabbar.wxss";
 page{
-  background-color:#e05729
-}
-
-.backgroundBlock{
-  margin-bottom: 140rpx;
-  align-items: center;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  background-color:#ffffff;
 }
 .pageTitle{
   text-align: center;
-  color: white;
-  margin:20rpx;
-  padding:20rpx
-}
-.block{
-  width: 100%;
-  padding-left: 6px;
-  margin-top: 300rpx;
-  background-color: #f1f1f1;
+  color: black;
+  padding:40rpx;
+  font-weight:600;
+  font-size: medium;
 }
 
-.tableTitle{
+.titleDate{
+  text-align: center;
+  color: #adabab;
+  padding-bottom:40rpx;
+  font-size:x-small;
+  font-weight:500;
+}
+.titleData{
   display: flex;
   flex-direction: row;
   align-items:flex-start;
@@ -30,21 +25,34 @@ page{
   padding-top:30rpx;
   padding-left:15rpx;
   padding-right:15rpx;
+}
+.title{
   font-size: small;
-  color: #f1f1f1;
+  margin-left: 20rpx;
+}
+.data{
+  position:absolute;
+  left:300rpx;
+  font-size: small;
+}
+.runButtom{
+  padding-left: 10px;
+  height: 34px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 40px;
+  color: rgb(129, 210, 241)
 }
 
-.ds{
-  position:absolute;
-  left:50rpx;
+.divLine{
+ background: rgba(175, 175, 175, 0.452);
+ width: 90%;
+ height: 3rpx;
+ margin-top:40rpx;
 }
-.pr{
-  position:absolute;
-  left:400rpx;
-  font-size: small;
-}
-.md{
-  position:absolute;
-  left:550rpx;
-  font-size: small;
+.bg{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  justify-content:center;
 }

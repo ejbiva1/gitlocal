@@ -1,10 +1,11 @@
 {
   "pages":[
-    "pages/index/login",
     "pages/index/index",
+    "pages/index/login",
     "pages/regression/setting",
     "pages/regression/currentDetail",
-    "pages/history/history"
+    "pages/history/history",
+    "pages/history/detail"
   ],
   "window":{
     "backgroundTextStyle":"light",
