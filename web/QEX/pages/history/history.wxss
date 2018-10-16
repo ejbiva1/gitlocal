@@ -2,60 +2,107 @@
 page{
   background-color:#f1f1f1
 }
-.titleBackground{
-  background-color:#e05729
-}
-.backgroundBlock{
-  padding-bottom: 140rpx;
-  align-items: center;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
+
 .pageTitle{
   text-align: center;
   color: white;
-  padding:40rpx
+  padding:40rpx;
+  background:#e05729
 }
-.block{
-  width: 100%;
-  padding-left: 6px;
-  margin-top: 300rpx;
-  /*background-color: #f1f1f1;*/
-}
+
 
 .tableTitle{
   display: flex;
   flex-direction: row;
-  align-items:flex-start;
-  margin-top:30rpx;
-  padding-top:30rpx;
   padding-left:15rpx;
   padding-right:15rpx;
-  font-size: smaller;
-  color: #f1f1f1;
+  padding-bottom:80rpx;
+  background:#e05729;
 }
 
 .ds{
   position:absolute;
   left:20rpx;
-  font-size:x-small;
+  font-size: x-small;
+  color:#f2f2f2;
+  background:#e05729;
 }
 .pr{
   position:absolute;
   left:350rpx;
   font-size: x-small;
+  color:#f2f2f2;
+  background:#e05729;
 }
 .bm{
   position:absolute;
   left:450rpx;
   font-size: x-small;
+  color:#f2f2f2;
+  background:#e05729;
 }
 .md{
   position:absolute;
   left:600rpx;
   font-size: x-small;
+  color:#f2f2f2;
+  background:#e05729;
 }
+
+
 .block{
+  width: 100%;
+  padding-left: 6px;
+  
+}
+.smallBlockDate{
+  font-size: smaller;
+  padding-left: 20rpx;
+  padding-top:20rpx;
+  padding-bottom: 20rpx;
+}
+.smallBlock{
+  width: 100%;
+  padding-left: 20rpx;
+  padding-top:40rpx;
+  padding-bottom: 40rpx;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+}
+
+.smallBlockTitle{
+  display: flex;
+  flex-direction: column;
+}
+.smallBlockStrategy{
+  font-weight: 600;
+  font-size:small;
+  padding-bottom: 20rpx;
+}
+.period{
+  color: #8a8a8a;
+  font-size:x-small;
+}
+.smallBlockData{
+  display: flex;
+  flex-direction: row;
+}
+.profit{
   position:absolute;
-  top:200rpx;
+  left:350rpx;
+  font-size: smaller;
+  color:#000000;
+}
+.benchmark{
+  position:absolute;
+  left:450rpx;
+  font-size: smaller;
+  color:#000000;
+}
+.maxDrawdown{
+  position:absolute;
+  left:600rpx;
+  font-size: smaller;
+  color:#000000;
 }
