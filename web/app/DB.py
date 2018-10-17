@@ -358,7 +358,7 @@ def getStrategy():
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[7])
+        strategy = Strategy(row[0], row[1].encode('utf-8').decode('unicode-escape'), row[2].encode('utf-8').decode('unicode-escape'), row[3], row[4], row[5], row[6], row[7], row[7])
         strategyList.append(strategy)
     cursor.close()
     return strategyList
