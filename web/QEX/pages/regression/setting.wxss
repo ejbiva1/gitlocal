@@ -68,19 +68,10 @@ view.itemView {
   align-items: center;
 }
 
-view.itemView image {
-    height: 78rpx;
-    width: 78rpx;
-    align-self: center;
-}
-
 view.itemView input {
     padding-top: 10rpx;
-    display: flex;
-    align-items: center;
     font-size: 30rpx;
-    justify-content: center;    
-    text-align: center;
+    padding-left:70rpx;
     color: white;
     
 }
