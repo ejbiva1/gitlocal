@@ -1,4 +1,3 @@
-import pandas as pd
 from util.ReadData import read_datas
 import decimal
 from util.Trader import *
@@ -18,7 +17,7 @@ class SellB:
         # self.summary = rep.Summary()
         # self.position = pos.Position(balance)
         self.datas = read_datas(start_time, end_time).sort_values(by='id', axis=0, ascending=True)
-
+        self.idt = self.datas['id']
     # # 获取[ T + (-)1 ]时间区间的数据
     # def filter(self):
     #     df = self.datas
@@ -27,7 +26,7 @@ class SellB:
     #     return df
 
     def condition_1(self, T):
-        df = self.datas[(self.datas['id'] == T)]
+        df = self.datas[(self.idt == T)]
         df = df[(df['close'] > df['open'])]
         if df.empty:
             return False
@@ -36,8 +35,8 @@ class SellB:
 
     def condition_2(self, T):
         pre_T = T - 3600
-        df1 = self.datas[(self.datas['id'] == T)]
-        df2 = self.datas[(self.datas['id'] == pre_T)]
+        df1 = self.datas[(self.idt == T)]
+        df2 = self.datas[(self.idt == pre_T)]
         # vol is at row[6] (from 0-7 ,begin with id not kline_id)
         try:
             if df1.iat[0, 6] > df2.iat[0, 6]:
@@ -51,8 +50,8 @@ class SellB:
 
     def condition_3(self, T):
         pre_T = T - 3600
-        df1 = self.datas[(self.datas['id'] == T)]
-        df2 = self.datas[(self.datas['id'] == pre_T)]
+        df1 = self.datas[(self.idt == T)]
+        df2 = self.datas[(self.idt == pre_T)]
         # close is at row[2] (from 0-7 ,begin with id not kline_id)
         try:
             if df1.iat[0, 2] > df2.iat[0, 1]:
@@ -64,8 +63,8 @@ class SellB:
 
     def condition_4(self, T):
         pre_T = T - 3600
-        df1 = self.datas[(self.datas['id'] == T)]
-        df2 = self.datas[(self.datas['id'] == pre_T)]
+        df1 = self.datas[(self.idt == T)]
+        df2 = self.datas[(self.idt == pre_T)]
         # high is at row[4] (from 0-7 ,begin with id not kline_id)
         try:
             if df1.iat[0, 4] > df2.iat[0, 4]:
@@ -77,8 +76,8 @@ class SellB:
 
     def condition_a(self, T):
         next_T = T + 3600
-        df1 = self.datas[(self.datas['id'] == T)]
-        df2 = self.datas[(self.datas['id'] == next_T)]
+        df1 = self.datas[(self.idt == T)]
+        df2 = self.datas[(self.idt == next_T)]
         # high is at row[4] (from 0-7 ,begin with id not kline_id)
         if df2.iat[0, 4] >= decimal.Decimal(df1.iat[0, 2]) * decimal.Decimal('1.02'):
             return True
@@ -88,8 +87,8 @@ class SellB:
     def condition_b(self, T):
         pre_T = T - 3600
         next_T = T + 3600
-        df1 = self.datas[(self.datas['id'] == pre_T)]
-        df2 = self.datas[(self.datas['id'] == next_T)]
+        df1 = self.datas[(self.idt == pre_T)]
+        df2 = self.datas[(self.idt == next_T)]
         diff = decimal.Decimal(df1.iat[0, 1] - df1.iat[0, 2]) * decimal.Decimal('0.1')
         # HIGH(T+1)>=OPEN(T-1) - [OPEN(T-1)-CLOSE(T-1)]10%
         if df2.iat[0, 4] >= (decimal.Decimal(df1.iat[0, 1]) - diff):
