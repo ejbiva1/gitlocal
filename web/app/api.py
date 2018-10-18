@@ -1,10 +1,8 @@
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, session
 import DB as db
 import json
-from datetime import datetime
-from datetime import date
 import web.app.controller as controller
-from  initData.InitData import StrategyList
+from facilties.functional import JsonExtendEncoder
 
 app = Flask(__name__)
 
@@ -33,35 +31,31 @@ def loadLogList():
     htmlStr = json.dumps(result)
     return htmlStr
 
-@app.route('/getStrategyInstanceList')
+
+@app.route('/getStrategyInstanceList', methods=['post', 'put'])
 def getStrategyInstanceList():
     strategy_list = []
+
     strategyList = controller.getStrategy()
     for item in strategyList:
-        # 如果不使用对象属性 __dict__ 则会显示其 内存地址；
+        # print(item.__dict__)
         strategy_list.append(item.__dict__)
-        print(item.__dict__)
-    #print(strategy_list)
-    #result = {"list": strategy_list}
-    result = json.dumps({"list": strategy_list}, cls=JsonExtendEncoder)
+
+    # json.dumps 序列化时对中文默认使用的ascii编码 : json.dumps 序列化对象时 对中文默认使用 ascii编码
+    result = json.dumps({"list": strategy_list}, cls=JsonExtendEncoder, ensure_ascii=False)
     return result
 
+#给URL 添加变量部分: 规则可以用 <converter:variable_name> 指定一个可选的转换器
+@app.route('/getStrategyInstance/<int:strategy_id>', methods=['post', 'put'])
+def getStrategyInstance(strategy_id):
+    strategyInstance = db.getStrategyInstance(strategy_id)
+    # strategyInstance_list = []
+    # strategyInstance_list.append(strategyInstance.__dict__)
+    # result = json.dumps({'result': strategyInstance_list}, ensure_ascii=False, cls=JsonExtendEncoder)
 
-class JsonExtendEncoder(json.JSONEncoder):
-    """
-        This class provide an extension to json serialization for datetime/date.
-    """
-
-    def default(self, o):
-        """
-            provide a interface for datetime/date
-        """
-        if isinstance(o, datetime):
-            return o.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(o, date):
-            return o.strftime('%Y-%m-%d')
-        else:
-            return json.JSONEncoder.default(self, o)
+    # python 对象 转化成 json 字符串
+    result = json.dumps({'result': strategyInstance.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+    return result
 
 
 if __name__ == "__main__":

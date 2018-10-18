@@ -337,6 +337,7 @@ class StrategyTransaction:
         self.high = high
     def set_low(self,low):
         self.low = low
+
 def getStrategy():
     cursor = connection.cursor()
     strategyList = []
@@ -358,7 +359,7 @@ def getStrategy():
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        strategy = Strategy(row[0], row[1].encode('utf-8').decode('unicode-escape'), row[2].encode('utf-8').decode('unicode-escape'), row[3], row[4], row[5], row[6], row[7], row[7])
+        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[7])
         strategyList.append(strategy)
     cursor.close()
     return strategyList
@@ -378,6 +379,20 @@ def getStrategyInstanceList(creator):
       strategyInstanceList.append(pro)
    cursor.close()
    return strategyInstanceList
+
+def getStrategyInstance(strategy_id):
+    cursor = connection.cursor()
+    # SQL 查询语句
+    sql = "select strategy_id, strategy_name, description, create_time, update_time, loading_times, creator, script_url, peroid from quant_coin.strategy where strategy_id = %s "  %(strategy_id)
+    # 执行SQL语句
+    cursor.execute(sql)
+    #获取记录
+    result = cursor.fetchone()
+    result = Strategy(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7], result[8])
+    cursor.close()
+    return result
+
+
 def getStrategyInstanceLogList():
    cursor = connection.cursor()
    strategyInstanceList = []
