@@ -1,15 +1,26 @@
 /**index.wxss**/
-@import "../../tabbar.wxss"
+@import "../../tabbar.wxss";
 page{
-  background-color:#e05729
+  background-color:#f2f2f2;
 }
 
 .pageTitle{
   text-align: center;
   color: white;
-  margin-top:30rpx;
+  padding-top:30rpx;
   font-size:small;
   font-weight: 600;
+  background-color:#e05729;
+}
+
+.pageTitle2{
+  text-align: center;
+  color: white;
+  padding-top:30rpx;
+  padding-bottom:40rpx;
+  font-size:small;
+  font-weight: 600;
+  background-color:#e05729;
 }
 
 .linkImage{
@@ -24,7 +35,7 @@ page{
 }
 
 .backgroundBlock{
-  margin-bottom: 140rpx;
+  margin-bottom: 70rpx;
   align-items: center;
   overflow-y: scroll;
   overflow-x: hidden;

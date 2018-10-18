@@ -2,8 +2,12 @@ var app = getApp();
 var util = require('../../utils/util.js')
 Page({
   data: {
-    inputvalues : '',
+    model:'',
+    inputvalues : 'Initial Funding (USDT)',
     startDates:'Start Date',
+    sysStartDate:'',
+    sys2StartDate:'',
+    sysEndDate: '',
     endDates:'End Date',
     pic_array: [
       { id: 1, name: '策略1' },
@@ -13,14 +17,44 @@ Page({
     ],
     hx_index: 0
   },
-  onLoad: function () {
+  onLoad: function (options) {
     app.editTabBar();
-    
+    var that = this;
+    this.setData({
+      model: options.model
+    }),
+    wx.setNavigationBarTitle({
+      title: this.data.model+" / USDT",
+    });
+
+    if (this.data.model == "BTC"){
+      this.setData({
+        sysStartDate: "2017-10-27"
+      })
+    }
+    else if(this.data.model == "ETC"){
+      this.setData({
+        sysStartDate: "2017-10-27"
+      })
+    }
+    else{
+      this.setData({
+        sysStartDate: "2017-12-06"
+      })
+    }
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth()+1;
+    var day = date.getDate()-2;
+    this.setData({
+      sysEndDate: year+"-"+month+"-"+day
+    })
   },
   startTime: function (e) {
     console.log(e.detail.value)
     this.setData({
-      startDates: e.detail.value
+      startDates: e.detail.value,
+      sys2StartDate: e.detail.value
     })
   },
   endTime: function (e) {

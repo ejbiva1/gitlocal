@@ -1,14 +1,15 @@
 <!--logs.wxml-->
 <import src="../../tabbar.wxml"/>
 <template is="tabBar" data="{{tabBar}}"/>
-<view class="backgroundBlock">
+
 <view class="pageTitle">
     <image src='../../img/bar03.png' mode="widthFix" style="width:65%;padding-bottom:20rpx;">
     </image>
 </view>
-<view class="pageTitle">
+<view class="pageTitle2">
     RESULT
 </view>
+<view class="backgroundBlock">
 <view class="block">
   <view class="blockTitle">
   Markry Entry Strategy

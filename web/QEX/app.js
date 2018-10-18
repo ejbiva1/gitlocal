@@ -27,9 +27,23 @@ App({
     var tabBar = this.globalData.tabBar;
     for (var i = 0; i < tabBar.list.length; i++) {
       tabBar.list[i].active = false;
-      if (tabBar.list[i].pagePath == _pagePath) {
-        tabBar.list[i].active = true;//根据页面地址设置当前页面状态  
-      }
+   
+        if (_pagePath == "/pages/index/index") {
+          tabBar.list[0].active = true;//根据页面地址设置当前页面状态  
+        } else if (_pagePath == "/pages/regression/currentDetail") {
+          tabBar.list[0].active = true;
+        }
+        else if (_pagePath == "/pages/regression/setting") {
+          tabBar.list[0].active = true;
+        }
+        else if (_pagePath == "/pages/history/history") {
+          tabBar.list[1].active = true;
+        } else if (_pagePath == "/pages/history/detail") {
+          tabBar.list[1].active = true;
+        }
+      
+      
+      
     }
     _curPage.setData({
       tabBar: tabBar
@@ -73,7 +87,7 @@ App({
           "selectedIconPath": "/img/regression_or.png",
           "clas": "menu-item3",
           "selectedColor": "#000000",
-          active: true
+           active: true
         },
         {
           "pagePath": "/pages/history/history",
@@ -82,7 +96,7 @@ App({
           "selectedIconPath": "/img/history_or.png",
           "selectedColor": "#000000",
           "clas": "menu-item3",
-          active: true
+           active: true
         }
       ],
       "position": "bottom"

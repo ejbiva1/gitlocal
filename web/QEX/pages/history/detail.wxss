@@ -5,7 +5,8 @@ page{
 .pageTitle{
   text-align: center;
   color: black;
-  padding:40rpx;
+  padding-top:40rpx;
+  padding-bottom: 30rpx;
   font-weight:600;
   font-size: medium;
 }
