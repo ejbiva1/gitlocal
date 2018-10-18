@@ -1,21 +1,25 @@
+import pandas as pd
 from decimal import Decimal
+from util.WriteData import insert_2_strategy_transaction
 
 
 class Calculator:
     # 初始化运算器， 持仓 当前时间戳 策略执行价格 策略执行币数 策略买或卖信号(不买不卖：0，买：1，卖2
-    def __init__(self, position, timestamp, price, amount, signal):
+    def __init__(self, position, timestamp, price, amount, signal, strategy_id, strategy_account_id):
         self.T = timestamp
         self.price = price
         self.amount = amount
         self.signal = signal
         self.position = position
         self.transaction_status = None
+        self.strategy_id = strategy_id
+        self.strategy_account_id = strategy_account_id
 
         self.rate_of_return = 0.0000
         self.cur_rate_of_return = 0.0000
 
     # 策略买入
-    def buy(self):
+    def buy(self, cost):
         # 基本变量
         # 初始总资产
         # pre_total = self.position.total
@@ -47,11 +51,11 @@ class Calculator:
         #     Decimal(self.position.total - pre_total) / Decimal(self.position.total)).quantize('0.0000')
         self.cur_rate_of_return = self.rate_of_return - pre_rate_of_return
 
-        # todo cost  由买入（卖出）实际操作决定
-        self.transaction(0, None, pre_coin_cash_rate, pre_balance)
+        # cost  由买入（卖出）实际操作决定
+        self.transaction(0, cost, pre_coin_cash_rate, pre_balance)
 
     # 策略卖出
-    def sell(self):
+    def sell(self, cost):
         # 基本变量
         # 初始总资产
         # pre_total = self.position.total
@@ -83,8 +87,8 @@ class Calculator:
         #     Decimal(self.position.total - pre_total) / Decimal(self.position.total)).quantize('0.0000')
         self.cur_rate_of_return = self.rate_of_return - pre_rate_of_return
 
-        # todo cost  由买入（卖出）实际操作决定
-        self.transaction(1, None, pre_coin_cash_rate, pre_balance)
+        # cost  由买入（卖出）实际操作决定
+        self.transaction(1, cost, pre_coin_cash_rate, pre_balance)
 
     # 不买不卖
     def non_trade(self):
@@ -117,21 +121,40 @@ class Calculator:
 
     # 买入后持久化（卖出同）[其实就是交易明细表]
     def transaction(self, flag, cost, pre_coin_cash_rate, pre_balance):
-        # 买入（卖出）标志
-        flag
-        # 时间
-        self.T
-        # 价格
-        cost
-        # 完成前仓位
-        pre_coin_cash_rate
-        # 完成后仓位
-        self.position.coin_cash_rate
-        # 变化仓位
+        # # 买入（卖出）标志
+        # flag
+        # # 时间
+        # self.T
+        # # 价格
+        # cost
+        # # 完成前仓位
+        # pre_coin_cash_rate
+        # # 完成后仓位
+        # self.position.coin_cash_rate
+        # # 变化仓位
         position_gap = self.position.coin_cash_rate - pre_coin_cash_rate
-        # 完成前余额
-        pre_balance
-        # 完成后余额
-        self.position.balance
-        # 余额变化
+        # # 完成前余额
+        # pre_balance
+        # # 完成后余额
+        # self.position.balance
+        # # 余额变化
         balance_gap = self.position.balance - pre_balance
+
+        data = {
+            'strategy_account_id': [1],
+            # todo 'strategy_account_id': [self.strategy_account_id],
+            't': [self.T],
+            'cost': [cost],
+            'volumn': [self.amount],
+            # todo 手续费暂时为0
+            'commission': [0.00],
+            'pre_position': [pre_coin_cash_rate],
+            'post_position': [self.position.coin_cash_rate],
+            'position_gap': [position_gap],
+            'pre_balance': [pre_balance],
+            'post_balance': [self.position.balance],
+            'balance_gap': [balance_gap],
+            'flag': [flag],
+            'strategy_id': [self.strategy_id]}
+        df = pd.DataFrame(data)
+        insert_2_strategy_transaction(df)
