@@ -24,12 +24,12 @@ class Calculator:
         # 初始总资产
         # pre_total = self.position.total
         pre_balance = self.position.balance
-        pre_coin_cash_rate = self.position.coin_cash_rate
-        pre_rate_of_return = self.rate_of_return
+        pre_current_position = self.position.current_position
+        pre_rate_of_return = Decimal(self.rate_of_return)
         # 币量
-        self.position.coin_amount += self.amount
+        self.position.coin_amount += Decimal(self.amount)
         # 持仓币价
-        self.position.price = self.get_close_price()
+        self.position.price = Decimal(self.get_close_price())
         # 持仓余额
         self.position.balance -= Decimal(self.amount) * Decimal(self.price)
         Decimal(self.position.balance).quantize(Decimal('0.00'))
@@ -38,21 +38,31 @@ class Calculator:
                                                   * Decimal(self.position.price)).quantize(
             Decimal('0.00'))
         self.position.total = self.position.balance + self.position.total_net_balance
-        # 仓位
-        self.position.coin_cash_rate = Decimal(
-            Decimal(self.position.total_net_balance) / Decimal(self.position.total)).quantize('0.0000')
+        # 仓位 current_position
+        self.position.current_position = Decimal(
+            Decimal(self.position.total_net_balance) / Decimal(self.position.total)).quantize(Decimal('0.0000'))
 
         # 效益计算模块
-        # 总收益率（累计）
-        self.rate_of_return = Decimal((Decimal(self.position.balance) - Decimal(self.position.init_balance)) / Decimal(
-            self.position.init_balance)).quantize('0.0000')
-        # 当期收益率（以初始本金为基准）
+        # 总收益率（累计） current_total_margin_rate
+        self.rate_of_return = Decimal((Decimal(self.position.total) - Decimal(self.position.init_balance)) / Decimal(
+            self.position.init_balance)).quantize(Decimal('0.0000'))
+        # 当期收益率（以初始本金为基准） current_margin_rate
         # self.cur_rate_of_return = Decimal(
         #     Decimal(self.position.total - pre_total) / Decimal(self.position.total)).quantize('0.0000')
         self.cur_rate_of_return = self.rate_of_return - pre_rate_of_return
 
         # cost  由买入（卖出）实际操作决定
-        self.transaction(0, cost, pre_coin_cash_rate, pre_balance)
+        self.transaction(0, cost, pre_current_position, pre_balance)
+        print('********** BUY **********')
+        print('amount= ' + str(Decimal(self.amount).quantize(Decimal('0.000000'))))
+        print('price= ' + str(Decimal(cost).quantize(Decimal('0.00'))))
+        print('balance= ' + str(Decimal(self.position.balance).quantize(Decimal('0.00'))))
+        print('total_net_balance= ' + str(Decimal(self.position.total_net_balance).quantize(Decimal('0.00'))))
+        print('total= ' + str(Decimal(self.position.total).quantize(Decimal('0.00'))))
+        print('current_position= ' + str(self.position.current_position))
+        print('current_margin_rate= ' + str(self.cur_rate_of_return))
+        print('current_total_margin_rate= ' + str(self.rate_of_return))
+        print('********** BUY **********')
 
     # 策略卖出
     def sell(self, cost):
@@ -60,7 +70,7 @@ class Calculator:
         # 初始总资产
         # pre_total = self.position.total
         pre_balance = self.position.balance
-        pre_coin_cash_rate = self.position.coin_cash_rate
+        pre_current_position = self.position.current_position
         pre_rate_of_return = self.rate_of_return
         # 币量
         self.position.coin_amount -= self.amount
@@ -75,25 +85,25 @@ class Calculator:
             Decimal('0.00'))
         self.position.total = self.position.balance + self.position.total_net_balance
         # 仓位
-        self.position.coin_cash_rate = Decimal(
-            Decimal(self.position.total_net_balance) / Decimal(self.position.total)).quantize('0.0000')
+        self.position.current_position = Decimal(
+            Decimal(self.position.total_net_balance) / Decimal(self.position.total)).quantize(Decimal('0.0000'))
 
         # 效益计算模块
         # 总收益率（累计）
-        self.rate_of_return = Decimal((Decimal(self.position.balance) - Decimal(self.position.init_balance)) / Decimal(
-            self.position.init_balance)).quantize('0.0000')
+        self.rate_of_return = Decimal((Decimal(self.position.total) - Decimal(self.position.init_balance)) / Decimal(
+            self.position.init_balance)).quantize(Decimal('0.0000'))
         # 当期收益率（以初始本金为基准）
         # self.cur_rate_of_return = Decimal(
         #     Decimal(self.position.total - pre_total) / Decimal(self.position.total)).quantize('0.0000')
         self.cur_rate_of_return = self.rate_of_return - pre_rate_of_return
 
         # cost  由买入（卖出）实际操作决定
-        self.transaction(1, cost, pre_coin_cash_rate, pre_balance)
+        self.transaction(1, cost, pre_current_position, pre_balance)
 
     # 不买不卖
     def non_trade(self):
         # pre_balance = self.position.balance
-        # pre_coin_cash_rate = self.position.coin_cash_rate
+        # pre_current_position = self.position.current_position
         pre_rate_of_return = self.rate_of_return
 
         # 持仓币价
@@ -106,12 +116,12 @@ class Calculator:
 
         # 效益计算模块
         # 总收益率（累计）
-        self.rate_of_return = Decimal((Decimal(self.position.balance) - Decimal(self.position.init_balance)) / Decimal(
-            self.position.init_balance)).quantize('0.0000')
+        self.rate_of_return = Decimal((Decimal(self.position.total) - Decimal(self.position.init_balance)) / Decimal(
+            float(self.position.init_balance))).quantize(Decimal('0.0000'))
         # 当期收益率（以初始本金为基准）
         # self.cur_rate_of_return = Decimal(
         #     Decimal(self.position.total - pre_total) / Decimal(self.position.total)).quantize('0.0000')
-        self.cur_rate_of_return = self.rate_of_return - pre_rate_of_return
+        self.cur_rate_of_return = self.rate_of_return - Decimal(pre_rate_of_return)
 
     # 获取收盘价
     def get_close_price(self):
@@ -120,7 +130,7 @@ class Calculator:
         return df.iat[0, 2]
 
     # 买入后持久化（卖出同）[其实就是交易明细表]
-    def transaction(self, flag, cost, pre_coin_cash_rate, pre_balance):
+    def transaction(self, flag, cost, pre_current_position, pre_balance):
         # # 买入（卖出）标志
         # flag
         # # 时间
@@ -128,11 +138,11 @@ class Calculator:
         # # 价格
         # cost
         # # 完成前仓位
-        # pre_coin_cash_rate
+        # pre_current_position
         # # 完成后仓位
-        # self.position.coin_cash_rate
+        # self.position.current_position
         # # 变化仓位
-        position_gap = self.position.coin_cash_rate - pre_coin_cash_rate
+        position_gap = self.position.current_position - pre_current_position
         # # 完成前余额
         # pre_balance
         # # 完成后余额
@@ -148,8 +158,8 @@ class Calculator:
             'volumn': [self.amount],
             # todo 手续费暂时为0
             'commission': [0.00],
-            'pre_position': [pre_coin_cash_rate],
-            'post_position': [self.position.coin_cash_rate],
+            'pre_position': [pre_current_position],
+            'post_position': [self.position.current_position],
             'position_gap': [position_gap],
             'pre_balance': [pre_balance],
             'post_balance': [self.position.balance],
