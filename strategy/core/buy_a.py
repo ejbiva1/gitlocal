@@ -57,7 +57,7 @@ class BuyA:
             # send signal
             pre_T = T - 86400
             df = self.datas[(self.idt == pre_T)]
-            # todo 确认一下价格是否为 CLOSE（T-1）
+            # 价格是否为 CLOSE（T-1）
             price = df.iat[0, 2]
             Trader.position_judge(position=self.position, strategy_id=1, price=price, timestamp=T, trade_amount=0)
             # return True

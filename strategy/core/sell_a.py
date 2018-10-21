@@ -18,11 +18,11 @@ class SellA:
 
     def strategy(self, T):
         # 是否总仓小于20%
-        if self.position.coin_cash_rate > Decimal('0.2'):
+        if self.position.current_position > Decimal('0.2'):
             persent = (self.position.init_balance - self.position.balance) / self.position.init_balance
             # 判断总资产减少10%？   yes，减持50%
             if persent >= 0.1:
-                #         todo send signal
+                # send signal
                 df = self.datas[(self.idt == T)]
                 price = df.iat[0, 2]
                 amount = Decimal(self.position.coin_amount) * Decimal('0.5')

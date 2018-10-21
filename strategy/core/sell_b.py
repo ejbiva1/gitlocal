@@ -120,8 +120,8 @@ class SellB:
         df = get_trade_info(T, strategy_id=4, flag=0)
         if not df.empty:
             # price = df.iat[0,2]
-            coin_cash_rate = self.position.coin_cash_rate
-            if 0.75 <= coin_cash_rate <= 0.8:
+            current_position = self.position.current_position
+            if 0.75 <= current_position <= 0.8:
                 return True
             else:
                 return False
@@ -142,6 +142,7 @@ class SellB:
                     if df.empty:
                         pass
                     else:
+                        print_signal(T, price, amount=df.iat[0, 3])
                         Trader.position_judge(position=self.position,
                                               strategy_id=4, price=price, timestamp=T,
                                               trade_amount=df.iat[0, 3])
@@ -159,6 +160,7 @@ class SellB:
                         if df.empty:
                             pass
                         else:
+                            print_signal(T, price, amount=df.iat[0, 3])
                             Trader.position_judge(position=self.position,
                                                   strategy_id=4, price=price, timestamp=T,
                                                   trade_amount=df.iat[0, 3])
@@ -166,6 +168,7 @@ class SellB:
                     else:
                         if self.condition_c(T):
                             # 卖出价格为买入价格95%，卖出仓位=T日买入仓位
+                            print_signal(T, self.price, amount=self.trade_amount)
                             Trader.position_judge(position=self.position,
                                                   strategy_id=4, price=self.price, timestamp=T,
                                                   trade_amount=self.trade_amount)
@@ -174,6 +177,7 @@ class SellB:
                             # 卖出价格为CLOSE(T+1)，卖出仓位=T日买入仓位
                             next_T = T + 3600
                             df = self.datas[(self.idt == next_T)]
+                            print_signal(T, df.iat[0, 2], amount=self.trade_amount)
                             Trader.position_judge(position=self.position,
                                                   strategy_id=4, price=df.iat[0, 2], timestamp=T,
                                                   trade_amount=self.trade_amount)
@@ -186,6 +190,7 @@ class SellB:
                 if df.empty:
                     pass
                 else:
+                    print_signal(T, df2.iat[0, 2], amount=df.iat[0, 3])
                     Trader.position_judge(position=self.position,
                                           strategy_id=4, price=df2.iat[0, 2], timestamp=T,
                                           trade_amount=df.iat[0, 3])
@@ -201,12 +206,20 @@ class SellB:
         if not df.empty:
             self.trade_amount = df.iat[0, 3]
 
-    # todo call
+    # call
     def call_no_trade(self, T):
         # 没有买卖操作
         calculator = Calculator(self.position, T, price=0, amount=0, signal=0, strategy_id=4, strategy_account_id=1)
         calculator.non_trade()
 
+
+def print_signal(T, price, amount):
+    print('********** SIGNAL **********')
+    print('signal_type= sell_b ,')
+    print('price= ' + str(price))
+    print('amount= ' + str(amount))
+    print('timestamp= ' + str(T))
+    print('********** SIGNAL **********')
 # def run_strategy(self):
 #     df = self.datas
 #     for timestamp in df['id']:

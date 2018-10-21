@@ -1,6 +1,7 @@
 from util.ReadData import read_datas_60min
 from decimal import Decimal
 from util.Trader import *
+import pandas as pd
 
 
 class BuyB:
@@ -16,9 +17,11 @@ class BuyB:
 
     def condition_1(self, T):
         timestamp = T - 7200
-        df = self.datas[(self.idt == timestamp)]
+        # self.idt == timestamp:
+        df = self.datas[(self.datas['id'] == timestamp)]
         df = df[(df['close'] > df['open'])]
         if df.empty:
+            print('Buy_b ' + str(T) + ' condition_1 False')
             return False
         else:
             return True
@@ -30,8 +33,10 @@ class BuyB:
             if df.iat[0, 2] < df.iat[0, 1]:
                 return True
             else:
+                print('Buy_b ' + str(T) + ' condition_2 False')
                 return False
         except IndexError:
+            print('Buy_b ' + str(T) + ' condition_2 False')
             return False
 
     def condition_3(self, T):
@@ -44,8 +49,10 @@ class BuyB:
             if df1.iat[0, 2] > df2.iat[0, 1]:
                 return True
             else:
+                print('Buy_b ' + str(T) + ' condition_3 False')
                 return False
         except IndexError:
+            print('Buy_b ' + str(T) + ' condition_3 False')
             return False
 
     def condition_4(self, T):
@@ -57,8 +64,10 @@ class BuyB:
             if df1.iat[0, 1] < df2.iat[0, 2]:
                 return True
             else:
+                print('Buy_b ' + str(T) + ' condition_4 False')
                 return False
         except IndexError:
+            print('Buy_b ' + str(T) + ' condition_4 False')
             return False
 
     def condition_5(self, T):
@@ -72,6 +81,7 @@ class BuyB:
         if t2 > t1:
             return True
         else:
+            print('Buy_b ' + str(T) + ' condition_5 False')
             return False
 
     def condition_6(self, T):
@@ -84,17 +94,19 @@ class BuyB:
         if df1.iat[0, 6] < vol2:
             return True
         else:
+            print('Buy_b ' + str(T) + ' condition_6 False')
             return False
 
     def condition_a(self, T):
         pre_T = T - 3600
         df = self.datas[(self.idt == pre_T)]
         df_t = self.datas[(self.idt == T)]
-        price = Decimal(df.iat[0, 1] - df.iat[0, 2]) / Decimal('2') + df.iat[0, 2]
+        price = Decimal(df.iat[0, 1] - df.iat[0, 2]) / Decimal('2') + Decimal(df.iat[0, 2])
         # HIGH(T+1)>=OPEN(T-1) - [OPEN(T-1)-CLOSE(T-1)]10%
         if df_t.iat[0, 3] < price:
             return True
         else:
+            print('Buy_b ' + str(T) + ' condition_a False')
             return False
 
     def strategy(self, T):
@@ -106,7 +118,14 @@ class BuyB:
             pre_T = T - 3600
             df = self.datas[(self.idt == pre_T)]
             price = Decimal(df.iat[0, 1] - df.iat[0, 2]) / Decimal('2') + Decimal(df.iat[0, 2])
-            Trader.position_judge(position=self.position, strategy_id=3, price=price, timestamp=T, trade_amount=0)
+            print('********** SIGNAL **********')
+            print('signal_type= buy_b ,')
+            print('price= ' + str(price))
+            print('timestamp= ' + str(T))
+            print('********** SIGNAL **********')
+            amount = Trader.position_judge(position=self.position, strategy_id=3, price=price, timestamp=T,
+                                           trade_amount=0)
+
             # return True
         else:
             # 没有买卖操作
