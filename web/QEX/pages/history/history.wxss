@@ -52,8 +52,6 @@ page{
 
 .block{
   width: 100%;
-  padding-left: 6px;
-  
 }
 .smallBlockDate{
   font-size: smaller;

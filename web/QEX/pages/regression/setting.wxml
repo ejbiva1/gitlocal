@@ -8,14 +8,13 @@
 <view class="pageTitle">
     SETTING
 </view>
-
 <view class='itemView'>
-  <image src='../../img/icon01.png' />
-  <input  type='digit'  bindinput='inputs' value='{{inputvalues}}' placeholder="Initial Funding" placeholder-class="center" placeholder-style="color:#ffffff;"></input>
+  <image src='../../img/icon01.png' style="width:84rpx;height:58rpx;padding-left:10rpx;padding-top:5rpx"/>
+  <input  type='number'  bindinput='inputs' value='{{inputvalues}}'></input>
 </view>
 
 
-<picker mode="date" value="{{date}}" start="2004-01-01" bindchange="startTime" >  
+<picker mode="date" value="{{date}}" start="{{sysStartDate}}" end="{{sysEndDate}}" bindchange="startTime" >  
   <view class="picker" placeholder="Start Date" >  
     <image src="../../img/icon02.png" style="width:58rpx;height:58rpx;padding-left:10rpx;padding-top:5rpx">
     </image>
@@ -25,7 +24,7 @@
   </view>  
 </picker>
 
-<picker mode="date" value="{{date}}" start="2004-01-01" bindchange="endTime"  >  
+<picker mode="date" value="{{date}}" start="{{sys2StartDate}}" end="{{sysEndDate}}" bindchange="endTime">  
   <view class="picker" placeholder="End Date">  
     <image src="../../img/icon02.png" style="width:58rpx;height:58rpx;align-self: center;padding-left:10rpx;padding-top:5rpx;">
     </image>
@@ -39,7 +38,7 @@
   <view class="picker" >
     <image src="../../img/strategy.png" style="width:68rpx;height:68rpx;float: left;padding-left:5rpx;padding-top:4rpx">
     </image>
-    <view clss="selectText" style="padding-left:60rpx;">
+    <view clss="selectText" style="padding-left:70rpx;">
       {{pic_array[hx_index].name}}
     </view>
   </view>

@@ -6,7 +6,7 @@
     <image src='../../img/bar01.png' mode="widthFix" style="width:65%;padding-bottom:20rpx;">
     </image>
 </view>
-<view class="pageTitle">
+<view class="pageTitle2">
     SELECT REGRESSION MODEL
 </view>
 
@@ -14,14 +14,14 @@
 
 <view class="backgroundBlock">
 <view class="linkImage">
-<image src='../../img/option01.png' bindtap='click'/>
+<image src='../../img/option01.png' bindtap='click1'/>
 </view>
 
 <view class="linkImage">
-<image src='../../img/option02.png' bindtap='click'/>
+<image src='../../img/option02.png' bindtap='click2'/>
 </view>
 
 <view class="linkImage">
-<image src='../../img/option03.png' bindtap='click'/>
+<image src='../../img/option03.png' bindtap='click3'/>
 </view>
 </view>
