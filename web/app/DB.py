@@ -362,53 +362,83 @@ def getStrategy():
         strategyList.append(strategy)
     cursor.close()
     return strategyList
-def getStrategyInstanceList(creator):
+
+def getStrategyLogList(creator):
    cursor = connection.cursor()
-   strategyInstanceList = []
+   strategyLogList = []
    # SQL 查询语句
-   sql = "SELECT strategy_instance_id,strategy_instance_description,start_date,end_date,init_balance,create_time,strategy_id,margin_return FROM strategy_instance;"
+   sql = " SELECT strategy_log_id,"\
+         " strategy_id,"\
+         " start_date," \
+         " end_date," \
+         " init_balance," \
+         " coin_category," \
+         " creator," \
+         " create_time," \
+         " execution_result" \
+         " FROM strategy_log" \
+         " where creator=%s"
 
    # 执行SQL语句
-   cursor.execute(sql)
+   cursor.execute(sql,creator)
    # 获取所有记录列表
    results = cursor.fetchall()
    for row in results:
       # 打印结果
-      pro = StrategyInstance(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
-      strategyInstanceList.append(pro)
-   cursor.close()
-   return strategyInstanceList
-def getStrategyInstanceLogList():
-   cursor = connection.cursor()
-   strategyInstanceList = []
-   # SQL 查询语句
-   sql = "SELECT strategy_instance_log_id,strategy_instance_id,transaction_direction,coin_category,create_time FROM strategy_instance_log where strategy_instance_id=%s"
-
-   # 执行SQL语句
-   cursor.execute(sql)
-   # 获取所有记录列表
-   results = cursor.fetchall()
-   for row in results:
-      # 打印结果
-      pro = StrategyInstanceLog(row[0], row[1], row[2], row[3], row[4])
+      pro = StrategyLog(row[0], row[1], row[2], row[3], row[4],row[5], row[6], row[7], row[8])
       #print("row[0]:"+str(row[0])+"|row[1]:"+row[1]+"|row[2]:"+str(row[2])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
-      strategyInstanceList.append(pro)
+      strategyLogList.append(pro)
    cursor.close()
-   return strategyInstanceList
-def checkUser():
-    cursor = connection.cursor()
-    strategyInstanceList = []
-    # SQL 查询语句
-    sql = "SELECT strategy_instance_log_id,strategy_instance_id,transaction_direction,coin_category,create_time FROM strategy_instance_log where strategy_instance_id=%s"
+   return strategyLogList
 
-    # 执行SQL语句
-    cursor.execute(sql)
-    # 获取所有记录列表
-    results = cursor.fetchall()
-    for row in results:
-        # 打印结果
-        pro = StrategyInstanceLog(row[0], row[1], row[2], row[3], row[4])
-        # print("row[0]:"+str(row[0])+"|row[1]:"+row[1]+"|row[2]:"+str(row[2])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
-        strategyInstanceList.append(pro)
-    cursor.close()
-    return strategyInstanceList
+def getStrategyAccountList(strategyLogId):
+   cursor = connection.cursor()
+   strategyAccountList = []
+   # SQL 查询语句
+   sql = " SELECT strategy_account_id,strategy_log_id,current_cash_balance,current_coin_balance,cost,total_net_balance,current_net_value,"\
+   " current_total_margin_rate,current_margin_rate,current_position,`signal`,transaction_status,t,open,close,high,low FROM strategy_account where strategy_log_id = %s"
+
+   # 执行SQL语句
+   cursor.execute(sql,strategyLogId)
+   # 获取所有记录列表
+   results = cursor.fetchall()
+   for row in results:
+      # 打印结果
+      pro = StrategyAccount(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16])
+      strategyAccountList.append(pro)
+   cursor.close()
+   return strategyAccountList
+
+list = getStrategyLogList(1)
+for sl in list:
+    print(sl.get_strategy_log_id())
+    print(sl.get_strategy_id())
+    print(sl.get_start_date())
+    print(sl.get_end_date())
+    print(sl.get_init_balance())
+    print(sl.get_coin_category())
+    print(sl.get_creator())
+    print(sl.get_create_time())
+    print(sl.get_strategy_log_id())
+    print(sl.get_execution_result())
+
+
+list = getStrategyAccountList(1)
+for sl in list:
+    print("----------------------")
+    print(sl.get_strategy_account_id())
+    print(sl.get_strategy_log_id())
+    print(sl.get_current_cash_balance())
+    print(sl.get_current_coin_balance())
+    print(sl.get_cost())
+    print(sl.get_total_net_balance())
+    print(sl.get_current_net_value())
+    print(sl.get_current_total_margin_rate())
+    print(sl.get_current_margin_rate())
+    print(sl.get_current_position())
+    print(sl.get_signal())
+    print(sl.get_transaction_status())
+    print(sl.get_t())
+    print(sl.get_close())
+    print(sl.get_high())
+    print(sl.get_low())
