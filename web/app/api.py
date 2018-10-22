@@ -1,42 +1,59 @@
-from flask import Flask, request
+from flask import Flask, request, session
 import DB as db
 import json
+import os
 import web.app.controller as controller
+from decimal import Decimal
+from numbers import Number
 from facilties.functional import JsonExtendEncoder
 
-
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '123456'
 
 
 @app.route('/startStrategy', methods=['POST'])
 def startStrategy():
-    strategyId = request.form.get("strategyId")
-    startTime = request.args.get("startTime")
+    strategyId = request.json.get("strategyId")
     startTime = request.json.get("startTime")
     endTime = request.json.get("endTime")
     initBalance = request.json.get("initBalance")
     coinCategory = request.json.get("coinCategory")
-    print("strategyId:" + strategyId)
-    strategyInstanceList = db.getStrategyInstanceList()
-    htmlStr = "<button>Save</button>"
-    result = {"list": strategyInstanceList}
-    htmlStr = json.dumps(result)
-    return htmlStr
+    if initBalance <= 1000000 and initBalance >= 10000:
+        controller.startStartStrategy()
+        return json.dumps({'result': 'strategy started'})
+    else:
+        return json.dumps({'result': 'pls be sure initBalance is correct'})
 
 
 @app.route('/loadLogList', methods=['POST'])
 def loadLogList():
-    strategyInstanceList = db.getStrategyInstanceList()
-    htmlStr = "<button>Save</button>"
-    result = {"list": strategyInstanceList}
-    htmlStr = json.dumps(result)
-    return htmlStr
+    # 后端写死一个 session 对象，保存一个session['userId']
+    session.permanent = True
+    session['userId'] = 1
+    strategy_log_list = []
+    strategyLogList = controller.loadLogList(session['userId'])
+    for item in strategyLogList:
+        strategy_log_list.append(item.__dict__)
+    print(strategy_log_list)
+    result = json.dumps({"list": strategy_log_list}, ensure_ascii=False, cls=JsonExtendEncoder)
+    return result
+
+
+@app.route('/getLogDetail/<int:stratgyLogId>', methods=['post'])
+def getLogDetail(stratgyLogId):
+    log_details = []
+    log_details_list = controller.getLogDetail(stratgyLogId, session['userId'])
+    for item in log_details_list:
+        print(item.__dict__)
+        log_details.append(item.__dict__)
+    result = json.dumps({'list': log_details}, ensure_ascii=False, cls=JsonExtendEncoder)
+
+    return result
 
 
 @app.route('/getStrategyInstanceList', methods=['post', 'put'])
 def getStrategyInstanceList():
     strategy_list = []
-
     strategyList = controller.getStrategy()
     for item in strategyList:
         # print(item.__dict__)

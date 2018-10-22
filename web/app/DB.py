@@ -74,6 +74,7 @@ class StrategyLog:
     def set_execution_result(self,execution_result):
         self.execution_result = execution_result
 
+
 class Strategy:
     strategy_id = 0
     strategy_name = ""
@@ -131,6 +132,7 @@ class Strategy:
         self.script_url = script_url
     def set_peroid(self,peroid):
         self.peroid = peroid
+
 
 class StrategyAccount:
     strategy_account_id = 0
@@ -219,6 +221,7 @@ class StrategyAccount:
         return self.high
     def get_low(self):
         return self.low
+
 
 class StrategyTransaction:
     strategy_transaction_id = 0
@@ -337,6 +340,8 @@ class StrategyTransaction:
         self.high = high
     def set_low(self,low):
         self.low = low
+
+
 def getStrategy():
     cursor = connection.cursor()
     strategyList = []
@@ -362,6 +367,7 @@ def getStrategy():
         strategyList.append(strategy)
     cursor.close()
     return strategyList
+
 
 def getStrategyLogList(creator):
    cursor = connection.cursor()
@@ -391,6 +397,34 @@ def getStrategyLogList(creator):
    cursor.close()
    return strategyLogList
 
+
+def getLogDetail(strategyLogId, creator):
+    cursor = connection.cursor()
+    log_details = []
+    #   SQL 查询语句
+    sql = " SELECT strategy_log_id,"\
+         " strategy_id,"\
+         " start_date," \
+         " end_date," \
+         " init_balance," \
+         " coin_category," \
+         " creator," \
+         " create_time," \
+         " execution_result" \
+         " FROM strategy_log" \
+         " where strategy_log_id=%s and creator=%s" %(strategyLogId, creator)
+
+    # 执行SQL 语句
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    for row in results:
+        pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+
+        log_details.append(pro)
+    cursor.close()
+    return log_details
+
 def getStrategyAccountList(strategyLogId):
    cursor = connection.cursor()
    strategyAccountList = []
@@ -409,36 +443,36 @@ def getStrategyAccountList(strategyLogId):
    cursor.close()
    return strategyAccountList
 
-list = getStrategyLogList(1)
-for sl in list:
-    print(sl.get_strategy_log_id())
-    print(sl.get_strategy_id())
-    print(sl.get_start_date())
-    print(sl.get_end_date())
-    print(sl.get_init_balance())
-    print(sl.get_coin_category())
-    print(sl.get_creator())
-    print(sl.get_create_time())
-    print(sl.get_strategy_log_id())
-    print(sl.get_execution_result())
-
-
-list = getStrategyAccountList(1)
-for sl in list:
-    print("----------------------")
-    print(sl.get_strategy_account_id())
-    print(sl.get_strategy_log_id())
-    print(sl.get_current_cash_balance())
-    print(sl.get_current_coin_balance())
-    print(sl.get_cost())
-    print(sl.get_total_net_balance())
-    print(sl.get_current_net_value())
-    print(sl.get_current_total_margin_rate())
-    print(sl.get_current_margin_rate())
-    print(sl.get_current_position())
-    print(sl.get_signal())
-    print(sl.get_transaction_status())
-    print(sl.get_t())
-    print(sl.get_close())
-    print(sl.get_high())
-    print(sl.get_low())
+# list = getStrategyLogList(1)
+# for sl in list:
+#     print(sl.get_strategy_log_id())
+#     print(sl.get_strategy_id())
+#     print(sl.get_start_date())
+#     print(sl.get_end_date())
+#     print(sl.get_init_balance())
+#     print(sl.get_coin_category())
+#     print(sl.get_creator())
+#     print(sl.get_create_time())
+#     print(sl.get_strategy_log_id())
+#     print(sl.get_execution_result())
+#
+#
+# list = getStrategyAccountList(1)
+# for sl in list:
+#     print("----------------------")
+#     print(sl.get_strategy_account_id())
+#     print(sl.get_strategy_log_id())
+#     print(sl.get_current_cash_balance())
+#     print(sl.get_current_coin_balance())
+#     print(sl.get_cost())
+#     print(sl.get_total_net_balance())
+#     print(sl.get_current_net_value())
+#     print(sl.get_current_total_margin_rate())
+#     print(sl.get_current_margin_rate())
+#     print(sl.get_current_position())
+#     print(sl.get_signal())
+#     print(sl.get_transaction_status())
+#     print(sl.get_t())
+#     print(sl.get_close())
+#     print(sl.get_high())
+#     print(sl.get_low())
