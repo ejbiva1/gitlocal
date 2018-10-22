@@ -3,8 +3,6 @@ import DB as db
 import json
 import os
 import web.app.controller as controller
-from decimal import Decimal
-from numbers import Number
 from facilties.functional import JsonExtendEncoder
 
 app = Flask(__name__)
@@ -39,14 +37,14 @@ def loadLogList():
     return result
 
 
-@app.route('/getLogDetail/<int:stratgyLogId>', methods=['post'])
-def getLogDetail(stratgyLogId):
-    log_details = []
-    log_details_list = controller.getLogDetail(stratgyLogId, session['userId'])
-    for item in log_details_list:
-        print(item.__dict__)
-        log_details.append(item.__dict__)
-    result = json.dumps({'list': log_details}, ensure_ascii=False, cls=JsonExtendEncoder)
+@app.route('/getLogDetail/<int:strategyLogId>', methods=['post'])
+def getLogDetail(strategyLogId):
+
+    log_details = controller.getLogDetail(strategyLogId, session['userId'])
+    # for item in log_details_list:
+    #     print(item.__dict__)
+    #     log_details.append(item.__dict__)
+    result = json.dumps({'list': log_details.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
 
     return result
 
