@@ -11,6 +11,8 @@ class StrategyLog:
     creator = 0
     create_time = ""
     execution_result = ""
+    strategy_name = ""
+    final_margin = 0.0
     def __init__(self, strategy_log_id,
     strategy_id,
     start_date,
@@ -19,7 +21,9 @@ class StrategyLog:
     coin_category,
     creator,
     create_time,
-    execution_result):
+    execution_result,
+    strategy_name,
+    final_margin):
         self.strategy_log_id = strategy_log_id
         self.strategy_id = strategy_id
         self.start_date = start_date
@@ -29,6 +33,8 @@ class StrategyLog:
         self.creator = creator
         self.create_time = create_time
         self.execution_result = execution_result
+        self.strategy_name = strategy_name
+        self.final_margin = final_margin
     def get_strategy_log_id(self):
         return self.strategy_log_id
     def get_strategy_id(self):
@@ -47,6 +53,11 @@ class StrategyLog:
         return self.create_time
     def get_execution_result(self):
         return self.execution_result
+    def get_final_margin(self):
+        return self.final_margin
+
+    def get_strategy_name(self):
+        return self.strategy_name
 
     def set_strategy_log_id(self,strategy_log_id):
         self.strategy_log_id = strategy_log_id
@@ -73,6 +84,10 @@ class StrategyLog:
         self.create_time = create_time
     def set_execution_result(self,execution_result):
         self.execution_result = execution_result
+    def set_strategy_name(self,strategy_name):
+        self.strategy_name = strategy_name
+    def set_final_margin(self,final_margin):
+        self.final_margin = final_margin
 
 class Strategy:
     strategy_id = 0
@@ -375,7 +390,9 @@ def getStrategyLogList(creator):
          " coin_category," \
          " creator," \
          " create_time," \
-         " execution_result" \
+         " execution_result," \
+         " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name,"\
+         " (final_margin - init_balance)/init_balance final_margin" \
          " FROM strategy_log" \
          " where creator=%s"
 
@@ -385,7 +402,7 @@ def getStrategyLogList(creator):
    results = cursor.fetchall()
    for row in results:
       # 打印结果
-      pro = StrategyLog(row[0], row[1], row[2], row[3], row[4],row[5], row[6], row[7], row[8])
+      pro = StrategyLog(row[0], row[1], row[2], row[3], row[4],row[5], row[6], row[7], row[8], row[9], row[10])
       #print("row[0]:"+str(row[0])+"|row[1]:"+row[1]+"|row[2]:"+str(row[2])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
       strategyLogList.append(pro)
    cursor.close()
