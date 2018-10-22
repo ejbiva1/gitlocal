@@ -19,7 +19,7 @@ def startStrategy():
     initBalance = request.json.get("initBalance")
     coinCategory = request.json.get("coinCategory")
     if initBalance <= 1000000 and initBalance >= 10000:
-        controller.startStartStrategy()
+        controller.startStartStrategy(strategyId,initBalance,startTime,endTime)
         return json.dumps({'result': 'strategy started'})
     else:
         return json.dumps({'result': 'pls be sure initBalance is correct'})
