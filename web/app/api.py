@@ -1,9 +1,10 @@
-from flask import Flask, request, session
+from flask import Flask, request, session, Response
 import DB as db
 import json
 import os
 import web.app.controller as controller
 from facilties.functional import JsonExtendEncoder
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
@@ -18,35 +19,35 @@ def startStrategy():
     coinCategory = request.json.get("coinCategory")
     if initBalance <= 1000000 and initBalance >= 10000:
         controller.startStartStrategy(strategyId,initBalance,startTime,endTime)
-        return json.dumps({'result': 'strategy started'})
+        return Response(json.dumps({'result': 'strategy started'}))
     else:
-        return json.dumps({'result': 'pls be sure initBalance is correct'})
+        return Response(json.dumps({'result': 'pls be sure initBalance is correct'}))
 
 
 @app.route('/loadLogList', methods=['POST'])
 def loadLogList():
     # 后端写死一个 session 对象，保存一个session['userId']
-    session.permanent = True
-    session['userId'] = 1
+
     strategy_log_list = []
     strategyLogList = controller.loadLogList(session['userId'])
     for item in strategyLogList:
         strategy_log_list.append(item.__dict__)
     print(strategy_log_list)
     result = json.dumps({"list": strategy_log_list}, ensure_ascii=False, cls=JsonExtendEncoder)
-    return result
+    return Response(result)
 
 
 @app.route('/getLogDetail/<int:strategyLogId>', methods=['post'])
 def getLogDetail(strategyLogId):
-
+    session.permanent = True
+    session['userId'] = 1
     log_details = controller.getLogDetail(strategyLogId, session['userId'])
     # for item in log_details_list:
     #     print(item.__dict__)
     #     log_details.append(item.__dict__)
     result = json.dumps({'list': log_details.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
 
-    return result
+    return Response(result)
 
 
 @app.route('/getStrategyInstanceList', methods=['post', 'put'])
@@ -59,7 +60,7 @@ def getStrategyInstanceList():
 
     # json.dumps 序列化时对中文默认使用的ascii编码 : json.dumps 序列化对象时 对中文默认使用 ascii编码
     result = json.dumps({"list": strategy_list}, cls=JsonExtendEncoder, ensure_ascii=False)
-    return result
+    return Response(result)
 
 
 # 给URL 添加变量部分: 规则可以用 <converter:variable_name> 指定一个可选的转换器
@@ -73,7 +74,7 @@ def getStrategyInstance(strategy_id):
 
         # python 对象 转化成 json 字符串
         result = json.dumps({'result': strategyInstance.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
-        return result
+        return Response(result)
 
 
 if __name__ == "__main__":
