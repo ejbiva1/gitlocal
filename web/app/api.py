@@ -1,8 +1,9 @@
-from flask import Flask, request, make_response, session
+from flask import Flask, request
 import DB as db
 import json
 import web.app.controller as controller
 from facilties.functional import JsonExtendEncoder
+
 
 app = Flask(__name__)
 
@@ -45,17 +46,19 @@ def getStrategyInstanceList():
     result = json.dumps({"list": strategy_list}, cls=JsonExtendEncoder, ensure_ascii=False)
     return result
 
-#给URL 添加变量部分: 规则可以用 <converter:variable_name> 指定一个可选的转换器
+
+# 给URL 添加变量部分: 规则可以用 <converter:variable_name> 指定一个可选的转换器
 @app.route('/getStrategyInstance/<int:strategy_id>', methods=['post', 'put'])
 def getStrategyInstance(strategy_id):
-    strategyInstance = db.getStrategyInstance(strategy_id)
-    # strategyInstance_list = []
-    # strategyInstance_list.append(strategyInstance.__dict__)
-    # result = json.dumps({'result': strategyInstance_list}, ensure_ascii=False, cls=JsonExtendEncoder)
+    if request.method == 'post':
+        strategyInstance = db.getStrategyInstance(strategy_id)
+        # strategyInstance_list = []
+        # strategyInstance_list.append(strategyInstance.__dict__)
+        # result = json.dumps({'result': strategyInstance_list}, ensure_ascii=False, cls=JsonExtendEncoder)
 
-    # python 对象 转化成 json 字符串
-    result = json.dumps({'result': strategyInstance.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
-    return result
+        # python 对象 转化成 json 字符串
+        result = json.dumps({'result': strategyInstance.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+        return result
 
 
 if __name__ == "__main__":

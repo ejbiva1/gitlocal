@@ -7,6 +7,7 @@ class JsonExtendEncoder(json.JSONEncoder):
     python json package has some methods to serialze variables, especially json.JSONEncoder.default()
     """
 
+
     def default(self, o):
         """
             provide a interface for datetime/date
