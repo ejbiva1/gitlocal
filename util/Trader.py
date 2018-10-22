@@ -5,7 +5,7 @@ from util.Calculator import Calculator
 class Trader:
     # judge position status
     @staticmethod
-    def position_judge(position, strategy_id, price, trade_amount, timestamp):
+    def position_judge(position, strategy_id, price, trade_amount, calculator):
         # buy_b strategy ==3
         if strategy_id == 3:
             if position.current_position >= 0.8:
@@ -17,8 +17,8 @@ class Trader:
                 else:
                     amount = Decimal(exception_buy) / Decimal(price)
                 signal = 1
-                calculator = Calculator(position, timestamp, price, amount, signal, strategy_id, 1)
-                calculator.buy(price)
+                # calculator = Calculator(position, timestamp,, signal, strategy_id, 1)
+                calculator.buy(price, amount)
                 # todo 回写数据库交易成功字段
                 return amount
             #     sell_b == 4
@@ -30,22 +30,23 @@ class Trader:
                 else:
                     amount = Decimal(exception_buy) / Decimal(price)
                 signal = 1
-                calculator = Calculator(position, timestamp, price, amount, signal, strategy_id, 1)
-                calculator.buy(price)
+                calculator.buy(price, amount)
                 # todo 回写数据库交易成功字段
                 return amount
         elif strategy_id == 4:
             signal = 0
-            calculator = Calculator(position, timestamp, price, trade_amount, signal, strategy_id, 1)
-            calculator.sell(price)
+            # calculator = Calculator(position, timestamp, price, trade_amount, signal, strategy_id, 1)
+            calculator.sell(price, trade_amount)
             # todo 回写数据库交易成功字段
         elif strategy_id == 2:
             signal = 0
-            calculator = Calculator(position, timestamp, price, trade_amount, signal, strategy_id, 1)
-            calculator.sell(price)
+            # calculator = Calculator(position, timestamp, price, trade_amount, signal, strategy_id, 1)
+            calculator.sell(price, trade_amount)
             # todo 回写数据库交易成功字段
         elif strategy_id == 1:
             signal = 1
-            calculator = Calculator(position, timestamp, price, trade_amount, signal, strategy_id, 1)
-            calculator.sell(price)
+            # calculator = Calculator(position, timestamp, price, trade_amount, signal, strategy_id, 1)
+            calculator.sell(price, trade_amount)
             # todo 回写数据库交易成功字段
+
+        calculator.position = position

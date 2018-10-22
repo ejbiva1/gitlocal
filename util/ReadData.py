@@ -45,9 +45,9 @@ def get_trade_info(time_stamp, strategy_id, flag):
     # todo 变量输入表名 table = 'strategy_transaction'
     sql = '''
            select * from quantcoin.strategy_transaction
-           where %(timeStamp)s = t
-           and %(strategy_id)s = strategy_id
-           and %(flag)s = flag
+           where t = %(timeStamp)s 
+           and strategy_id = %(strategy_id)s
+           and flag = %(flag)s 
            '''
     df = pd.read_sql_query(sql, params={'timeStamp': time_stamp, 'strategy_id': strategy_id, 'flag': flag}, con=engine,
                            index_col='strategy_transaction_id')

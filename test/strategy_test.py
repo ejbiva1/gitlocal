@@ -13,5 +13,7 @@ print(dates.size)
 sell_b = SellB(start_time=start_time, end_time=end_time, position=position)
 buy_b = BuyB(start_time=start_time, end_time=end_time, position=position)
 for t in dates:
-    sell_b.strategy(t)
-    buy_b.strategy(t)
+    sell_b.strategy(t, position)
+    position = sell_b.position
+    buy_b.strategy(t, position)
+    position = buy_b.position

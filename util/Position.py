@@ -26,6 +26,10 @@ class Position:
 
         # 仓位
         self.current_position = Decimal(0.0000)
+        # 总收益率
+        self.rate_of_return = 0.0000
+        # 当期收益率
+        self.cur_rate_of_return = 0.0000
 
     # todo 数据库持久化
     def insert(self):

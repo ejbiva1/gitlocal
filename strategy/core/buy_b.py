@@ -109,7 +109,9 @@ class BuyB:
             print('Buy_b ' + str(T) + ' condition_a False')
             return False
 
-    def strategy(self, T):
+    def strategy(self, T, position):
+        self.position = position
+        calculator = Calculator(self.position, T, signal=0, strategy_id=3, strategy_account_id=1)
         if (self.condition_1(T) and self.condition_2(T)
                 and self.condition_3(T) and self.condition_4(T)
                 and self.condition_5(T) and self.condition_6(T)
@@ -123,14 +125,16 @@ class BuyB:
             print('price= ' + str(price))
             print('timestamp= ' + str(T))
             print('********** SIGNAL **********')
-            amount = Trader.position_judge(position=self.position, strategy_id=3, price=price, timestamp=T,
+            amount = Trader.position_judge(position=self.position, calculator=calculator, strategy_id=3, price=price,
                                            trade_amount=0)
 
             # return True
         else:
             # 没有买卖操作
-            calculator = Calculator(self.position, T, price=0, amount=0, signal=0, strategy_id=3, strategy_account_id=1)
+            # calculator = Calculator(self.position, T, signal=0, strategy_id=3, strategy_account_id=1)
             calculator.non_trade()
+
+        self.position = calculator.position
     # def run_strategy(self):
     #     df = self.datas
     #     for timestamp in df['id']:
