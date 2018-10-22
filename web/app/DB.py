@@ -11,8 +11,6 @@ class StrategyLog:
     creator = 0
     create_time = ""
     execution_result = ""
-    strategy_name = ""
-    final_margin = 0.0
     def __init__(self, strategy_log_id,
     strategy_id,
     start_date,
@@ -21,9 +19,7 @@ class StrategyLog:
     coin_category,
     creator,
     create_time,
-    execution_result,
-    strategy_name,
-    final_margin):
+    execution_result):
         self.strategy_log_id = strategy_log_id
         self.strategy_id = strategy_id
         self.start_date = start_date
@@ -33,8 +29,6 @@ class StrategyLog:
         self.creator = creator
         self.create_time = create_time
         self.execution_result = execution_result
-        self.strategy_name = strategy_name
-        self.final_margin = final_margin
     def get_strategy_log_id(self):
         return self.strategy_log_id
     def get_strategy_id(self):
@@ -53,11 +47,6 @@ class StrategyLog:
         return self.create_time
     def get_execution_result(self):
         return self.execution_result
-    def get_final_margin(self):
-        return self.final_margin
-
-    def get_strategy_name(self):
-        return self.strategy_name
 
     def set_strategy_log_id(self,strategy_log_id):
         self.strategy_log_id = strategy_log_id
@@ -84,10 +73,7 @@ class StrategyLog:
         self.create_time = create_time
     def set_execution_result(self,execution_result):
         self.execution_result = execution_result
-    def set_strategy_name(self,strategy_name):
-        self.strategy_name = strategy_name
-    def set_final_margin(self,final_margin):
-        self.final_margin = final_margin
+
 
 class Strategy:
     strategy_id = 0
@@ -146,6 +132,7 @@ class Strategy:
         self.script_url = script_url
     def set_peroid(self,peroid):
         self.peroid = peroid
+
 
 class StrategyAccount:
     strategy_account_id = 0
@@ -234,6 +221,7 @@ class StrategyAccount:
         return self.high
     def get_low(self):
         return self.low
+
 
 class StrategyTransaction:
     strategy_transaction_id = 0
@@ -352,6 +340,8 @@ class StrategyTransaction:
         self.high = high
     def set_low(self,low):
         self.low = low
+
+
 def getStrategy():
     cursor = connection.cursor()
     strategyList = []
@@ -378,6 +368,7 @@ def getStrategy():
     cursor.close()
     return strategyList
 
+
 def getStrategyLogList(creator):
    cursor = connection.cursor()
    strategyLogList = []
@@ -390,9 +381,7 @@ def getStrategyLogList(creator):
          " coin_category," \
          " creator," \
          " create_time," \
-         " execution_result," \
-         " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name,"\
-         " (final_margin - init_balance)/init_balance final_margin" \
+         " execution_result" \
          " FROM strategy_log" \
          " where creator=%s"
 
@@ -402,11 +391,39 @@ def getStrategyLogList(creator):
    results = cursor.fetchall()
    for row in results:
       # 打印结果
-      pro = StrategyLog(row[0], row[1], row[2], row[3], row[4],row[5], row[6], row[7], row[8], row[9], row[10])
+      pro = StrategyLog(row[0], row[1], row[2], row[3], row[4],row[5], row[6], row[7], row[8])
       #print("row[0]:"+str(row[0])+"|row[1]:"+row[1]+"|row[2]:"+str(row[2])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
       strategyLogList.append(pro)
    cursor.close()
    return strategyLogList
+
+
+def getLogDetail(strategyLogId, creator):
+    cursor = connection.cursor()
+    log_details = []
+    #   SQL 查询语句
+    sql = " SELECT strategy_log_id,"\
+         " strategy_id,"\
+         " start_date," \
+         " end_date," \
+         " init_balance," \
+         " coin_category," \
+         " creator," \
+         " create_time," \
+         " execution_result" \
+         " FROM strategy_log" \
+         " where strategy_log_id=%s and creator=%s" %(strategyLogId, creator)
+
+    # 执行SQL 语句
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    for row in results:
+        pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+
+        log_details.append(pro)
+    cursor.close()
+    return log_details
 
 def getStrategyAccountList(strategyLogId):
    cursor = connection.cursor()
@@ -438,9 +455,8 @@ def getStrategyAccountList(strategyLogId):
 #     print(sl.get_create_time())
 #     print(sl.get_strategy_log_id())
 #     print(sl.get_execution_result())
-#     print(sl.get_strategy_name())
-#     print(sl.get_final_margin())
-
+#
+#
 # list = getStrategyAccountList(1)
 # for sl in list:
 #     print("----------------------")
