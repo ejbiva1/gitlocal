@@ -3,7 +3,7 @@ import DB
 def getStrategy():
     return DB.getStrategy()
 #启动策略
-def startStartStrategy():
+def startStartStrategy(strategyId,initBalance,startDate,endDate):
     return ''
 #查询历史列表
 def loadLogList(creator):
