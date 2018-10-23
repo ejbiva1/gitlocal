@@ -145,9 +145,9 @@ class SellB:
                         pass
                     else:
                         print_signal(T, price, amount=df.iat[0, 3], reason='condition_a')
-                        Trader.position_judge(position=self.position,
-                                              strategy_id=4, calculator=calculator, price=price,
-                                              trade_amount=df.iat[0, 3])
+                    Trader.position_judge(position=self.position,
+                                          strategy_id=4, calculator=calculator, price=price,
+                                          trade_amount=df.iat[0, 3])
                     # return True
                 else:
                     if self.condition_b(T):
@@ -171,9 +171,12 @@ class SellB:
                         if self.condition_c(T):
                             # 卖出价格为买入价格95%，卖出仓位=T日买入仓位
                             print_signal(T, self.price, amount=self.trade_amount, reason='condition_c true')
-                            Trader.position_judge(position=self.position,
-                                                  strategy_id=4, price=self.price, calculator=calculator,
-                                                  trade_amount=self.trade_amount)
+                            position_check = Trader.position_judge(position=self.position,
+                                                                   strategy_id=4, price=self.price,
+                                                                   calculator=calculator,
+                                                                   trade_amount=self.trade_amount)
+                            if position_check == 0:
+                                calculator.non_trade()
                             # return True
                         else:
                             # 卖出价格为CLOSE(T+1)，卖出仓位=T日买入仓位
@@ -181,8 +184,10 @@ class SellB:
                             df = self.datas[(self.idt == next_T)]
                             print_signal(T, df.iat[0, 2], amount=self.trade_amount, reason='condition_c false')
                             Trader.position_judge(position=self.position,
-                                                  strategy_id=4, price=df.iat[0, 2], calculator=calculator,
+                                                  strategy_id=4, price=df.iat[0, 2],
+                                                  calculator=calculator,
                                                   trade_amount=self.trade_amount)
+
             else:
                 # 卖出价格为CLOSE(T+1)，卖出仓位=T日买入仓位
                 df = get_trade_info(T - 3600, 3, 0)
@@ -195,6 +200,7 @@ class SellB:
                     Trader.position_judge(position=self.position,
                                           strategy_id=4, price=df2.iat[0, 2], calculator=calculator,
                                           trade_amount=df.iat[0, 3])
+
         else:
             print('condition_0 False: no_trade')
             self.call_no_trade(T, calculator)

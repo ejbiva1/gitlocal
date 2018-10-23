@@ -12,7 +12,8 @@ class Position:
         self.init_balance = balance
         if strategy_type == 1 or strategy_type == 2:
             # todo 判断开始日期-12T是否存在
-            self.datas = read_datas_1day(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
+            self.datas = read_datas_1day_test(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
+            # self.datas = read_datas_1day(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
         else:
             # self.datas = read_datas_60min(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
             self.datas = read_datas_60min_test(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
@@ -34,5 +35,3 @@ class Position:
     # todo 数据库持久化
     def insert(self):
         return 0
-
-

@@ -53,6 +53,7 @@ class Calculator:
         self.transaction(0, cost, amount, pre_current_position, pre_balance)
         print('\n')
         print('********** BUY **********')
+        print('T= ' + str(self.T))
         print('amount= ' + str(Decimal(amount).quantize(Decimal('0.000000'))))
         print('price= ' + str(Decimal(cost).quantize(Decimal('0.00'))))
         print('balance= ' + str(Decimal(self.position.balance).quantize(Decimal('0.00'))))
@@ -98,9 +99,11 @@ class Calculator:
         self.position.cur_rate_of_return = self.position.rate_of_return - Decimal(pre_rate_of_return)
 
         # cost  由买入（卖出）实际操作决定
-        self.transaction(1, cost, amount, pre_current_position, pre_balance)
+        self.transaction(flag=1, cost=cost, amount=amount, pre_current_position=pre_current_position,
+                         pre_balance=pre_balance)
         print('\n')
         print('********** SELL **********')
+        print('T= ' + str(self.T))
         print('amount= ' + str(Decimal(amount).quantize(Decimal('0.000000'))))
         print('price= ' + str(Decimal(cost).quantize(Decimal('0.00'))))
         print('balance= ' + str(Decimal(self.position.balance).quantize(Decimal('0.00'))))
@@ -136,6 +139,7 @@ class Calculator:
         self.position.cur_rate_of_return = self.position.rate_of_return - Decimal(pre_rate_of_return)
         print('\n')
         print('********** non_trade **********')
+        print('T= ' + str(self.T))
         print('balance= ' + str(Decimal(self.position.balance).quantize(Decimal('0.00'))))
         print('total_net_balance= ' + str(Decimal(self.position.total_net_balance).quantize(Decimal('0.00'))))
         print('total= ' + str(Decimal(self.position.total).quantize(Decimal('0.00'))))

@@ -127,6 +127,8 @@ class BuyB:
             print('********** SIGNAL **********')
             amount = Trader.position_judge(position=self.position, calculator=calculator, strategy_id=3, price=price,
                                            trade_amount=0)
+            if amount == 0:
+                calculator.non_trade()
 
             # return True
         else:
