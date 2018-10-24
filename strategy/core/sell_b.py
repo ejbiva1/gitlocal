@@ -102,7 +102,7 @@ class SellB:
 
     def condition_c(self, T):
         # LOW(T+1)< 买入价格95%，则决策卖出，卖出价格为买入价格95%，卖出仓位=T日买入仓位
-        df = get_trade_info(T, 4, 0)
+        df = get_trade_info(T, 3, 0)
         next_T = T + 3600
         df2 = self.datas[(self.idt == next_T)]
         if df.empty:
@@ -117,18 +117,20 @@ class SellB:
             return False
 
     def condition_0(self, T):
-        df = get_trade_info(T, strategy_id=4, flag=0)
+        df = get_trade_info(T - 3600, strategy_id=3, flag=0)
         if not df.empty:
-            # price = df.iat[0,2]
-            coin_cash_rate = self.position.coin_cash_rate
-            if 0.75 <= coin_cash_rate <= 0.8:
+            # price = df.iat[0, 2]
+            current_position = self.position.current_position
+            if 0.75 <= current_position <= 0.8:
                 return True
             else:
                 return False
         else:
             return False
 
-    def strategy(self, T):
+    def strategy(self, T, position):
+        self.position = position
+        calculator = Calculator(self.position, T, signal=0, strategy_id=4, strategy_account_id=1)
         if self.condition_0(T):
             # todo 前提是已经在T日执行了短线策略1（BUY-B），即已经以价格P买入并仓位已经到达75%~80%
             if (self.condition_1(T) and self.condition_2(T)
@@ -136,20 +138,21 @@ class SellB:
 
                 if self.condition_a(T):
                     # 卖出仓位=T日买入仓位，卖出价格为CLOSE(T)1.02
-                    df = get_trade_info(T, 4, 0)
+                    df = get_trade_info(T, 3, 0)
                     df1 = self.datas[(self.idt == T)]
                     price = Decimal(df1.iat[0, 2]) * Decimal('1.02')
                     if df.empty:
                         pass
                     else:
-                        Trader.position_judge(position=self.position,
-                                              strategy_id=4, price=price, timestamp=T,
-                                              trade_amount=df.iat[0, 3])
+                        print_signal(T, price, amount=df.iat[0, 3], reason='condition_a')
+                    Trader.position_judge(position=self.position,
+                                          strategy_id=4, calculator=calculator, price=price,
+                                          trade_amount=df.iat[0, 3])
                     # return True
                 else:
                     if self.condition_b(T):
                         # 则卖出价格为OPEN(T-1) - [OPEN(T-1)-CLOSE(T-1)]10%。卖出仓位=T日买入仓位
-                        df = get_trade_info(T, 4, 0)
+                        df = get_trade_info(T, 3, 0)
                         pre_T = T - 3600
                         df1 = self.datas[(self.idt == pre_T)]
                         open_price = df1.iat[0, 1]
@@ -159,54 +162,75 @@ class SellB:
                         if df.empty:
                             pass
                         else:
-                            Trader.position_judge(position=self.position,
-                                                  strategy_id=4, price=price, timestamp=T,
+                            print_signal(T, price, amount=df.iat[0, 3], reason='condition_b')
+                            Trader.position_judge(position=self.position, calculator=calculator,
+                                                  strategy_id=4, price=price,
                                                   trade_amount=df.iat[0, 3])
                         # return True
                     else:
                         if self.condition_c(T):
                             # 卖出价格为买入价格95%，卖出仓位=T日买入仓位
-                            Trader.position_judge(position=self.position,
-                                                  strategy_id=4, price=self.price, timestamp=T,
-                                                  trade_amount=self.trade_amount)
+                            print_signal(T, self.price, amount=self.trade_amount, reason='condition_c true')
+                            position_check = Trader.position_judge(position=self.position,
+                                                                   strategy_id=4, price=self.price,
+                                                                   calculator=calculator,
+                                                                   trade_amount=self.trade_amount)
+                            if position_check == 0:
+                                calculator.non_trade()
                             # return True
                         else:
                             # 卖出价格为CLOSE(T+1)，卖出仓位=T日买入仓位
                             next_T = T + 3600
                             df = self.datas[(self.idt == next_T)]
+                            print_signal(T, df.iat[0, 2], amount=self.trade_amount, reason='condition_c false')
                             Trader.position_judge(position=self.position,
-                                                  strategy_id=4, price=df.iat[0, 2], timestamp=T,
+                                                  strategy_id=4, price=df.iat[0, 2],
+                                                  calculator=calculator,
                                                   trade_amount=self.trade_amount)
-                            # return True
+
             else:
                 # 卖出价格为CLOSE(T+1)，卖出仓位=T日买入仓位
-                df = get_trade_info(T, 4, 0)
+                df = get_trade_info(T - 3600, 3, 0)
                 next_T = T + 3600
                 df2 = self.datas[(self.idt == next_T)]
                 if df.empty:
                     pass
                 else:
+                    print_signal(T, df2.iat[0, 2], amount=df.iat[0, 3], reason='nor condition_1-4')
                     Trader.position_judge(position=self.position,
-                                          strategy_id=4, price=df2.iat[0, 2], timestamp=T,
+                                          strategy_id=4, price=df2.iat[0, 2], calculator=calculator,
                                           trade_amount=df.iat[0, 3])
+
         else:
-            self.call_no_trade(T)
+            print('condition_0 False: no_trade')
+            self.call_no_trade(T, calculator)
+
+        self.position = calculator.position
 
     # 更新CLOSE(T+1)，T日买入仓位 到self中的trade_amount，price
     def refresh_price_amount(self, T):
-        df = get_trade_info(T, 4, 0)
+        df = get_trade_info(T - 3600, 3, 0)
         next_T = T + 3600
         df2 = self.datas[(self.idt == next_T)]
         self.price = df2.iat[0, 2]
         if not df.empty:
             self.trade_amount = df.iat[0, 3]
 
-    # todo call
-    def call_no_trade(self, T):
+    # call
+    def call_no_trade(self, T, calculator):
         # 没有买卖操作
-        calculator = Calculator(self.position, T, price=0, amount=0, signal=0, strategy_id=4, strategy_account_id=1)
+        # calculator = Calculator(self.position, T, signal=0, strategy_id=4, strategy_account_id=1)
         calculator.non_trade()
 
+
+def print_signal(T, price, amount, reason):
+    print('********** SIGNAL **********')
+    print('signal_type= sell_b')
+    print('signal_reason= ' + str(reason))
+    print('price= ' + str(price))
+    print('amount= ' + str(amount))
+    print('timestamp= ' + str(T))
+    print('********** SIGNAL **********')
 # def run_strategy(self):
 #     df = self.datas
 #     for timestamp in df['id']:

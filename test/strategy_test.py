@@ -5,6 +5,7 @@ from strategy.core.buy_b import BuyB
 from strategy.core.buy_a import BuyA
 
 
+# todo type define
 def strategy_combination_b(start_time, end_time, init_balance):
     position = Position(start_date=start_time, end_date=end_time, balance=init_balance, strategy_type=3)
     dates = position.datas['id']

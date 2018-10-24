@@ -2,6 +2,8 @@ from util.Position import Position
 from util.Trader import *
 
 
+# todo 判断是否能取到MA10(T-2),取不到，则不返回信号
+# todo NON trade 不需要每次在策略里做，而是在每个周期做一次就好了
 class BuyA:
     # 初始化策略参数
     def __init__(self, start_time, end_time, position):
@@ -41,30 +43,40 @@ class BuyA:
         pre_T = T - 86400
         df = self.datas[(self.idt == pre_T)]
         try:
-            if df.iat[0, 3] <= Decimal(df.iat[0, 2]) * 1.02:
+            if df.iat[0, 3] <= Decimal(df.iat[0, 2]) * Decimal('1.02'):
                 return True
             else:
                 return False
         except IndexError:
             return False
 
-    def strategy(self, T):
+    def strategy(self, T, position):
+        self.position = position
         self.update_MA(T)
         self.update_pre_MA(T)
-
+        calculator = Calculator(self.position, T, signal=0, strategy_id=1, strategy_account_id=1)
         if (self.condition_a(T) and self.condition_1(T)
                 and self.condition_2() and self.condition_3()):
             # send signal
             pre_T = T - 86400
             df = self.datas[(self.idt == pre_T)]
-            # todo 确认一下价格是否为 CLOSE（T-1）
+            # 价格是否为 CLOSE（T-1）
             price = df.iat[0, 2]
-            Trader.position_judge(position=self.position, strategy_id=1, price=price, timestamp=T, trade_amount=0)
-            # return True
+            print('********** SIGNAL **********')
+            print('signal_type= buy_a ,')
+            print('price= ' + str(price))
+            print('timestamp= ' + str(T))
+            print('********** SIGNAL **********')
+            position_check = Trader.position_judge(position=self.position, strategy_id=1, price=price,
+                                                   calculator=calculator,
+                                                   trade_amount=0)
+            if position_check == 0:
+                calculator.non_trade()
+        # return True
         else:
             # 没有买卖操作
-            calculator = Calculator(self.position, T, price=0, amount=0, signal=0, strategy_id=1, strategy_account_id=1)
             calculator.non_trade()
+        self.position = calculator.position
 
     # get MA5(T-1) MA10(T-1）
     def update_MA(self, T):
