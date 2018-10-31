@@ -112,13 +112,15 @@ class StrategyConf:
     update_time = ""
     strategy_id = 0
 
-    def __init__(self,strategy_conf_id,creator,create_time,update_time,path,strategy_id):
+    def __init__(self,strategy_conf_id,creator,create_time,update_time,strategy_id,coin_category):
         self.strategy_conf_id = strategy_conf_id
         self.creator = creator
         self.create_time = create_time
         self.update_time = update_time
         self.strategy_id = strategy_id
-
+        self.coin_category = coin_category
+    def printAll(self):
+        print(str(self.strategy_conf_id)+"|"+str(self.creator)+"|"+str(self.create_time)+"|"+str(self.update_time)+"|"+str(self.strategy_id)+"|"+self.coin_category)
     def get_strategy_conf_id(self):
         return self.strategy_conf_id
     def get_creator(self):
@@ -129,7 +131,21 @@ class StrategyConf:
         return self.update_time
     def get_strategy_id(self):
         return self.strategy_id
+    def get_coin_category(self):
+        return self.coin_category
 
+    def set_strategy_conf_id(self, strategy_conf_id):
+        self.strategy_conf_id = strategy_conf_id
+    def set_creator(self, creator):
+        self.creator = creator
+    def set_create_time(self, create_time):
+        self.create_time = create_time
+    def set_update_time(self, update_time):
+        self.update_time = update_time
+    def set_strategy_id(self, strategy_id):
+        self.strategy_id = strategy_id
+    def set_coin_category(self, coin_category):
+        self.coin_category = coin_category
 class Strategy:
     strategy_id = 0
     strategy_name = ""
@@ -575,21 +591,22 @@ def getStrategyAccountList(strategyLogId):
     cursor.close()
     return strategyAccountList
 
-def getStrategyConf(userId, strategyId):
+def getStrategyConf(userId, strategyId,coin_category):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " SELECT strategy_conf_id,creator,create_time,update_time,path,strategy_id "\
-          " FROM strategy_conf where creator=%s and strategy_id=%s"
+    sql = " SELECT strategy_conf_id,creator,create_time,update_time,strategy_id,coin_category "\
+          " FROM strategy_conf where creator=%s and strategy_id=%s and coin_category=%s"
 
     # 执行SQL语句
-    param = (userId, strategyId)
+    param = (userId, strategyId,coin_category)
     cursor.execute(sql, param)
     # 获取所有记录列表
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        pro = StrategyConf(row[0], row[1], row[2], row[3], row[4])
+        pro = StrategyConf(row[0], row[1], row[2], row[3], row[4],row[5])
+        pro.printAll()
         strategyConfList.append(pro)
     cursor.close()
     return strategyConfList
@@ -650,3 +667,4 @@ def saveStrategyConfItem(strategy_conf_id,index_label,formular,price):
 #     print(sl.get_low())
 #saveStrategyConf(1,2)
 #saveStrategyConfItem(1,'close(t-1)','<',20)
+#pro = getStrategyConf(1, 2,"ETH")
