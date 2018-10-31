@@ -3,6 +3,8 @@ from strategy.core.sell_a import SellA
 from strategy.core.sell_b import SellB
 from strategy.core.buy_b import BuyB
 from strategy.core.buy_a import BuyA
+from util.ReadData import read_datas_1day_test
+from strategy.core.poc import poc_strategy
 
 
 def strategy_combination_b(start_time, end_time, init_balance):
@@ -30,6 +32,15 @@ def strategy_combination_a(start_time, end_time, init_balance):
         position = sell_a.position
         buy_a.strategy(t, position)
         position = buy_a.position
+
+
+def strategy_poc(strategyId, userId, start_time, end_time, init_balance):
+    balance = init_balance
+    df = read_datas_1day_test(start_time - 172800, end_time)
+
+    for t in df['id']:
+        new_balance = poc_strategy(balance, t)
+        balance = new_balance
 
 
 if __name__ == '__main__':
