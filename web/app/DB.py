@@ -105,6 +105,30 @@ class StrategyLog:
     def set_final_margin(self, final_margin):
         self.final_margin = final_margin
 
+class StrategyConf:
+    strategy_conf_id = 0
+    creator = 0
+    create_time = ""
+    update_time = ""
+    strategy_id = 0
+
+    def __init__(self,strategy_conf_id,creator,create_time,update_time,path,strategy_id):
+        self.strategy_conf_id = strategy_conf_id
+        self.creator = creator
+        self.create_time = create_time
+        self.update_time = update_time
+        self.strategy_id = strategy_id
+
+    def get_strategy_conf_id(self):
+        return self.strategy_conf_id
+    def get_creator(self):
+        return self.creator
+    def get_create_time(self):
+        return self.create_time
+    def get_update_time(self):
+        return self.update_time
+    def get_strategy_id(self):
+        return self.strategy_id
 
 class Strategy:
     strategy_id = 0
@@ -494,7 +518,7 @@ def getStrategyLogList(creator):
     for row in results:
         # 打印结果
         pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
-        # print("row[0]:"+str(row[0])+"|row[1]:"+row[1]+"|row[2]:"+str(row[2])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
+        # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
     cursor.close()
     return strategyLogList
@@ -523,7 +547,7 @@ def getLogDetail(strategyLogId, creator):
 
     results = cursor.fetchone()
     # for row in results:
-    #     pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+    #     pro = StrategyLog(row[0], row[a], row[b], row[3], row[4], row[5], row[6], row[7], row[8])
     #
     #     log_details.append(pro)
     log_details = StrategyLog(results[0], results[1], results[2], results[3], results[4], results[5], results[6],
@@ -551,7 +575,45 @@ def getStrategyAccountList(strategyLogId):
     cursor.close()
     return strategyAccountList
 
-# list = getStrategyLogList(1)
+def getStrategyConf(userId, strategyId):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL 查询语句
+    sql = " SELECT strategy_conf_id,creator,create_time,update_time,path,strategy_id "\
+          " FROM strategy_conf where creator=%s and strategy_id=%s"
+
+    # 执行SQL语句
+    param = (userId, strategyId)
+    cursor.execute(sql, param)
+    # 获取所有记录列表
+    results = cursor.fetchall()
+    for row in results:
+        # 打印结果
+        pro = StrategyConf(row[0], row[1], row[2], row[3], row[4])
+        strategyConfList.append(pro)
+    cursor.close()
+    return strategyConfList
+
+def saveStrategyConf(creator,strategy_id):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL 查询语句
+    sql = " INSERT INTO strategy_conf(creator,strategy_id)VALUES(%s,%s);"
+    param=(creator,strategy_id)
+    cursor.execute(sql,param)
+    cursor.execute('SELECT LAST_INSERT_ID();')
+    strategy_conf_id = cursor.fetchone()
+    connection.commit()
+    return strategy_conf_id
+def saveStrategyConfItem(strategy_conf_id,index_label,formular,price):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL 查询语句
+    sql = " INSERT INTO strategy_conf_item(strategy_conf_id,index_label,formular,price)VALUES(%s,%s,%s,%s);"
+    param=(strategy_conf_id,index_label,formular,price)
+    cursor.execute(sql,param)
+    connection.commit()
+# list = getStrategyLogList(a)
 # for sl in list:
 #     print(sl.get_strategy_log_id())
 #     print(sl.get_strategy_id())
@@ -567,7 +629,7 @@ def getStrategyAccountList(strategyLogId):
 #     print(sl.get_final_margin())
 
 
-# list = getStrategyAccountList(1)
+# list = getStrategyAccountList(a)
 # for sl in list:
 #     print("----------------------")
 #     print(sl.get_strategy_account_id())
@@ -586,3 +648,5 @@ def getStrategyAccountList(strategyLogId):
 #     print(sl.get_close())
 #     print(sl.get_high())
 #     print(sl.get_low())
+#saveStrategyConf(1,2)
+#saveStrategyConfItem(1,'close(t-1)','<',20)
