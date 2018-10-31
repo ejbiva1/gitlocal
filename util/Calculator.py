@@ -28,7 +28,7 @@ class Calculator:
         # 持仓币价
         self.position.price = Decimal(self.get_close_price())
         # 持仓余额
-        self.position.balance -= Decimal(amount) * Decimal(cost)
+        self.position.balance -= amount * cost
         Decimal(self.position.balance).quantize(Decimal('0.00'))
         # 总币值
         self.position.total_net_balance = Decimal(Decimal(self.position.coin_amount)
@@ -80,6 +80,9 @@ class Calculator:
         self.position.balance += Decimal(amount) * Decimal(cost)
         Decimal(self.position.balance).quantize(Decimal('0.00'))
         # 总币值
+        # self.position.total_net_balance = Decimal(Decimal(self.position.coin_amount)
+        #                                           * Decimal(self.position.price)).quantize(
+        #
         self.position.total_net_balance = Decimal(Decimal(self.position.coin_amount)
                                                   * Decimal(self.position.price)).quantize(
             Decimal('0.00'))
@@ -105,7 +108,7 @@ class Calculator:
         print('********** SELL **********')
         print('T= ' + str(self.T))
         print('amount= ' + str(Decimal(amount).quantize(Decimal('0.000000'))))
-        print('price= ' + str(Decimal(cost).quantize(Decimal('0.00'))))
+        print('cost= ' + str(Decimal(cost).quantize(Decimal('0.00'))))
         print('balance= ' + str(Decimal(self.position.balance).quantize(Decimal('0.00'))))
         print('total_net_balance= ' + str(Decimal(self.position.total_net_balance).quantize(Decimal('0.00'))))
         print('total= ' + str(Decimal(self.position.total).quantize(Decimal('0.00'))))
@@ -193,3 +196,8 @@ class Calculator:
             'strategy_id': [self.strategy_id]}
         df = pd.DataFrame(data)
         insert_2_strategy_transaction(df)
+
+    # 回写每次交易结果到表strategy_account
+    def transaction_result_write_back(self):
+        # todo
+        return 0

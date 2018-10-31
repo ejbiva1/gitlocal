@@ -110,6 +110,7 @@ class BuyB:
             return False
 
     def strategy(self, T, position):
+        flag = 0
         self.position = position
         calculator = Calculator(self.position, T, signal=0, strategy_id=3, strategy_account_id=1)
         if (self.condition_1(T) and self.condition_2(T)
@@ -129,7 +130,8 @@ class BuyB:
                                            trade_amount=0)
             if amount == 0:
                 calculator.non_trade()
-
+            else:
+                flag = 1
             # return True
         else:
             # 没有买卖操作
@@ -137,6 +139,7 @@ class BuyB:
             calculator.non_trade()
 
         self.position = calculator.position
+        return flag
     # def run_strategy(self):
     #     df = self.datas
     #     for timestamp in df['id']:

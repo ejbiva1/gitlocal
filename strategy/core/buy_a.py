@@ -54,6 +54,7 @@ class BuyA:
         self.position = position
         self.update_MA(T)
         self.update_pre_MA(T)
+        flag = 0
         calculator = Calculator(self.position, T, signal=0, strategy_id=1, strategy_account_id=1)
         if (self.condition_a(T) and self.condition_1(T)
                 and self.condition_2() and self.condition_3()):
@@ -72,11 +73,12 @@ class BuyA:
                                                    trade_amount=0)
             if position_check == 0:
                 calculator.non_trade()
-        # return True
+            flag = 1
         else:
             # 没有买卖操作
             calculator.non_trade()
         self.position = calculator.position
+        return flag
 
     # get MA5(T-1) MA10(T-1）
     def update_MA(self, T):
