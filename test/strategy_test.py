@@ -5,6 +5,10 @@ from strategy.core.buy_b import BuyB
 from strategy.core.buy_a import BuyA
 from util.WriteData import *
 from decimal import Decimal
+from util.ReadData import read_datas_1day_test
+from strategy.core.poc import sell_signal, buy_signal
+from web.app.DB import getStrategyConf, getStrategyConfItem
+import pandas as pd
 
 
 # todo type define
@@ -98,6 +102,76 @@ def write_back2log(position, log_id):
     total = position.total
     log = Log(strategy_log_id=log_id, final_margin=total)
     update_strategy_log(log)
+
+
+def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init_balance):
+    balance = init_balance
+    data = read_datas_1day_test(start_time - 172800, end_time)
+    strategy_conf_list = getStrategyConf(strategy_id, user_id, coin_category)
+    strategy_conf = strategy_conf_list[0]
+    strategy_conf_id = strategy_conf.strategy_conf_id
+    item_list = getStrategyConfItem(strategy_conf_id=strategy_conf_id)
+    df = pd.DataFrame(item_list)
+    df_sell = df[df[5] == 2]
+    df_buy = df[df[5] == 1]
+    # 转换构造sell和buy的所有条件
+    sell_dict = create_conditions_dictionary(df_sell)
+    buy_dict = create_conditions_dictionary(df_buy)
+
+    for t in data['id']:
+        # todo 返回价钱和数量signal
+        signal = sell_signal(t, sell_dict, data)
+        signal = buy_signal(t, buy_dict, data)
+        # todo 进行买卖
+        # balance = new_balance
+
+    # todo 计算最后的收益率和基准收益率
+
+
+# 内部方法
+def create_conditions_dictionary(df):
+    dictionary = {'close(T-1)': 0, 'open(T-1)': 0, 'high(T-1)': 0, 'low(T-1)': 0,
+                  'close(T-2)': 0, 'open(T-2)': 0, 'high(T-2)': 0, 'low(T-2)': 0}
+    for condition in df:
+        technical_index = condition[2]
+        operator = condition[3]
+        price = condition[4]
+        if technical_index == 11:
+            formula = get_formula(operator, price)
+            dictionary['close(T-1)'] = formula
+        elif technical_index == 21:
+            formula = get_formula(operator, price)
+            dictionary['open(T-1)'] = formula
+        elif technical_index == 31:
+            formula = get_formula(operator, price)
+            dictionary['high(T-1)'] = formula
+        elif technical_index == 41:
+            formula = get_formula(operator, price)
+            dictionary['low(T-1)'] = formula
+        elif technical_index == 12:
+            formula = get_formula(operator, price)
+            dictionary['close(T-2)'] = formula
+        elif technical_index == 22:
+            formula = get_formula(operator, price)
+            dictionary['open(T-2)'] = formula
+        elif technical_index == 32:
+            formula = get_formula(operator, price)
+            dictionary['high(T-2)'] = formula
+        elif technical_index == 42:
+            formula = get_formula(operator, price)
+            dictionary['low(T-2)'] = formula
+    return dictionary
+
+
+# 内部方法
+def get_formula(operator, price):
+    if operator == '3':
+        value = price.split(',')
+        formular = value[0] + '<x<' + value[1]
+        # condition_sell = Poc_condition(technical_index, formular)
+    else:
+        formular = 'x' + operator + price
+    return formular
 
 
 if __name__ == '__main__':
