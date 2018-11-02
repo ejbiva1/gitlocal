@@ -1,6 +1,7 @@
 from util.ReadData import *
 from decimal import Decimal
 from util.Trader import *
+from entity.Signal import Signal
 
 
 class SellA:
@@ -17,7 +18,8 @@ class SellA:
         self.trade_amount = 0.000000
 
     def strategy(self, T, position):
-        flag = 0
+        signal = Signal(signal=0, flag=0)
+
         self.position = position
         # 是否总仓小于20%
         calculator = Calculator(self.position, T, signal=0, strategy_id=3,
@@ -32,11 +34,12 @@ class SellA:
                 amount = Decimal(self.position.coin_amount) * Decimal('0.5')
                 strategy_id = 2
                 print_signal(T, price, amount, 'sell_a True')
+                signal.signal = 1
                 flag_inner = Trader.position_judge(position=self.position, strategy_id=strategy_id, price=price,
                                                    calculator=calculator,
                                                    trade_amount=amount)
                 if flag_inner is not 0:
-                    flag = 1
+                    signal.flag = 1
             else:
                 # 没有买卖操作
                 calculator.non_trade()
@@ -45,7 +48,7 @@ class SellA:
             # calculator = Calculator(self.position, T, price=0, amount=0, signal=0, strategy_id=3, strategy_account_id=1)
             calculator.non_trade()
         self.position = calculator.position
-        return flag
+        return signal
 
 
 def print_signal(T, price, amount, reason):

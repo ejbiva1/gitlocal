@@ -1,5 +1,6 @@
 from util.Position import Position
 from util.Trader import *
+from entity.Signal import Signal
 
 
 # todo 判断是否能取到MA10(T-2),取不到，则不返回信号
@@ -55,6 +56,7 @@ class BuyA:
         self.update_MA(T)
         self.update_pre_MA(T)
         flag = 0
+        signal = Signal(flag=0, signal=0)
         calculator = Calculator(self.position, T, signal=0, strategy_id=1, strategy_account_id=1)
         if (self.condition_a(T) and self.condition_1(T)
                 and self.condition_2() and self.condition_3()):
@@ -68,17 +70,18 @@ class BuyA:
             print('price= ' + str(price))
             print('timestamp= ' + str(T))
             print('********** SIGNAL **********')
+            signal.signal = 1
             position_check = Trader.position_judge(position=self.position, strategy_id=1, price=price,
                                                    calculator=calculator,
                                                    trade_amount=0)
             if position_check == 0:
                 calculator.non_trade()
-            flag = 1
+            signal.flag = 1
         else:
             # 没有买卖操作
             calculator.non_trade()
         self.position = calculator.position
-        return flag
+        return signal
 
     # get MA5(T-1) MA10(T-1）
     def update_MA(self, T):

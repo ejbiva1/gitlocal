@@ -1,7 +1,7 @@
 from util.ReadData import read_datas_60min
 from decimal import Decimal
 from util.Trader import *
-import pandas as pd
+from entity.Signal import Signal
 
 
 class BuyB:
@@ -110,7 +110,7 @@ class BuyB:
             return False
 
     def strategy(self, T, position):
-        flag = 0
+        signal = Signal(signal=0, flag=0)
         self.position = position
         calculator = Calculator(self.position, T, signal=0, strategy_id=3, strategy_account_id=1)
         if (self.condition_1(T) and self.condition_2(T)
@@ -126,12 +126,13 @@ class BuyB:
             print('price= ' + str(price))
             print('timestamp= ' + str(T))
             print('********** SIGNAL **********')
+            signal.signal = 1
             amount = Trader.position_judge(position=self.position, calculator=calculator, strategy_id=3, price=price,
                                            trade_amount=0)
             if amount == 0:
                 calculator.non_trade()
             else:
-                flag = 1
+                signal.flag = 1
             # return True
         else:
             # 没有买卖操作
@@ -139,7 +140,7 @@ class BuyB:
             calculator.non_trade()
 
         self.position = calculator.position
-        return flag
+        return signal
     # def run_strategy(self):
     #     df = self.datas
     #     for timestamp in df['id']:
