@@ -32,6 +32,9 @@ class Position:
         # 当期收益率
         self.cur_rate_of_return = 0.0000
 
+        # 策略log_id（作为全局变量使用）
+        self.log_id = 0
+
     # todo 数据库持久化
     def insert(self):
         return 0
