@@ -1,3 +1,7 @@
+from entity.Poc_signal import Poc_signal
+from decimal import Decimal
+
+
 # def poc_strategy(t, sell_dict, buy_dict, data):
 
 
@@ -13,7 +17,11 @@ def sell_signal(t, sell_dict, data):
     s8 = low_t_2(df, sell_dict)
     if s1 and s2 and s3 and s4 and s5 and s6 and s7 and s8:
         # todo 卖出信号
-        return 0
+        price = df.iat[0, 2]
+        signal = Poc_signal(signal=2, price=Decimal(price).quantize(Decimal('0.000000')))
+        return signal
+    else:
+        return Poc_signal(signal=0, price=0)
 
 
 def buy_signal(t, buy_dict, data):
@@ -28,35 +36,47 @@ def buy_signal(t, buy_dict, data):
     b8 = low_t_2(df, buy_dict)
     if b1 and b2 and b3 and b4 and b5 and b6 and b7 and b8:
         # todo 买入信号
-        return 0
+        price = df.iat[0, 2]
+        signal = Poc_signal(signal=1, price=Decimal(price).quantize(Decimal('0.000000')))
+        return signal
+    else:
+        return Poc_signal(signal=0, price=0)
 
 
 def low_t_2(df, dict):
     if dict['low(T-2)'] is not 0:
         x = df.iat[0, 3]
-        flag = eval(dict['low(T-1)'])
+        flag = eval(dict['low(T-2)'])
         return flag
+    else:
+        return True
 
 
 def high_t_2(df, dict):
     if dict['high(T-2)'] is not 0:
         x = df.iat[0, 4]
-        flag = eval(dict['high(T-1)'])
+        flag = eval(dict['high(T-2)'])
         return flag
+    else:
+        return True
 
 
 def open_t_2(df, dict):
     if dict['open(T-2)'] is not 0:
         x = df.iat[0, 1]
-        flag = eval(dict['open(T-1)'])
+        flag = eval(dict['open(T-2)'])
         return flag
+    else:
+        return True
 
 
 def close_t_2(df, dict):
     if dict['close(T-2)'] is not 0:
         x = df.iat[0, 2]
-        flag = eval(dict['close(T-1)'])
+        flag = eval(dict['close(T-2)'])
         return flag
+    else:
+        return True
 
 
 def low_t_1(df, dict):
@@ -64,6 +84,8 @@ def low_t_1(df, dict):
         x = df.iat[0, 3]
         flag = eval(dict['low(T-1)'])
         return flag
+    else:
+        return True
 
 
 def high_t_1(df, dict):
@@ -71,6 +93,8 @@ def high_t_1(df, dict):
         x = df.iat[0, 4]
         flag = eval(dict['high(T-1)'])
         return flag
+    else:
+        return True
 
 
 def open_t_1(df, dict):
@@ -78,6 +102,8 @@ def open_t_1(df, dict):
         x = df.iat[0, 1]
         flag = eval(dict['open(T-1)'])
         return flag
+    else:
+        return True
 
 
 def close_t_1(df, dict):
@@ -85,3 +111,5 @@ def close_t_1(df, dict):
         x = df.iat[0, 2]
         flag = eval(dict['close(T-1)'])
         return flag
+    else:
+        return True

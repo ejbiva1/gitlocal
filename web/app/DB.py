@@ -1,6 +1,7 @@
 import pymysql
 
-connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
+# connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
+connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
 
 class StrategyLog:
@@ -105,6 +106,7 @@ class StrategyLog:
     def set_final_margin(self, final_margin):
         self.final_margin = final_margin
 
+
 class StrategyConf:
     strategy_conf_id = 0
     creator = 0
@@ -112,27 +114,36 @@ class StrategyConf:
     update_time = ""
     strategy_id = 0
     Strategy_conf_items = []
-    def __init__(self,strategy_conf_id,creator,create_time,update_time,strategy_id,coin_category):
+
+    def __init__(self, strategy_conf_id, creator, create_time, update_time, strategy_id, coin_category):
         self.strategy_conf_id = strategy_conf_id
         self.creator = creator
         self.create_time = create_time
         self.update_time = update_time
         self.strategy_id = strategy_id
         self.coin_category = coin_category
+
     def printAll(self):
-        print(str(self.strategy_conf_id)+"|"+str(self.creator)+"|"+str(self.create_time)+"|"+str(self.update_time)+"|"+str(self.strategy_id)+"|"+self.coin_category)
+        print(str(self.strategy_conf_id) + "|" + str(self.creator) + "|" + str(self.create_time) + "|" + str(
+            self.update_time) + "|" + str(self.strategy_id) + "|" + self.coin_category)
         for item in self.get_Strategy_conf_items():
             item.printAll()
+
     def get_strategy_conf_id(self):
         return self.strategy_conf_id
+
     def get_creator(self):
         return self.creator
+
     def get_create_time(self):
         return self.create_time
+
     def get_update_time(self):
         return self.update_time
+
     def get_strategy_id(self):
         return self.strategy_id
+
     def get_coin_category(self):
         return self.coin_category
 
@@ -141,18 +152,25 @@ class StrategyConf:
 
     def set_strategy_conf_id(self, strategy_conf_id):
         self.strategy_conf_id = strategy_conf_id
+
     def set_creator(self, creator):
         self.creator = creator
+
     def set_create_time(self, create_time):
         self.create_time = create_time
+
     def set_update_time(self, update_time):
         self.update_time = update_time
+
     def set_strategy_id(self, strategy_id):
         self.strategy_id = strategy_id
+
     def set_coin_category(self, coin_category):
         self.coin_category = coin_category
+
     def set_Strategy_conf_items(self, Strategy_conf_items):
         self.Strategy_conf_items = Strategy_conf_items
+
 
 class StrategyConfItem:
     strategy_conf_item_id = 0
@@ -162,13 +180,14 @@ class StrategyConfItem:
     price = 0.0
     direction = ""
 
-    def __init__(self, strategy_conf_item_id,strategy_conf_id,index_label,formular,price,direction):
+    def __init__(self, strategy_conf_item_id, strategy_conf_id, index_label, formular, price, direction):
         self.strategy_conf_item_id = strategy_conf_item_id
         self.strategy_conf_id = strategy_conf_id
         self.index_label = index_label
         self.formular = formular
         self.price = price
         self.direction = direction
+
     def printAll(self):
         print(str(self.strategy_conf_item_id))
         print(str(self.strategy_conf_id))
@@ -176,31 +195,44 @@ class StrategyConfItem:
         print(self.formular)
         print(str(self.price))
         print(self.direction)
+
     def get_strategy_conf_item_id(self):
         return self.strategy_conf_item_id
+
     def get_strategy_conf_id(self):
         return self.strategy_conf_id
+
     def get_index_label(self):
         return self.index_label
+
     def get_formular(self):
         return self.formular
+
     def get_price(self):
         return self.price
+
     def get_direction(self):
         return self.direction
 
     def set_strategy_conf_item_id(self, strategy_conf_item_id):
         self.strategy_conf_item_id = strategy_conf_item_id
+
     def set_strategy_conf_id(self, strategy_conf_id):
         self.strategy_conf_id = strategy_conf_id
+
     def set_index_label(self, index_label):
         self.index_label = index_label
+
     def set_formular(self, formular):
         self.formular = formular
+
     def set_price(self, price):
         self.price = price
+
     def set_direction(self, direction):
         self.direction = direction
+
+
 class Strategy:
     strategy_id = 0
     strategy_name = ""
@@ -646,31 +678,34 @@ def getStrategyAccountList(strategyLogId):
     cursor.close()
     return strategyAccountList
 
-def getStrategyConf(userId, strategyId,coin_category):
+
+def getStrategyConf(userId, strategyId, coin_category):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " SELECT strategy_conf_id,creator,create_time,update_time,strategy_id,coin_category "\
+    sql = " SELECT strategy_conf_id,creator,create_time,update_time,strategy_id,coin_category " \
           " FROM strategy_conf where creator=%s and strategy_id=%s and coin_category=%s"
 
     # 执行SQL语句
-    param = (userId, strategyId,coin_category)
+    param = (userId, strategyId, coin_category)
     cursor.execute(sql, param)
     # 获取所有记录列表
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        strategyConf = StrategyConf(row[0], row[1], row[2], row[3], row[4],row[5])
+        strategyConf = StrategyConf(row[0], row[1], row[2], row[3], row[4], row[5])
         strategyConf.set_Strategy_conf_items(getStrategyConfItem(row[0]))
-        strategyConf.printAll()
+        # strategyConf.printAll()
         strategyConfList.append(strategyConf)
     cursor.close()
     return strategyConfList
+
+
 def getStrategyConfItem(strategy_conf_id):
     cursor = connection.cursor()
     strategyConfItemList = []
     # SQL 查询语句
-    sql = " SELECT strategy_conf_item_id,strategy_conf_id,index_label,formular,price,direction"\
+    sql = " SELECT strategy_conf_item_id,strategy_conf_id,index_label,formular,price,direction" \
           " FROM strategy_conf_item where strategy_conf_id=%s"
 
     # 执行SQL语句
@@ -685,25 +720,31 @@ def getStrategyConfItem(strategy_conf_id):
         strategyConfItemList.append(item)
     cursor.close()
     return strategyConfItemList
-def saveStrategyConf(creator,strategy_id):
+
+
+def saveStrategyConf(creator, strategy_id):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
     sql = " INSERT INTO strategy_conf(creator,strategy_id)VALUES(%s,%s);"
-    param=(creator,strategy_id)
-    cursor.execute(sql,param)
+    param = (creator, strategy_id)
+    cursor.execute(sql, param)
     cursor.execute('SELECT LAST_INSERT_ID();')
     strategy_conf_id = cursor.fetchone()
     connection.commit()
     return strategy_conf_id
-def saveStrategyConfItem(strategy_conf_id,index_label,formular,price):
+
+
+def saveStrategyConfItem(strategy_conf_id, index_label, formular, price):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
     sql = " INSERT INTO strategy_conf_item(strategy_conf_id,index_label,formular,price)VALUES(%s,%s,%s,%s);"
-    param=(strategy_conf_id,index_label,formular,price)
-    cursor.execute(sql,param)
+    param = (strategy_conf_id, index_label, formular, price)
+    cursor.execute(sql, param)
     connection.commit()
+
+
 # list = getStrategyLogList(a)
 # for sl in list:
 #     print(sl.get_strategy_log_id())
@@ -739,6 +780,6 @@ def saveStrategyConfItem(strategy_conf_id,index_label,formular,price):
 #     print(sl.get_close())
 #     print(sl.get_high())
 #     print(sl.get_low())
-#saveStrategyConf(1,2)
-#saveStrategyConfItem(1,'close(t-1)','<',20)
-pro = getStrategyConf(1, 2,"BTC")
+# saveStrategyConf(1,2)
+# saveStrategyConfItem(1,'close(t-1)','<',20)
+# pro = getStrategyConf(1, 2, "BTC")
