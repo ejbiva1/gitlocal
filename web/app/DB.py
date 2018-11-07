@@ -722,12 +722,12 @@ def getStrategyConfItem(strategy_conf_id):
     return strategyConfItemList
 
 
-def saveStrategyConf(creator, strategy_id):
+def saveStrategyConf(creator, strategy_id,coin_category):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " INSERT INTO strategy_conf(creator,strategy_id)VALUES(%s,%s);"
-    param = (creator, strategy_id)
+    sql = " INSERT INTO strategy_conf(creator,strategy_id, coin_category)VALUES(%s,%s, %s);"
+    param = (creator, strategy_id, coin_category)
     cursor.execute(sql, param)
     cursor.execute('SELECT LAST_INSERT_ID();')
     strategy_conf_id = cursor.fetchone()
@@ -735,12 +735,12 @@ def saveStrategyConf(creator, strategy_id):
     return strategy_conf_id
 
 
-def saveStrategyConfItem(strategy_conf_id, index_label, formular, price):
+def saveStrategyConfItem(strategy_conf_id, index_label, formular, price, direction):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " INSERT INTO strategy_conf_item(strategy_conf_id,index_label,formular,price)VALUES(%s,%s,%s,%s);"
-    param = (strategy_conf_id, index_label, formular, price)
+    sql = " INSERT INTO strategy_conf_item(strategy_conf_id,index_label,formular,price, direction)VALUES(%s,%s,%s,%s, %s);"
+    param = (strategy_conf_id, index_label, formular, price,direction)
     cursor.execute(sql, param)
     connection.commit()
 

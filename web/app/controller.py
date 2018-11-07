@@ -18,10 +18,10 @@ def startStartStrategy(strategyId, initBalance, startDate, endDate):
     return "好像启动了"
 
 
-def saveStrategyConf(strategyId, userId, initBalance, startDate, endDate, strategyConfItemlist):
-    strategyConfId = DB.saveStrategyConf(userId, strategyId)
+def saveStrategyConf(strategyId, userId, initBalance, startDate, endDate,coin_category, strategyConfItemlist):
+    strategyConfId = DB.saveStrategyConf(userId, strategyId, coin_category)
     for item in strategyConfItemlist:
-        DB.saveStrategyConfItem(item['strategy_conf_id'], item['index_label'], item['formular'],
+        DB.saveStrategyConfItem(strategyConfId, item['index_label'], item['formular'],
                                 item['price'], item['direction'])
 
 
