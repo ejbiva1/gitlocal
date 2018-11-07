@@ -1,0 +1,28 @@
+api: /saveStrategyConf
+数据格式如下: {
+kind: 'btc',
+initBalance:10000,
+startDate: "2017-12-11",
+endDate: "2018-10-29",
+strategyConfItemlist: [
+{
+"direction": 1,
+"formular": ">",
+"index_label": 21,
+"index_label_name": "OPEN(T-1)",
+"price": "30",
+"strategy_conf_id": 3,
+"unit": "USDT"
+},
+{
+"direction": 2,
+"formular": ">",
+"index_label": 21,
+"index_label_name": "OPEN(T-1)",
+"price": "30",
+"strategy_conf_id": 3,
+"unit": "USDT"
+}
+],
+strategyId: 3
+}

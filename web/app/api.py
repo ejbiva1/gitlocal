@@ -61,21 +61,27 @@ def saveStrategyConf():
     strategyId = request.json.get("strategyId")
     # print(strategy_Id)
     startDate = request.json.get("startDate")
+
+    print(startDate)
     # print(start_Date)
     endDate = request.json.get("endDate")
+    print(endDate)
     # print(end_Date)
     initBalance = request.json.get("initBalance")
     # print(init_Balance)
     strategyConfItemlist = request.json.get("strategyConfItemlist")
     coin_category = request.json.get("kind")
 
-    controller.saveStrategyConf(strategyId=strategyId, userId=session['userId'], startDate=startDate,
+    controller.saveStrategyConf(strategyId=strategyId, userId=session['userId'], initBalance=initBalance,
+                                startDate=startDate,
                                 endDate=endDate,
-                                initBalance=initBalance, strategyConfItemlist=strategyConfItemlist)
+                               coin_category=coin_category , strategyConfItemlist=strategyConfItemlist)
     regression_result = main.strategy_poc(strategy_id=strategyId, user_id=session['userId'],
                                           coin_category=coin_category,
-                                          start_time=startDate, end_time=endDate, init_balance=initBalance)
-    print(regression_result.__dict__)
+                                          start_time=startDate, end_time=endDate,
+                                           init_balance=initBalance)
+    print(regression_result)
+    #print(regression_result.__dict__)
 
     response = make_response(
         json.dumps({'result': regression_result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
