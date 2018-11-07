@@ -136,10 +136,10 @@ def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init
         signal = buy_signal(t, buy_dict, data)
         if signal.signal == 1:
             # todo 买入并返回余额，买入数量
-            amount = Decimal(balance) / Decimal(close_t)
+            amount = (Decimal(balance) / Decimal(close_t)).quantize(Decimal('0.00000000'))
             position = amount
-            # balance -= Decimal(amount) * Decimal(close_t)
-            balance = 0
+            balance -= Decimal(amount) * Decimal(close_t)
+            # balance = 0
 
     # todo 计算最后的收益率和基准收益率
     if position is 0:
