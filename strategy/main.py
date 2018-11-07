@@ -10,6 +10,7 @@ from strategy.core.poc import sell_signal, buy_signal
 from web.app.DB import getStrategyConf, getStrategyConfItem
 import pandas as pd
 from entity.Poc_response import Poc_response
+from time import time
 
 
 # todo type define
@@ -111,10 +112,62 @@ def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init
     if data.empty:
         print('load data error!')
         return False
+    df = get_strategy_conf_list(coin_category, strategy_id, user_id)
+    if df.empty:
+        return False
+    df_sell = df[df['5'] == 2]
+    df_buy = df[df['5'] == 1]
+    # 转换构造sell和buy的所有条件
+    sell_dict = create_conditions_dictionary(df_sell)
+    buy_dict = create_conditions_dictionary(df_buy)
+    position = 0.000000
+    end_time_close = data[data['id'] == end_time].iat[0, 2]
+
+    for t in data['id']:
+        data_t = data[data['id'] == t]
+        close_t = data_t.iat[0, 2]
+        # 返回价钱和数量signal
+        signal = sell_signal(t, sell_dict, data)
+        if signal.signal == 2:
+            # todo 卖出并返回余额
+            balance += Decimal(position) * Decimal(close_t)
+            position = 0
+
+        signal = buy_signal(t, buy_dict, data)
+        if signal.signal == 1:
+            # todo 买入并返回余额，买入数量
+            amount = Decimal(balance) / Decimal(close_t)
+            position = amount
+            # balance -= Decimal(amount) * Decimal(close_t)
+            balance = 0
+
+    # todo 计算最后的收益率和基准收益率
+    if position is 0:
+        strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
+    else:
+        balance += Decimal(position) * Decimal(end_time_close)
+        strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
+    df_start = data[data['id'] == start_time]
+    df_end = data[data['id'] == end_time]
+
+    new_balance = init_balance
+    if df_start.iat[0, 2] is not 0:
+        amount = Decimal(init_balance) / Decimal(df_start.iat[0, 2])
+    else:
+        amount = 0
+    new_balance -= Decimal(amount) * Decimal(df_start.iat[0, 2])
+    new_balance += amount * Decimal(df_end.iat[0, 2])
+    benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
+
+    return Poc_response(strategy_profit=Decimal(strategy_profit).quantize(Decimal('0.0000')),
+                        benchmark_profit=Decimal(benchmark_profit).quantize(Decimal('0.0000')))
+
+
+def get_strategy_conf_list(coin_category, strategy_id, user_id):
     strategy_conf_list = getStrategyConf(strategyId=strategy_id, userId=user_id, coin_category=coin_category)
     if not strategy_conf_list:
         print('no strategy!')
-        return False
+        return pd.DataFrame()
     strategy_conf = strategy_conf_list[0]
     strategy_conf_id = strategy_conf.strategy_conf_id
     item_list = getStrategyConfItem(strategy_conf_id=strategy_conf_id)
@@ -139,57 +192,12 @@ def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init
         price_list.append(price)
         formula_list.append(formula)
         direction_list.append(direction)
-
     temp_list = {"0": item_id_list, "1": conf_id_list, "2": label_list, "3": price_list, "4": formula_list,
                  "5": direction_list}
     # labs = [0, 1, 2, 3, 4, 5]
     df = pd.DataFrame(temp_list)
     # df = pd.DataFrame.from_records(temp_list)
-    df_sell = df[df['5'] == 2]
-    df_buy = df[df['5'] == 1]
-    # 转换构造sell和buy的所有条件
-    sell_dict = create_conditions_dictionary(df_sell)
-    buy_dict = create_conditions_dictionary(df_buy)
-    position = 0.000000
-    end_time_close = data[data['id'] == end_time].iat[0, 2]
-
-    for t in data['id']:
-        data_t = data[data['id'] == t]
-        close_t = data_t.iat[0, 2]
-        # 返回价钱和数量signal
-        signal = buy_signal(t, buy_dict, data)
-        if signal.signal == 1:
-            # todo 买入并返回余额，买入数量
-            amount = Decimal(balance) / Decimal(close_t)
-            position = amount
-        # balance -= Decimal(amount) * Decimal(close_t)
-
-        signal = sell_signal(t, sell_dict, data)
-        if signal.signal == 2:
-            # todo 卖出并返回余额
-            balance += Decimal(position) * Decimal(close_t)
-            position = 0
-
-    # todo 计算最后的收益率和基准收益率
-    if position is 0:
-        strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
-    else:
-        balance += Decimal(position) * Decimal(end_time_close)
-        strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
-    df_start = data[data['id'] == start_time]
-    df_end = data[data['id'] == end_time]
-
-    new_balance = init_balance
-    if df_start.iat[0, 2] is not 0:
-        amount = Decimal(init_balance) / Decimal(df_start.iat[0, 2])
-    else:
-        amount = 0
-    new_balance -= Decimal(amount) * Decimal(df_start.iat[0, 2])
-    new_balance += amount * Decimal(df_end.iat[0, 2])
-    benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
-
-    return Poc_response(strategy_profit=Decimal(strategy_profit).quantize(Decimal('0.0000')),
-                        benchmark_profit=Decimal(benchmark_profit).quantize(Decimal('0.0000')))
+    return df
 
 
 # 内部方法
@@ -241,13 +249,15 @@ def get_formula(operator, price):
 if __name__ == '__main__':
     # start_time = 1510070400
     # start_time = 1508990400
-    start_time = 1509292800
+    print(time())
+    start_time = 1509206400
     # end_time = 1510675200
     # end_time = 1509022800
-    end_time = 1511452800
+    end_time = 1512921600
     init_balance = 200000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
-    response = strategy_poc(strategy_id=2, user_id=1, coin_category='btc', start_time=start_time, end_time=end_time,
+    response = strategy_poc(strategy_id=5, user_id=1, coin_category='btc', start_time=start_time, end_time=end_time,
                             init_balance=init_balance)
     print('benchmark_profit=' + str(response.benchmark_profit))
     print('strategy_profit=' + str(response.strategy_profit))
+    print(time())
