@@ -14,10 +14,10 @@ def startStartStrategy(strategyId,initBalance,startDate,endDate):
     elif (strategyId==2):
         strategyTool.strategy_combination_b(startDate, endDate, initBalance)
     return "好像启动了"
-def saveStrategyConf(strategyId,userId,initBalance,startDate,endDate,strategyConfItemlist):
-    strategyConfId = DB.saveStrategyConf(userId,strategyId)
+def saveStrategyConf(userId,coin_category,initBalance,startDate,endDate,strategyConfItemlist):
+    strategyId = DB.saveStrategy(userId,coin_category,initBalance,startDate,endDate)
     for item in strategyConfItemlist:
-        DB.saveStrategyConfItem(item.strategy_conf_id,item.index_label,item.formular,item.price)
+        DB.saveStrategyConfItem(item['strategy_id'],item['index_label'],item['formular'],item['price'])
     return strategyTool.strategy_poc(strategyId, userId, startDate, endDate, initBalance)
 #查询历史列表
 def loadLogList(creator):

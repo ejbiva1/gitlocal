@@ -1,6 +1,6 @@
 import pymysql
 
-# connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
+#connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
 
@@ -722,25 +722,25 @@ def getStrategyConfItem(strategy_conf_id):
     return strategyConfItemList
 
 
-def saveStrategyConf(creator, strategy_id,coin_category):
+def saveStrategy(creator, coin_category,init_balance,start_time,end_time):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " INSERT INTO strategy_conf(creator,strategy_id, coin_category)VALUES(%s,%s, %s);"
-    param = (creator, strategy_id, coin_category)
+    sql = " INSERT INTO strategy(creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s, %s);"
+    param = (creator, coin_category,init_balance,start_time,end_time)
     cursor.execute(sql, param)
     cursor.execute('SELECT LAST_INSERT_ID();')
-    strategy_conf_id = cursor.fetchone()
+    strategy_id = cursor.fetchone()
     connection.commit()
-    return strategy_conf_id
+    return strategy_id
 
 
-def saveStrategyConfItem(strategy_conf_id, index_label, formular, price, direction):
+def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " INSERT INTO strategy_conf_item(strategy_conf_id,index_label,formular,price, direction)VALUES(%s,%s,%s,%s, %s);"
-    param = (strategy_conf_id, index_label, formular, price,direction)
+    sql = " INSERT INTO strategy_conf_item(strategy_id,index_label,formular,price, direction)VALUES(%s,%s,%s,%s, %s);"
+    param = (strategy_id, index_label, formular, price,direction)
     cursor.execute(sql, param)
     connection.commit()
 
@@ -780,6 +780,6 @@ def saveStrategyConfItem(strategy_conf_id, index_label, formular, price, directi
 #     print(sl.get_close())
 #     print(sl.get_high())
 #     print(sl.get_low())
-# saveStrategyConf(1,2)
+#saveStrategy(1,'BTC',12000,'2018-11-8 13:00:00','2018-11-8 14:00:00')
 # saveStrategyConfItem(1,'close(t-1)','<',20)
 # pro = getStrategyConf(1, 2, "BTC")
