@@ -58,7 +58,7 @@ def saveStrategyConf():
     session.permanent = True
     session['userId'] = 1
     # strategyId,userId,initBalance,startDate,endDate,strategyConfItemlist
-    strategyId = request.json.get("strategyId")
+    strategy_name = request.json.get("strategy_name")
     # print(strategy_Id)
     startDate = request.json.get("startDate")
 
@@ -72,14 +72,15 @@ def saveStrategyConf():
     strategyConfItemlist = request.json.get("strategyConfItemlist")
     coin_category = request.json.get("kind")
 
-    controller.saveStrategyConf(strategyId=strategyId, userId=session['userId'], initBalance=initBalance,
+    regression_result = controller.saveStrategyConf(strategy_name=strategy_name, userId=session['userId'], initBalance=initBalance,
                                 startDate=startDate,
                                 endDate=endDate,
                                coin_category=coin_category , strategyConfItemlist=strategyConfItemlist)
-    regression_result = main.strategy_poc(strategy_id=strategyId, user_id=session['userId'],
-                                          coin_category=coin_category,
-                                          start_time=startDate, end_time=endDate,
-                                           init_balance=initBalance)
+    # regression_result = main.strategy_poc(strategy_id=strategyId, user_id=session['userId'],
+    #                                       coin_category=coin_category,
+    #                                       start_time=startDate, end_time=endDate,
+    #                                        init_balance=initBalance)
+
     print(regression_result)
     #print(regression_result.__dict__)
 

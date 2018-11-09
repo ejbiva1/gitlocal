@@ -7,7 +7,7 @@ from util.WriteData import *
 from decimal import Decimal
 from util.ReadData import read_datas_1day_test
 from strategy.core.poc import sell_signal, buy_signal
-from web.app.DB import getStrategyConf, getStrategyConfItem, getStrategy
+from web.app.DB import  getStrategyConfItem
 import pandas as pd
 from entity.Poc_response import Poc_response
 from time import time
@@ -130,6 +130,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         signal = sell_signal(t, sell_dict, data)
         if signal.signal == 2:
             # 卖出并返回余额
+            balance = Decimal(balance)
             balance += Decimal(position) * Decimal(close_t)
             position = 0
 
@@ -138,6 +139,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
             # 买入并返回余额，买入数量
             amount = (Decimal(balance) / Decimal(close_t)).quantize(Decimal('0.00000000'))
             position = amount
+            balance = Decimal(balance)
             balance -= Decimal(amount) * Decimal(close_t)
             # balance = 0
 
@@ -145,6 +147,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
     if position is 0:
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
     else:
+        balance = Decimal(balance)
         balance += Decimal(position) * Decimal(end_time_close)
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
     df_start = data[data['id'] == start_time]
@@ -155,6 +158,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         amount = Decimal(init_balance) / Decimal(df_start.iat[0, 2])
     else:
         amount = 0
+    new_balance = Decimal(new_balance)
     new_balance -= Decimal(amount) * Decimal(df_start.iat[0, 2])
     new_balance += amount * Decimal(df_end.iat[0, 2])
     benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
@@ -183,14 +187,14 @@ def get_strategy_conf_list(strategy_id):
     direction_list = []
     for it in item_list:
         item_id = it.strategy_conf_item_id
-        conf_id = it.strategy_conf_id
+        strategy_id = it.strategy_id
         label = it.index_label
         price = it.price
         formula = it.formular
         direction = it.direction
 
         item_id_list.append(item_id)
-        conf_id_list.append(conf_id)
+        conf_id_list.append(strategy_id)
         label_list.append(label)
         price_list.append(price)
         formula_list.append(formula)

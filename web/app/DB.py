@@ -1,6 +1,6 @@
 import pymysql
 
-#connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
+# connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
 
@@ -247,8 +247,9 @@ class Strategy:
     start_time = ""
     end_time = ""
     strategy_conf_items = []
+
     def __init__(self, strategy_id, strategy_name, description, create_time, update_time, loading_times, creator,
-                 script_url, peroid,init_balance,start_time,end_time):
+                 script_url, peroid, init_balance, start_time, end_time):
         self.strategy_id = strategy_id
         self.strategy_name = strategy_name
         self.description = description
@@ -261,6 +262,7 @@ class Strategy:
         self.init_balance = init_balance
         self.start_time = start_time
         self.end_time = end_time
+
     def get_strategy_id(self):
         return self.strategy_id
 
@@ -293,10 +295,13 @@ class Strategy:
 
     def get_init_balance(self):
         return self.init_balance
+
     def get_start_time(self):
         return self.start_time
+
     def get_end_time(self):
         return self.end_time
+
     def set_strategy_id(self, strategy_id):
         self.strategy_id = strategy_id
 
@@ -332,8 +337,10 @@ class Strategy:
 
     def set_end_time(self, end_time):
         self.end_time = end_time
+
     def set_strategy_conf_items(self, strategy_conf_items):
         self.strategy_conf_items = strategy_conf_items
+
 
 class StrategyAccount:
     strategy_account_id = 0
@@ -613,12 +620,13 @@ def getALLStrategy(creator):
           " where creator=%s"
 
     # 执行SQL语句
-    cursor.execute(sql,creator)
+    cursor.execute(sql, creator)
     # 获取所有记录列表
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
+                            row[11])
         strategyList.append(strategy)
     cursor.close()
     return strategyList
@@ -762,12 +770,12 @@ def getStrategyConfItem(strategy_id):
     return strategyConfItemList
 
 
-def saveStrategy(creator, coin_category,init_balance,start_time,end_time):
+def saveStrategy(strategy_name, creator, coin_category, init_balance, start_time, end_time):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " INSERT INTO strategy(creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s, %s);"
-    param = (creator, coin_category,init_balance,start_time,end_time)
+    sql = " INSERT INTO strategy_test(strategy_name,creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s,%s, %s);"
+    param = (strategy_name, creator, coin_category, init_balance, start_time, end_time)
     cursor.execute(sql, param)
     cursor.execute('SELECT LAST_INSERT_ID();')
     strategy_id = cursor.fetchone()
@@ -780,10 +788,9 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
     strategyConfList = []
     # SQL 查询语句
     sql = " INSERT INTO strategy_conf_item(strategy_id,index_label,formular,price, direction)VALUES(%s,%s,%s,%s, %s);"
-    param = (strategy_id, index_label, formular, price,direction)
+    param = (strategy_id, index_label, formular, price, direction)
     cursor.execute(sql, param)
     connection.commit()
-
 
 # list = getStrategyLogList(a)
 # for sl in list:
@@ -820,7 +827,7 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
 #     print(sl.get_close())
 #     print(sl.get_high())
 #     print(sl.get_low())
-#saveStrategy(1,'BTC',12000,'2018-11-8 13:00:00','2018-11-8 14:00:00')
+# saveStrategy(1,'BTC',12000,'2018-11-8 13:00:00','2018-11-8 14:00:00')
 # saveStrategyConfItem(1,'close(t-1)','<',20)
 # pro = getStrategyConf(1, 2, "BTC")
-#pro = getStrategy(1, 4, "BTC")
+# pro = getStrategy(1, 4, "BTC")
