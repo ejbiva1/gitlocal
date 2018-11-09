@@ -7,7 +7,7 @@ from util.WriteData import *
 from decimal import Decimal
 from util.ReadData import read_datas_1day_test
 from strategy.core.poc import sell_signal, buy_signal
-from web.app.DB import getStrategyConf, getStrategyConfItem
+from web.app.DB import getStrategyConf, getStrategyConfItem, getStrategy
 import pandas as pd
 from entity.Poc_response import Poc_response
 from time import time
@@ -106,13 +106,13 @@ def write_back2log(position, log_id):
     update_strategy_log(log)
 
 
-def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init_balance):
+def strategy_poc(strategy_id, start_time, end_time, init_balance):
     balance = init_balance
     data = read_datas_1day_test(start_time - 172800, end_time)
     if data.empty:
         print('load data error!')
         return False
-    df = get_strategy_conf_list(coin_category, strategy_id, user_id)
+    df = get_strategy_conf_list(strategy_id)
     if df.empty:
         return False
     df_sell = df[df['5'] == 2]
@@ -129,19 +129,19 @@ def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init
         # 返回价钱和数量signal
         signal = sell_signal(t, sell_dict, data)
         if signal.signal == 2:
-            # todo 卖出并返回余额
+            # 卖出并返回余额
             balance += Decimal(position) * Decimal(close_t)
             position = 0
 
         signal = buy_signal(t, buy_dict, data)
         if signal.signal == 1:
-            # todo 买入并返回余额，买入数量
+            # 买入并返回余额，买入数量
             amount = (Decimal(balance) / Decimal(close_t)).quantize(Decimal('0.00000000'))
             position = amount
             balance -= Decimal(amount) * Decimal(close_t)
             # balance = 0
 
-    # todo 计算最后的收益率和基准收益率
+    # 计算最后的收益率和基准收益率
     if position is 0:
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
     else:
@@ -163,14 +163,17 @@ def strategy_poc(strategy_id, user_id, coin_category, start_time, end_time, init
                         benchmark_profit=Decimal(benchmark_profit).quantize(Decimal('0.0000')))
 
 
-def get_strategy_conf_list(coin_category, strategy_id, user_id):
-    strategy_conf_list = getStrategyConf(strategyId=strategy_id, userId=user_id, coin_category=coin_category)
-    if not strategy_conf_list:
+def get_strategy_conf_list(strategy_id):
+    # def get_strategy_conf_list(coin_category, strategy_id, user_id):
+    # strategy_conf_list = getStrategyConf(strategyId=strategy_id, userId=user_id, coin_category=coin_category)
+    # strategy_conf_list = getStrategy(strategyId=strategy_id, userId=user_id, coin_category=coin_category)
+    item_list = getStrategyConfItem(strategy_id=strategy_id)
+    if not item_list:
         print('no strategy!')
         return pd.DataFrame()
-    strategy_conf = strategy_conf_list[0]
-    strategy_conf_id = strategy_conf.strategy_conf_id
-    item_list = getStrategyConfItem(strategy_conf_id=strategy_conf_id)
+    # strategy_conf = strategy_conf_list[0]
+    # strategy_conf_id = strategy_conf.strategy_conf_id
+    # item_list = getStrategyConfItem(strategy_id=strategy_id)
     # temp_list = []
     item_id_list = []
     conf_id_list = []
