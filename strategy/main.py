@@ -7,10 +7,11 @@ from util.WriteData import *
 from decimal import Decimal
 from util.ReadData import read_datas_1day_test
 from strategy.core.poc import sell_signal, buy_signal
-from web.app.DB import  getStrategyConfItem
+from web.app.DB import getStrategyConfItem
 import pandas as pd
 from entity.Poc_response import Poc_response
 from time import time
+from math import floor
 
 
 # todo type define
@@ -137,14 +138,20 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         signal = buy_signal(t, buy_dict, data)
         if signal.signal == 1:
             # 买入并返回余额，买入数量
-            amount = (Decimal(balance) / Decimal(close_t)).quantize(Decimal('0.00000000'))
-            position = amount
+            amount = (Decimal(balance) / Decimal(close_t))
+            amount *= 100000000
+            amount = floor(amount) / 100000000
+            # .quantize(Decimal('0.00000000'))
+            position = Decimal(str(amount))
             balance = Decimal(balance)
             balance -= Decimal(amount) * Decimal(close_t)
             # balance = 0
-        print('balance: ' + balance)
-        print('position: ' + position)
-        print('current profit: ' + (balance - Decimal(init_balance)) / Decimal(init_balance))
+        print('******************')
+        print('balance: ' + str(balance))
+        print('position: ' + str(position))
+        print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
+            init_balance)))
+        print('\n')
 
     # 计算最后的收益率和基准收益率
     if position is 0:
@@ -266,7 +273,7 @@ if __name__ == '__main__':
     end_time = 1512921600
     init_balance = 200000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
-    response = strategy_poc(strategy_id=5, user_id=1, coin_category='btc', start_time=start_time, end_time=end_time,
+    response = strategy_poc(strategy_id=10, start_time=start_time, end_time=end_time,
                             init_balance=init_balance)
     print('benchmark_profit=' + str(response.benchmark_profit))
     print('strategy_profit=' + str(response.strategy_profit))
