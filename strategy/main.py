@@ -142,6 +142,9 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
             balance = Decimal(balance)
             balance -= Decimal(amount) * Decimal(close_t)
             # balance = 0
+        print('balance: ' + balance)
+        print('position: ' + position)
+        print('current profit: ' + (balance - Decimal(init_balance)) / Decimal(init_balance))
 
     # 计算最后的收益率和基准收益率
     if position is 0:
