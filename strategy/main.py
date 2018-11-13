@@ -123,8 +123,8 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
     buy_dict = create_conditions_dictionary(df_buy)
     position = 0.000000
     end_time_close = data[data['id'] == end_time].iat[0, 2]
-
-    for t in data['id']:
+    id_list = data[data['id'] >= start_time]['id']
+    for t in id_list:
         data_t = data[data['id'] == t]
         close_t = data_t.iat[0, 2]
         # 返回价钱和数量signal
@@ -134,6 +134,13 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
             balance = Decimal(balance)
             balance += Decimal(position) * Decimal(close_t)
             position = 0
+
+        print('******************')
+        print('balance: ' + str(balance))
+        print('position: ' + str(position))
+        print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
+            init_balance)))
+        print('\n')
 
         signal = buy_signal(t, buy_dict, data)
         if signal.signal == 1:
@@ -270,7 +277,7 @@ if __name__ == '__main__':
     start_time = 1509206400
     # end_time = 1510675200
     # end_time = 1509022800
-    end_time = 1512921600
+    end_time = 1509379200
     init_balance = 200000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
     response = strategy_poc(strategy_id=10, start_time=start_time, end_time=end_time,
