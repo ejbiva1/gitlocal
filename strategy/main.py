@@ -131,27 +131,30 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         signal = sell_signal(t, sell_dict, data)
         if signal.signal == 2:
             # 卖出并返回余额
-            balance = Decimal(balance)
-            balance += Decimal(position) * Decimal(close_t)
+            balance = Decimal(str(balance)).quantize(Decimal('0.00'))
+            balance += Decimal(str(position)) * Decimal(str(close_t))
             position = 0
+            balance = Decimal(str(balance)).quantize(Decimal('0.00'))
 
         print('******************')
         print('balance: ' + str(balance))
         print('position: ' + str(position))
-        print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
-            init_balance)))
+        print('current profit: ' + str(
+            ((balance + Decimal(str(position)) * Decimal(str(close_t))) - Decimal(str(init_balance))) / Decimal(str(
+                init_balance))))
         print('\n')
 
         signal = buy_signal(t, buy_dict, data)
         if signal.signal == 1:
             # 买入并返回余额，买入数量
-            amount = (Decimal(balance) / Decimal(close_t))
+            amount = (Decimal(str(balance)) / Decimal(str(close_t)))
             amount *= 100000000
             amount = floor(amount) / 100000000
             # .quantize(Decimal('0.00000000'))
             position = Decimal(str(amount))
-            balance = Decimal(balance)
-            balance -= Decimal(amount) * Decimal(close_t)
+            balance = Decimal(str(balance)).quantize(Decimal('0.00'))
+            balance -= Decimal(str(amount)) * Decimal(str(close_t))
+            balance = Decimal(str(balance)).quantize(Decimal('0.00'))
             # balance = 0
         print('******************')
         print('balance: ' + str(balance))
@@ -164,7 +167,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
     if position is 0:
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
     else:
-        balance = Decimal(balance)
+        balance = Decimal(str(balance)).quantize(Decimal('0.00'))
         balance += Decimal(position) * Decimal(end_time_close)
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
     df_start = data[data['id'] == start_time]
@@ -175,7 +178,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         amount = Decimal(init_balance) / Decimal(df_start.iat[0, 2])
     else:
         amount = 0
-    new_balance = Decimal(new_balance)
+    new_balance = Decimal(str(new_balance)).quantize(Decimal('0.00'))
     new_balance -= Decimal(amount) * Decimal(df_start.iat[0, 2])
     new_balance += amount * Decimal(df_end.iat[0, 2])
     benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
@@ -274,13 +277,13 @@ if __name__ == '__main__':
     # start_time = 1510070400
     # start_time = 1508990400
     print(time())
-    start_time = 1509206400
+    start_time = 1517587200
     # end_time = 1510675200
     # end_time = 1509022800
-    end_time = 1509379200
+    end_time = 1517760000
     init_balance = 200000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
-    response = strategy_poc(strategy_id=10, start_time=start_time, end_time=end_time,
+    response = strategy_poc(strategy_id=22, start_time=start_time, end_time=end_time,
                             init_balance=init_balance)
     print('benchmark_profit=' + str(response.benchmark_profit))
     print('strategy_profit=' + str(response.strategy_profit))

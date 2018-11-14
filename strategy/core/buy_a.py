@@ -85,26 +85,26 @@ class BuyA:
 
     # get MA5(T-1) MA10(T-1）
     def update_MA(self, T):
-        start_timestamp_5T = T - 6 * 86400
-        start_timestamp_10T = T - 11 * 86400
+        start_timestamp_5T = T - 5 * 86400
+        start_timestamp_10T = T - 10 * 86400
         pre_T = T - 86400
         df_5 = self.datas[(self.idt >= start_timestamp_5T)]
-        df1_5 = df_5[df_5['id'] <= pre_T]
+        df1_5 = df_5[df_5['id'] < pre_T]
         df_10 = self.datas[(self.idt >= start_timestamp_10T)]
-        df1_10 = df_10[df_10['id'] <= pre_T]
+        df1_10 = df_10[df_10['id'] < pre_T]
 
         self.MA5 = df1_5['close'].mean()
         self.MA10 = df1_10['close'].mean()
 
     # get MA5(T-1) MA10(T-1）
     def update_pre_MA(self, T):
-        start_timestamp_5T = T - 7 * 86400
-        start_timestamp_10T = T - 12 * 86400
+        start_timestamp_5T = T - 6 * 86400
+        start_timestamp_10T = T - 11 * 86400
         pre_T = T - 2 * 86400
         df_5 = self.datas[(self.idt >= start_timestamp_5T)]
-        df1_5 = df_5[df_5['id'] <= pre_T]
+        df1_5 = df_5[df_5['id'] < pre_T]
         df_10 = self.datas[(self.idt >= start_timestamp_10T)]
-        df1_10 = df_10[df_10['id'] <= pre_T]
+        df1_10 = df_10[df_10['id'] < pre_T]
 
         self.pre_MA5 = df1_5['close'].mean()
         self.pre_MA10 = df1_10['close'].mean()
