@@ -762,19 +762,30 @@ def getStrategyConfItem(strategy_id):
     return strategyConfItemList
 
 
-def saveStrategy(creator, coin_category,init_balance,start_time,end_time):
+def saveStrategy(strategy_name,creator, coin_category,init_balance,start_time,end_time):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " INSERT INTO strategy(creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s, %s);"
-    param = (creator, coin_category,init_balance,start_time,end_time)
+    sql = " INSERT INTO strategy(strategy_name,creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s,%s, %s);"
+    param = (strategy_name,creator, coin_category,init_balance,start_time,end_time)
     cursor.execute(sql, param)
     cursor.execute('SELECT LAST_INSERT_ID();')
     strategy_id = cursor.fetchone()
     connection.commit()
     return strategy_id
 
-
+def checkStrategyName(strategy_name):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL 查询语句
+    sql = " select * from strategy where strategy_name=%s"
+    param = (strategy_name)
+    cursor.execute(sql, param)
+    results = cursor.fetchall()
+    if (len(results)>0):
+        return True
+    else:
+        return False
 def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
     cursor = connection.cursor()
     strategyConfList = []
@@ -824,3 +835,4 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
 # saveStrategyConfItem(1,'close(t-1)','<',20)
 # pro = getStrategyConf(1, 2, "BTC")
 #pro = getStrategy(1, 4, "BTC")
+#print(checkStrategyName("测试策略"))
