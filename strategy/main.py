@@ -109,7 +109,7 @@ def write_back2log(position, log_id):
 
 def strategy_poc(strategy_id, start_time, end_time, init_balance):
     balance = init_balance
-    data = read_datas_1day_test(start_time - 172800, end_time)
+    data = read_datas_1day_test(start_time - 777600, end_time)
     if data.empty:
         print('load data error!')
         return False
