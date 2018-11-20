@@ -57,6 +57,9 @@ def loadLogList(creator):
 #查询历史账户列表
 def getLogDetail(stratgyLogId, creator):
     return DB.getLogDetail(stratgyLogId, creator)
+#查询历史账户列表
+def deleteStrategyById(strategyId):
+    return DB.deleteStrategyById(strategyId)
 
 
 
