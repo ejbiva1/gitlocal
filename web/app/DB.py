@@ -751,7 +751,7 @@ def getStrategyAccountList(strategyLogId):
     return strategyAccountList
 
 
-def getStrategy(userId, strategyId, coin_category):
+def getStrategy(userId, strategyId):
     cursor = connection.cursor()
     strategyList = []
     # SQL 查询语句
@@ -769,10 +769,10 @@ def getStrategy(userId, strategyId, coin_category):
           " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
           " duration,benchmark,drawdown,status" \
-          " FROM strategy where creator=%s and strategy_id=%s and coin_category=%s"
+          " FROM strategy where creator=%s and strategy_id=%s "
 
     # 执行SQL语句
-    param = (userId, strategyId, coin_category)
+    param = (userId, strategyId)
     cursor.execute(sql, param)
     # 获取所有记录列表
     results = cursor.fetchall()
