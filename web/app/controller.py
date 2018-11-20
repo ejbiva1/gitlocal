@@ -60,6 +60,10 @@ def getLogDetail(stratgyLogId, creator):
 #查询历史账户列表
 def deleteStrategyById(strategyId):
     return DB.deleteStrategyById(strategyId)
+#查询策略详情
+def getStrategy(creator,strategyId):
+    return DB.getStrategy(creator,strategyId)
+
 
 
 
