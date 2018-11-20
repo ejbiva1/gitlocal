@@ -246,9 +246,10 @@ class Strategy:
     init_balance = 0
     start_time = ""
     end_time = ""
+    last_run = ""
     strategy_conf_items = []
     def __init__(self, strategy_id, strategy_name, description, create_time, update_time, loading_times, creator,
-                 script_url, peroid,init_balance,start_time,end_time):
+                 script_url, peroid,init_balance,start_time,end_time,last_run):
         self.strategy_id = strategy_id
         self.strategy_name = strategy_name
         self.description = description
@@ -261,6 +262,7 @@ class Strategy:
         self.init_balance = init_balance
         self.start_time = start_time
         self.end_time = end_time
+        self.last_run = last_run
     def get_strategy_id(self):
         return self.strategy_id
 
@@ -297,6 +299,10 @@ class Strategy:
         return self.start_time
     def get_end_time(self):
         return self.end_time
+
+    def get_last_run(self):
+        return self.last_run
+
     def set_strategy_id(self, strategy_id):
         self.strategy_id = strategy_id
 
@@ -334,6 +340,8 @@ class Strategy:
         self.end_time = end_time
     def set_strategy_conf_items(self, strategy_conf_items):
         self.strategy_conf_items = strategy_conf_items
+    def set_last_run(self, last_run):
+        self.last_run = last_run
 
 class StrategyAccount:
     strategy_account_id = 0
@@ -722,7 +730,7 @@ def getStrategy(userId, strategyId, coin_category):
           " peroid," \
           " init_balance," \
           " start_time," \
-          " end_time" \
+          " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
           " FROM strategy where creator=%s and strategy_id=%s and coin_category=%s"
 
     # 执行SQL语句
@@ -733,7 +741,7 @@ def getStrategy(userId, strategyId, coin_category):
     for row in results:
         # 打印结果
         strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                            row[11])
+                            row[11],row[12])
         strategy.set_strategy_conf_items(getStrategyConfItem(row[0]))
         # strategyConf.printAll()
         strategyList.append(strategy)
