@@ -16,8 +16,8 @@ def startStartStrategy(strategyId,initBalance,startDate,endDate):
     return "好像启动了"
 
 #检查是否有重名的策略，True已存在，False不存在
-def checkStrategyName(strategy_name):
-    return DB.checkStrategyName(strategy_name)
+def checkStrategyName(strategy_name,creator):
+    return DB.checkStrategyName(strategy_name,creator)
 
 #保存策略并执行策略
 def saveStrategyAndRun(strategy_name,userId,coin_category,initBalance,startDate,endDate,strategyConfItemlist):
