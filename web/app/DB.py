@@ -645,8 +645,7 @@ def getALLStrategy(creator):
           " start_time," \
           " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
-          " duration,benchmark，drawdown" \ 
-          " FROM strategy" \
+          " duration,benchmark,drawdown FROM strategy " \
           " where creator=%s"
 
     # 执行SQL语句
@@ -762,7 +761,7 @@ def getStrategy(userId, strategyId, coin_category):
           " start_time," \
           " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
-          " duration,benchmark，drawdown" \
+          " duration,benchmark,drawdown" \
           " FROM strategy where creator=%s and strategy_id=%s and coin_category=%s"
 
     # 执行SQL语句
@@ -843,7 +842,24 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
     param = (strategy_id, index_label, formular, price,direction)
     cursor.execute(sql, param)
     connection.commit()
-
+def deleteStrategyById(strategy_id):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL 查询语句
+    sql = " delete from strategy_conf_item where strategy_id=%s;"
+    param = (strategy_id)
+    cursor.execute(sql, param)
+    sql = " delete from strategy_account where strategy_log_id in " \
+          "       (select strategy_log_id from strategy_log where strategy_id=%s);"
+    param = (strategy_id)
+    cursor.execute(sql, param)
+    sql = " delete from strategy_log where strategy_id=%s;"
+    param = (strategy_id)
+    cursor.execute(sql, param)
+    sql = " delete from strategy where strategy_id=%s;"
+    param = (strategy_id)
+    cursor.execute(sql, param)
+    connection.commit()
 
 # list = getStrategyLogList(a)
 # for sl in list:
