@@ -252,8 +252,9 @@ class Strategy:
     duration = 0
     benchmar = 0.0
     drawdown = 0.0
+    status = 0
     def __init__(self, strategy_id, strategy_name, description, create_time, update_time, loading_times, creator,
-                 script_url, peroid,init_balance,start_time,end_time,last_run,run_times,duration,benchmark,drawdown):
+                 script_url, peroid,init_balance,start_time,end_time,last_run,run_times,duration,benchmark,drawdown,status):
         self.strategy_id = strategy_id
         self.strategy_name = strategy_name
         self.description = description
@@ -271,6 +272,7 @@ class Strategy:
         self.duration = duration
         self.benchmark = benchmark
         self.drawdown = drawdown
+        self.status = status
     def get_strategy_id(self):
         return self.strategy_id
 
@@ -318,6 +320,9 @@ class Strategy:
         return self.benchmark
     def get_drawdown(self):
         return self.drawdown
+    def get_status(self):
+        return self.status
+
 
     def set_strategy_id(self, strategy_id):
         self.strategy_id = strategy_id
@@ -369,6 +374,8 @@ class Strategy:
 
     def set_drawdown(self, drawdown):
         self.drawdown = drawdown
+    def set_status(self, status):
+        self.status = status
 
 class StrategyAccount:
     strategy_account_id = 0
@@ -645,7 +652,7 @@ def getALLStrategy(creator):
           " start_time," \
           " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
-          " duration,benchmark,drawdown FROM strategy " \
+          " duration,benchmark,drawdown,status FROM strategy " \
           " where creator=%s"
 
     # 执行SQL语句
@@ -654,7 +661,7 @@ def getALLStrategy(creator):
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16])
+        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17])
         strategyList.append(strategy)
     cursor.close()
     return strategyList
@@ -761,7 +768,7 @@ def getStrategy(userId, strategyId, coin_category):
           " start_time," \
           " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
-          " duration,benchmark,drawdown" \
+          " duration,benchmark,drawdown,status" \
           " FROM strategy where creator=%s and strategy_id=%s and coin_category=%s"
 
     # 执行SQL语句
@@ -772,7 +779,7 @@ def getStrategy(userId, strategyId, coin_category):
     for row in results:
         # 打印结果
         strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                            row[11],row[12],row[13],row[14],row[15],row[16])
+                            row[11],row[12],row[13],row[14],row[15],row[16],row[17])
         strategy.set_strategy_conf_items(getStrategyConfItem(row[0]))
         # strategyConf.printAll()
         strategyList.append(strategy)
