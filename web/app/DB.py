@@ -622,7 +622,8 @@ def getALLStrategy(creator):
           " peroid," \
           " init_balance," \
           " start_time," \
-          " end_time" \
+          " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
+          " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
           " FROM strategy" \
           " where creator=%s"
 
@@ -632,7 +633,7 @@ def getALLStrategy(creator):
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+        strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13])
         strategyList.append(strategy)
     cursor.close()
     return strategyList
@@ -654,7 +655,8 @@ def getStrategyLogList(creator):
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin" \
           " FROM strategy_log" \
-          " where creator=%s"
+          " where creator=%s" \
+          " order by "
 
     # 执行SQL语句
     cursor.execute(sql, creator)
