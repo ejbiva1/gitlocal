@@ -93,5 +93,21 @@ def saveStrategyConf():
     return response
 
 
+@app.route('/getALLStrategy', methods=['post'])
+def getALLStrategy():
+    strategy_list = []
+    session.permanent = True
+    session['userId'] = 1
+    strategyList = controller.getALLStrategy(session['userId'])
+    for item in strategyList:
+        strategy_list.append(item.__dict__)
+    print(strategy_list)
+    result = json.dumps({"list": strategy_list}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
 if __name__ == "__main__":
     app.run(debug=True)

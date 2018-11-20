@@ -55,5 +55,9 @@ def loadLogList(creator):
 def getLogDetail(stratgyLogId, creator):
     return DB.getLogDetail(stratgyLogId, creator)
 
+#查询策略列表
+def getALLStrategy(creator):
+    return DB.getALLStrategy(creator)
+
 
 
