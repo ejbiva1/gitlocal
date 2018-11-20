@@ -773,6 +773,15 @@ def saveStrategy(strategy_name,creator, coin_category,init_balance,start_time,en
     strategy_id = cursor.fetchone()
     connection.commit()
     return strategy_id
+#保存策略名称
+def saveStrategyName(strategy_id,strategy_name,creator):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL 查询语句
+    sql = " update strategy set strategy_name=%s where strategy_id=%s and creator=%s"
+    param = (strategy_name,strategy_id,creator)
+    cursor.execute(sql, param)
+    connection.commit()
 
 def checkStrategyName(strategy_name):
     cursor = connection.cursor()
@@ -831,7 +840,7 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
 #     print(sl.get_close())
 #     print(sl.get_high())
 #     print(sl.get_low())
-#saveStrategy(1,'BTC',12000,'2018-11-8 13:00:00','2018-11-8 14:00:00')
+#saveStrategyName(2,'BTC',1)
 # saveStrategyConfItem(1,'close(t-1)','<',20)
 # pro = getStrategyConf(1, 2, "BTC")
 #pro = getStrategy(1, 4, "BTC")
