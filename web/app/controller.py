@@ -46,6 +46,9 @@ def saveStrategy(strategy_name,userId,coin_category,initBalance,startDate,endDat
 
     result['strategy_id'] = strategyId
     return result
+#保存策略名称
+def saveStrategyName(strategy_id,strategy_name,creator):
+    return DB.saveStrategyName(strategy_id,strategy_name,creator)
 
 #查询历史列表
 def loadLogList(creator):
@@ -54,10 +57,6 @@ def loadLogList(creator):
 #查询历史账户列表
 def getLogDetail(stratgyLogId, creator):
     return DB.getLogDetail(stratgyLogId, creator)
-
-#查询策略列表
-def getALLStrategy(creator):
-    return DB.getALLStrategy(creator)
 
 
 
