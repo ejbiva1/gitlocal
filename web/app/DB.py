@@ -783,12 +783,12 @@ def saveStrategyName(strategy_id,strategy_name,creator):
     cursor.execute(sql, param)
     connection.commit()
 
-def checkStrategyName(strategy_name):
+def checkStrategyName(strategy_name,creator):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " select * from strategy where strategy_name=%s"
-    param = (strategy_name)
+    sql = " select * from strategy where strategy_name=%s and creator=%s"
+    param = (strategy_name,creator)
     cursor.execute(sql, param)
     results = cursor.fetchall()
     if (len(results)>0):
