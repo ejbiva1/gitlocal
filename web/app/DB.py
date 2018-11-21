@@ -650,9 +650,10 @@ def getALLStrategy(creator):
           " peroid," \
           " init_balance," \
           " start_time," \
-          " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
+          " end_time," \
+          " (select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run," \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
-          " duration,benchmark,drawdown,status FROM strategy " \
+          " duration,benchmark,drawdown,status FROM strategy s" \
           " where creator=%s"
 
     # 执行SQL语句
@@ -766,10 +767,11 @@ def getStrategy(userId, strategyId):
           " peroid," \
           " init_balance," \
           " start_time," \
-          " end_time,(select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run" \
+          " end_time," \
+          " (select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run," \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
           " duration,benchmark,drawdown,status" \
-          " FROM strategy where creator=%s and strategy_id=%s "
+          " FROM strategy s where creator=%s and strategy_id=%s "
 
     # 执行SQL语句
     param = (userId, strategyId)
