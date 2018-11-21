@@ -132,36 +132,36 @@ def close_t_1(df, dict):
 
 
 def low_t(df, dict):
-    if dict['low(T-1)'] is not 0:
+    if dict['low(T)'] is not 0:
         x = df.iat[0, 3]
-        flag = eval(dict['low(T-1)'])
+        flag = eval(dict['low(T)'])
         return flag
     else:
         return True
 
 
 def high_t(df, dict):
-    if dict['high(T-1)'] is not 0:
+    if dict['high(T)'] is not 0:
         x = df.iat[0, 4]
-        flag = eval(dict['high(T-1)'])
+        flag = eval(dict['high(T)'])
         return flag
     else:
         return True
 
 
 def open_t(df, dict):
-    if dict['open(T-1)'] is not 0:
+    if dict['open(T)'] is not 0:
         x = df.iat[0, 1]
-        flag = eval(dict['open(T-1)'])
+        flag = eval(dict['open(T)'])
         return flag
     else:
         return True
 
 
 def close_t(df, dict):
-    if dict['close(T-1)'] is not 0:
+    if dict['close(T)'] is not 0:
         x = df.iat[0, 2]
-        flag = eval(dict['close(T-1)'])
+        flag = eval(dict['close(T)'])
         return flag
     else:
         return True
