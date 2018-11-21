@@ -72,17 +72,19 @@ def saveStrategyConf():
     strategyConfItemlist = request.json.get("strategyConfItemlist")
     coin_category = request.json.get("kind")
 
-    regression_result = controller.saveStrategyConf(strategy_name=strategy_name, userId=session['userId'], initBalance=initBalance,
-                                startDate=startDate,
-                                endDate=endDate,
-                               coin_category=coin_category , strategyConfItemlist=strategyConfItemlist)
+    regression_result = controller.saveStrategyConf(strategy_name=strategy_name, userId=session['userId'],
+                                                    initBalance=initBalance,
+                                                    startDate=startDate,
+                                                    endDate=endDate,
+                                                    coin_category=coin_category,
+                                                    strategyConfItemlist=strategyConfItemlist)
     # regression_result = main.strategy_poc(strategy_id=strategyId, user_id=session['userId'],
     #                                       coin_category=coin_category,
     #                                       start_time=startDate, end_time=endDate,
     #                                        init_balance=initBalance)
 
     print(regression_result)
-    #print(regression_result.__dict__)
+    # print(regression_result.__dict__)
 
     response = make_response(
         json.dumps({'result': regression_result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
@@ -103,6 +105,39 @@ def getALLStrategy():
         strategy_list.append(item.__dict__)
     print(strategy_list)
     result = json.dumps({"list": strategy_list}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/checkStrategyName', methods=['post'])
+def checkStrategyName():
+    session.permanent = True
+    session['userId'] = 1
+
+    strategy_name = request.json.get("strategy_name")
+    is_strategy_name_exist = controller.checkStrategyName(strategy_name, session['userId'])
+
+    print(is_strategy_name_exist.__dict__)
+    result = json.dumps({"result": is_strategy_name_exist.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/saveStrategyName', methods=['post'])
+def saveStrategyName():
+    session.permanent = True
+    session['userId'] = 1
+
+    strategy_name = request.json.get("strategy_name")
+    strategy_id = request.json.get("strategy_id")
+    result = controller.saveStrategyName(strategy_name=strategy_name, strategy_id=strategy_id, creator=session['userId'])
+
+    print(result.__dict__)
+    result = json.dumps({"result": result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
     response = make_response(result)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
