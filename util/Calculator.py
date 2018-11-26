@@ -21,6 +21,7 @@ class Calculator:
         # 初始总资产
         # pre_total = self.position.total
         pre_balance = self.position.balance
+        pre_balance = Decimal(str(pre_balance)).quantize(Decimal('0.00'))
         pre_current_position = self.position.current_position
         pre_rate_of_return = Decimal(self.position.rate_of_return)
         # 币量
@@ -28,7 +29,7 @@ class Calculator:
         # 持仓币价
         self.position.price = Decimal(self.get_close_price())
         # 持仓余额
-        self.position.balance -= amount * cost
+        self.position.balance -= Decimal(str(amount)) * Decimal(str(cost))
         Decimal(self.position.balance).quantize(Decimal('0.00'))
         # 总币值
         self.position.total_net_balance = Decimal(Decimal(self.position.coin_amount)
@@ -69,7 +70,9 @@ class Calculator:
         # 基本变量
         # 初始总资产
         # pre_total = self.position.total
+        amount = Decimal(str(amount)).quantize(Decimal('0.000000'))
         pre_balance = self.position.balance
+        pre_balance = Decimal(str(pre_balance)).quantize(Decimal('0.00'))
         pre_current_position = self.position.current_position
         pre_rate_of_return = self.position.rate_of_return
         # 币量
@@ -155,7 +158,9 @@ class Calculator:
     def get_close_price(self):
         df = self.position.datas
         df = df[df['id'] == self.T]
-        return df.iat[0, 2]
+        close = df.iat[0, 2]
+        close = Decimal(str(close))
+        return close
 
     # 买入后持久化（卖出同）[其实就是交易明细表]
     def transaction(self, flag, cost, amount, pre_current_position, pre_balance):
@@ -176,7 +181,7 @@ class Calculator:
         # # 完成后余额
         # self.position.balance
         # # 余额变化
-        balance_gap = self.position.balance - pre_balance
+        balance_gap = Decimal(str(self.position.balance)) - pre_balance
 
         data = {
             'strategy_account_id': [1],
