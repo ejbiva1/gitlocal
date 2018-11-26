@@ -2,12 +2,12 @@ import json
 from datetime import date, datetime
 from decimal import Decimal
 
+
 class JsonExtendEncoder(json.JSONEncoder):
     """
     This class provide an extension to json serialization for datetime/date.
     python json package has some methods to serialze variables, especially json.JSONEncoder.default()
     """
-
 
     def default(self, o):
         """
@@ -21,3 +21,20 @@ class JsonExtendEncoder(json.JSONEncoder):
             return o.__str__()
         else:
             return json.JSONEncoder.default(self, o)
+
+
+class ResponseModel:
+    # result
+    data = []
+
+    # status => error code
+    code = '0'
+
+    # message
+
+    message = 'success'
+
+    def __init__(self, data, code, message):
+        self.data = data;
+        self.code = code;
+        self.message = message;

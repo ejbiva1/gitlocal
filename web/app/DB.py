@@ -752,7 +752,7 @@ def getStrategyAccountList(strategyLogId):
     return strategyAccountList
 
 
-def getStrategy(userId, strategyId):
+def getStrategy(userId, strategyId, coin_category):
     cursor = connection.cursor()
     strategyList = []
     # SQL 查询语句
