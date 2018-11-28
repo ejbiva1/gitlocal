@@ -682,10 +682,10 @@ def getStrategyLogList(creator):
           " create_time," \
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin" \
+          " (final_margin - init_balance)/init_balance final_margin " \
           " FROM strategy_log" \
           " where creator=%s" \
-          " order by "
+          " order by create_time"
 
     # 执行SQL语句
     cursor.execute(sql, creator)
