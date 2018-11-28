@@ -16,6 +16,7 @@ class SellA:
         self.idt = self.datas['id']
         self.price = 0.00
         self.trade_amount = 0.000000
+        self.cal = Decimal('1')
 
     def strategy(self, T, position):
         signal = Signal(signal=0, flag=0)
@@ -25,8 +26,10 @@ class SellA:
         calculator = Calculator(self.position, T, signal=0, strategy_id=3,
                                 strategy_account_id=1)
         if self.position.current_position > Decimal('0.2'):
-            persent = (self.position.init_balance - self.position.balance) / self.position.init_balance
-            # 判断总资产减少10%？   yes，减持50%
+            # persent = (self.position.init_balance - self.position.balance) / self.position.init_balance
+            base = self.position.init_balance * self.cal
+            persent = (self.position.init_balance - self.position.balance) / base
+            # 判断当前总资产减少10%?   yes,减持50%
             if persent >= 0.1:
                 # send signal
                 df = self.datas[(self.idt == T)]
@@ -40,6 +43,7 @@ class SellA:
                                                    trade_amount=amount)
                 if flag_inner is not 0:
                     signal.flag = 1
+                    self.cal *= Decimal('0.9')
             else:
                 # 没有买卖操作
                 calculator.non_trade()
