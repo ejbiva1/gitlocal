@@ -84,5 +84,7 @@ def getALLStrategy(creator):
 # 查询策略详情
 def getStrategy(creator, strategyId):
     return DB.getStrategy(creator, strategyId)
-
+#删除strategy_log
+def deleteStrategyLogById(strategy_log_id):
+    return DB.deleteStrategyLogById(strategy_log_id)
 
