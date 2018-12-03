@@ -4,7 +4,7 @@ import json
 import os
 import web.app.controller as controller
 from strategy import main
-from facilties.functional import JsonExtendEncoder
+from facilties.functional import JsonExtendEncoder, HttpResponseModel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
@@ -134,7 +134,8 @@ def saveStrategyName():
 
     strategy_name = request.json.get("strategy_name")
     strategy_id = request.json.get("strategy_id")
-    result = controller.saveStrategyName(strategy_name=strategy_name, strategy_id=strategy_id, creator=session['userId'])
+    result = controller.saveStrategyName(strategy_name=strategy_name, strategy_id=strategy_id,
+                                         creator=session['userId'])
 
     print(result.__dict__)
     result = json.dumps({"result": result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
@@ -142,6 +143,26 @@ def saveStrategyName():
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
     return response
+
+
+@app.route('/deleteStrategyLogById', methods=['post'])
+def deleteStrategyLogById():
+    strategy_log_id = request.json.get("strategy_log_id")
+
+    try:
+        result = controller.deleteStrategyLogById(strategy_log_id)
+
+        result = json.dumps({"result": result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+        print(result)
+        # response = HttpResponseModel(result)
+        response = make_response(result);
+        response.status = "200"
+        response.headers["Content-Type"] = "application/json"
+
+        return response
+
+    except ZeroDivisionError as e:
+        print('except:', e)
 
 
 if __name__ == "__main__":

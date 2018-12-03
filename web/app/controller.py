@@ -78,13 +78,19 @@ def getLogDetail(stratgyLogId, creator):
 def deleteStrategyById(strategyId):
     return DB.deleteStrategyById(strategyId)
 
+
 # 查询策略列表
 def getALLStrategy(creator):
     return DB.getALLStrategy(creator);
+
+
 # 查询策略详情
 def getStrategy(creator, strategyId):
     return DB.getStrategy(creator, strategyId)
-#删除strategy_log
-def deleteStrategyLogById(strategy_log_id):
-    return DB.deleteStrategyLogById(strategy_log_id)
 
+
+# 删除strategy_log
+def deleteStrategyLogById(strategy_log_id):
+    DB.deleteStrategyLogById(strategy_log_id)
+    response = ResponseModel(data='', code='1', message='success')
+    return response

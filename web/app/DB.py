@@ -874,7 +874,7 @@ def deleteStrategyLogById(strategy_log_id):
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
-    sql = " delete from strategy_log where strategy_log_id=%s;"
+    sql = " delete from strategy_log where strategy_log_id = %s;"
     param = (strategy_log_id)
     cursor.execute(sql, param)
     connection.commit()
