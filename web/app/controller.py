@@ -74,12 +74,12 @@ def getLogDetail(stratgyLogId, creator):
     return DB.getLogDetail(stratgyLogId, creator)
 
 
-# 查询历史账户列表
+# 删除某条策略 这个最后再测试；
 def deleteStrategyById(strategyId):
     return DB.deleteStrategyById(strategyId)
 
 
-# 查询策略列表
+# 查询策略列表， 获取所有策略
 def getALLStrategy(creator):
     return DB.getALLStrategy(creator);
 
