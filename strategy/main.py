@@ -76,7 +76,7 @@ def strategy_combination_a(start_time, end_time, init_balance):
         account_id_buy = account_insert(position=position, t=t, strategy_log_id=log_id, signal=int(buy_flag.signal),
                                         transaction_status=status)
 
-    #  回写策略执行后总资产到strategy_log表
+    # 回写策略执行后总资产到strategy_log表
     write_back2log(position, log_id)
 
 
@@ -229,8 +229,10 @@ def get_strategy_conf_list(strategy_id):
 
 # 内部方法
 def create_conditions_dictionary(df):
-    dictionary = {'close(T-1)': 0, 'open(T-1)': 0, 'high(T-1)': 0, 'low(T-1)': 0,
-                  'close(T-2)': 0, 'open(T-2)': 0, 'high(T-2)': 0, 'low(T-2)': 0}
+    dictionary = {'close(T)': 0, 'open(T)': 0, 'high(T)': 0, 'low(T)': 0,
+                  'close(T-1)': 0, 'open(T-1)': 0, 'high(T-1)': 0, 'low(T-1)': 0,
+                  'close(T-2)': 0, 'open(T-2)': 0, 'high(T-2)': 0, 'low(T-2)': 0,
+                  'ma5(T)': 0, 'ma10(T)': 0}
     for index, condition in df.iterrows():
         technical_index = condition[2]
         price = condition[3]

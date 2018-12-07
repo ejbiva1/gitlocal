@@ -29,7 +29,12 @@ def loadLogList():
     strategy_log_list = []
     session.permanent = True
     session['userId'] = 1
-    strategyLogList = controller.loadLogList(session['userId'])
+
+    strategy_id = request.json.get('strategy_id')
+    if strategy_id is None:
+        strategy_id = 0
+
+    strategyLogList = controller.loadLogList(session['userId'], strategy_id)
     for item in strategyLogList:
         strategy_log_list.append(item.__dict__)
     print(strategy_log_list)
@@ -53,41 +58,31 @@ def getLogDetail(strategyLogId):
     return result
 
 
+# 保存并执行 策略   这里就先执行新策略吧
 @app.route('/saveStrategyConf', methods=['post'])
 def saveStrategyConf():
     session.permanent = True
     session['userId'] = 1
-    # strategyId,userId,initBalance,startDate,endDate,strategyConfItemlist
+
     strategy_name = request.json.get("strategy_name")
-    # print(strategy_Id)
-    startDate = request.json.get("startDate")
 
-    print(startDate)
-    # print(start_Date)
-    endDate = request.json.get("endDate")
-    print(endDate)
-    # print(end_Date)
-    initBalance = request.json.get("initBalance")
-    # print(init_Balance)
+    start_time = request.json.get("start_time")
+    end_time = request.json.get("end_time")
+    init_balance = request.json.get("init_balance")
     strategyConfItemlist = request.json.get("strategyConfItemlist")
-    coin_category = request.json.get("kind")
+    coin_category = request.json.get("coin_category")
 
-    regression_result = controller.saveStrategyConf(strategy_name=strategy_name, userId=session['userId'],
-                                                    initBalance=initBalance,
-                                                    startDate=startDate,
-                                                    endDate=endDate,
-                                                    coin_category=coin_category,
-                                                    strategyConfItemlist=strategyConfItemlist)
-    # regression_result = main.strategy_poc(strategy_id=strategyId, user_id=session['userId'],
-    #                                       coin_category=coin_category,
-    #                                       start_time=startDate, end_time=endDate,
-    #                                        init_balance=initBalance)
+    regression_result = controller.saveStrategyAndRun(strategy_name=strategy_name,
+                                                      userId=session['userId'],
+                                                      init_balance=init_balance,
+                                                      start_time=start_time,
+                                                      end_time=end_time,
+                                                      coin_category=coin_category,
+                                                      strategyConfItemlist=strategyConfItemlist)
 
     print(regression_result)
-    # print(regression_result.__dict__)
 
-    response = make_response(
-        json.dumps({'result': regression_result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(json.dumps({'result': regression_result}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
@@ -105,6 +100,20 @@ def getALLStrategy():
         strategy_list.append(item.__dict__)
     print(strategy_list)
     result = json.dumps({"list": strategy_list}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/getStrategyDetail', methods=['post'])
+def getStrategyDetail():
+    strategy_id = request.json.get('strategy_id')
+    session.permanent = True
+    session['userId'] = 1
+    strategy = controller.getStrategyDetail(creator=session['userId'], strategy_id=strategy_id)
+
+    result = json.dumps({"result": strategy.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
     response = make_response(result)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
@@ -163,6 +172,101 @@ def deleteStrategyLogById():
 
     except ZeroDivisionError as e:
         print('except:', e)
+
+
+@app.route('/getStrategy', methods=['post'])
+def getStrategy():
+    strategy_id = request.json.get('strategy_id')
+    session.permanent = True
+    session['userId'] = 1
+
+    try:
+
+        strategy_confs = controller.getStrategy(creator=session['userId'], strategyId=strategy_id)
+
+        result = json.dumps({"result": strategy_confs.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+
+        response = make_response(result);
+        response.status = "200"
+        response.headers["Content-Type"] = "application/json"
+
+        return response
+
+    except ZeroDivisionError as e:
+        print('except:', e)
+
+
+@app.route('/saveStrategy', methods=['post'])
+def saveStrategy():
+    session.permanent = True
+    session['userId'] = 1
+    strategy_id = request.json.get('strategy_id')
+    print(strategy_id)
+    if strategy_id is None:
+        strategy_id = 0;
+    strategy_name = request.json.get("strategy_name")
+    start_time = request.json.get("start_time")
+    end_time = request.json.get("end_time")
+    init_balance = request.json.get("init_balance")
+    strategyConfItemlist = request.json.get("strategyConfItemlist")
+    coin_category = request.json.get("kind")
+
+    regression_result = controller.saveStrategy(
+        strategy_id=strategy_id,
+        strategy_name=strategy_name,
+        userId=session['userId'],
+        init_balance=init_balance,
+        start_time=start_time,
+        end_time=end_time,
+        coin_category=coin_category,
+        strategyConfItemlist=strategyConfItemlist)
+
+    response = make_response(json.dumps({'result': regression_result}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+@app.route('/executeStrategy', methods=['post'])
+def executeStrategy():
+    session.permant = True
+    session['userId'] = 1
+    strategy_id = request.json.get('strategy_id')
+
+    result = controller.executeStrategy(userId=session['userId'], strategy_id=strategy_id)
+
+    response = make_response(json.dumps({'result': result}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+@app.route('/mob_executeStrategy', methods=['post'])
+def mob_executeStrategy():
+    session.permant = True
+    session['userId'] = 1
+    strategy_id = request.json.get('strategy_id')
+    start_time = request.json.get('start_time')
+    end_time = request.json.get('end_time')
+    print(end_time)
+    init_balance = request.json.get('init_balance')
+    coin_category = request.json.get('coin_category')
+
+    result = controller.mob_executeStrategy(userId=session['userId'], strategy_id=strategy_id, start_time=start_time,
+                                            end_time=end_time, init_balance=init_balance, coin_category=coin_category)
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+    return {}
 
 
 if __name__ == "__main__":
