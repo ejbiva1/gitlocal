@@ -1,8 +1,7 @@
 import pymysql
 
-# connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
+#connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
-
 
 class StrategyLog:
     strategy_log_id = 0
@@ -742,6 +741,7 @@ def getStrategyLogList(creator):
           " where creator=%s" \
           " order by create_time"
 
+    #print(sql)
     # 执行SQL语句
     cursor.execute(sql, creator)
     # 获取所有记录列表
@@ -776,6 +776,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
 
     # 执行SQL语句
     param = (creator, strategy_id)
+    #print(sql)
     cursor.execute(sql, param)
     # 获取所有记录列表
     results = cursor.fetchall()

@@ -5,6 +5,8 @@ import os
 import web.app.controller as controller
 from strategy import main
 from facilties.functional import JsonExtendEncoder, HttpResponseModel
+from flask import Flask, Blueprint, render_template, request, redirect, jsonify
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
@@ -58,27 +60,30 @@ def getLogDetail(strategyLogId):
     return result
 
 
-# 保存并执行 策略   这里就先执行新策略吧
+# 保存并执行 策略
 @app.route('/saveStrategyConf', methods=['post'])
 def saveStrategyConf():
     session.permanent = True
     session['userId'] = 1
 
     strategy_name = request.json.get("strategy_name")
-
+    strategy_id = request.json.get("strategy_id")
     start_time = request.json.get("start_time")
     end_time = request.json.get("end_time")
     init_balance = request.json.get("init_balance")
     strategyConfItemlist = request.json.get("strategyConfItemlist")
     coin_category = request.json.get("coin_category")
+    strategy_oper = request.json.get('strategy_oper')
 
-    regression_result = controller.saveStrategyAndRun(strategy_name=strategy_name,
+    regression_result = controller.saveStrategyAndRun(strategy_id=strategy_id,
+                                                      strategy_name=strategy_name,
                                                       userId=session['userId'],
                                                       init_balance=init_balance,
                                                       start_time=start_time,
                                                       end_time=end_time,
                                                       coin_category=coin_category,
-                                                      strategyConfItemlist=strategyConfItemlist)
+                                                      strategyConfItemlist=strategyConfItemlist,
+                                                      strategy_oper=strategy_oper)
 
     print(regression_result)
 
@@ -209,9 +214,9 @@ def saveStrategy():
     end_time = request.json.get("end_time")
     init_balance = request.json.get("init_balance")
     strategyConfItemlist = request.json.get("strategyConfItemlist")
-    coin_category = request.json.get("kind")
+    coin_category = request.json.get("coin_category")
 
-    regression_result = controller.saveStrategy(
+    result = controller.saveStrategy(
         strategy_id=strategy_id,
         strategy_name=strategy_name,
         userId=session['userId'],
@@ -221,11 +226,42 @@ def saveStrategy():
         coin_category=coin_category,
         strategyConfItemlist=strategyConfItemlist)
 
-    response = make_response(json.dumps({'result': regression_result}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
 
+    return response
+
+
+@app.route('/updateStrategy', methods=['post'])
+def updateStrategy():
+    session.permanent = True
+    session['userId'] = 1
+    strategy_id = request.json.get('strategy_id')
+    print(strategy_id)
+    if strategy_id is None:
+        strategy_id = 0;
+    strategy_name = request.json.get("strategy_name")
+    start_time = request.json.get("start_time")
+    end_time = request.json.get("end_time")
+    init_balance = request.json.get("init_balance")
+    coin_category = request.json.get("coin_category")
+
+    result = controller.updateStrategy(
+        strategy_id=strategy_id,
+        strategy_name=strategy_name,
+        userId=session['userId'],
+        init_balance=init_balance,
+        start_time=start_time,
+        end_time=end_time,
+        coin_category=coin_category
+    )
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
     return response
 
 
@@ -237,7 +273,7 @@ def executeStrategy():
 
     result = controller.executeStrategy(userId=session['userId'], strategy_id=strategy_id)
 
-    response = make_response(json.dumps({'result': result}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
@@ -265,8 +301,6 @@ def mob_executeStrategy():
     response.headers["Content-Type"] = "application/json"
 
     return response
-
-    return {}
 
 
 if __name__ == "__main__":
