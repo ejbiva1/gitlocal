@@ -1,6 +1,7 @@
 import json
 from datetime import date, datetime
 from decimal import Decimal
+from flask import Flask, request, session, make_response
 
 
 class JsonExtendEncoder(json.JSONEncoder):
@@ -38,3 +39,14 @@ class ResponseModel:
         self.data = data;
         self.code = code;
         self.message = message;
+
+
+class HttpResponseModel:
+
+    def __init__(self, result):
+
+        self.response = make_response(result);
+        self.response.status = "200"
+        self.response.headers["Content-Type"] = "application/json"
+        print(self.response)
+
