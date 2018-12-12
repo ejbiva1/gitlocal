@@ -79,6 +79,25 @@ def strategy_combination_a(start_time, end_time, init_balance):
     #  回写策略执行后总资产到strategy_log表
     write_back2log(position, log_id)
 
+    # 计算基准收益率
+    get_benchmark_profit(end_time, init_balance, position, start_time)
+
+
+def get_benchmark_profit(end_time, init_balance, position, start_time):
+    data = position.datas
+    df_start = data[data['id'] == start_time]
+    df_end = data[data['id'] == end_time]
+    new_balance = init_balance
+    if df_start.iat[0, 2] is not 0:
+        amount = Decimal(init_balance) / Decimal(df_start.iat[0, 2])
+    else:
+        amount = 0
+    new_balance = Decimal(str(new_balance)).quantize(Decimal('0.00'))
+    new_balance -= Decimal(amount) * Decimal(df_start.iat[0, 2])
+    new_balance += amount * Decimal(df_end.iat[0, 2])
+    benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
+    print('benchmark_profit: ' + str(benchmark_profit))
+
 
 def account_insert(position, t, strategy_log_id, signal, transaction_status):
     df = position.datas[position.datas['id'] == t]
@@ -274,17 +293,19 @@ def get_formula(operator, price):
 
 
 if __name__ == '__main__':
-    # start_time = 1510070400
+    start_time = 1525449600
     # start_time = 1508990400
-    print(time())
-    start_time = 1517587200
+    # print(time())
+    # start_time = 1517587200
     # end_time = 1510675200
     # end_time = 1509022800
-    end_time = 1517760000
-    init_balance = 200000
+    end_time = 1530201600
+    init_balance = 1000000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
-    response = strategy_poc(strategy_id=22, start_time=start_time, end_time=end_time,
-                            init_balance=init_balance)
-    print('benchmark_profit=' + str(response.benchmark_profit))
-    print('strategy_profit=' + str(response.strategy_profit))
-    print(time())
+    strategy_combination_a(start_time=start_time, end_time=end_time, init_balance=init_balance)
+
+    # response = strategy_poc(strategy_id=22, start_time=start_time, end_time=end_time,
+    #                         init_balance=init_balance)
+    # print('benchmark_profit=' + str(response.benchmark_profit))
+    # print('strategy_profit=' + str(response.strategy_profit))
+    # print(time())
