@@ -1,10 +1,10 @@
 import DB
 import sys
+from marshmallow import Schema, fields
 
 sys.path.append("../..")
 import strategy.main as strategyTool
 from facilties.functional import ResponseModel
-
 
 def getStrategy():
     return DB.getStrategy()
@@ -23,32 +23,33 @@ def startStartStrategy(strategyId, initBalance, startDate, endDate):
 def checkStrategyName(strategy_name, creator):
     is_strategy_name_exist = DB.checkStrategyName(strategy_name, creator)
     strategy_name_exist = {'exist': is_strategy_name_exist}
-    response = ResponseModel(data=strategy_name_exist, code='1', message='success')
+    response = ResponseModel(data=strategy_name_exist, code='1', message='策略名称已存在')
     return response
 
 
 # 保存策略并执行策略
 def saveStrategyAndRun(strategy_id, strategy_name, userId, coin_category, init_balance, start_time, end_time,
                        strategyConfItemlist, strategy_oper):
-    response = checkStrategyName(strategy_name=strategy_name, creator=userId)
-    if (response.data.exist == True):
-        return response
-
-    else:
-        if strategy_oper == "save":
-            # update 并且更新
-            updateStrategy(strategy_id, strategy_name, userId, coin_category, init_balance, start_time, end_time,
-                           strategyConfItemlist)
-
-        elif strategy_oper == "submit":
-            result = saveStrategy(strategy_name, userId, coin_category, init_balance, start_time, end_time,
-                                  strategyConfItemlist)
-
-            strategy_id = result.data
-
-        result = strategyTool.strategy_poc(strategy_id, start_time, end_time, init_balance)
-
+    # 　　没有更新　strategy_name
+    if DB.checkPreviousStrategyName(strategy_id=strategy_id, strategy_name=strategy_name, creator=userId) is True:
+        result = strategyOperation(strategy_id, strategy_name, userId, coin_category, init_balance, start_time,
+                                   end_time,
+                                   strategyConfItemlist, strategy_oper)
         return result
+
+    # 已 更新 strategy_name
+    else:
+        response = checkStrategyName(strategy_name=strategy_name, creator=userId).__dict__
+        if response['data']['exist'] is True:
+            return response
+
+        else:
+            # strategyOperation 是 判断 updateStrategy 还是  重新添加一条 Strategy 根据 前端传值: strategy_oper
+            result = strategyOperation(strategy_id, strategy_name, userId, coin_category, init_balance, start_time,
+                                       end_time,
+                                       strategyConfItemlist, strategy_oper)
+
+            return result
 
 
 # 保存策略名称
@@ -86,6 +87,7 @@ def getALLStrategy(creator):
 # 查询某个策略
 def getStrategyDetail(creator, strategy_id):
     strategy = DB.getStrategyDetail(creator, strategy_id);
+    schema = ResponseSchema
     response = ResponseModel(data=strategy.__dict__, code='1', message='success')
     return response;
 
@@ -139,9 +141,10 @@ def updateStrategy(strategy_name, userId, strategy_id, coin_category, init_balan
         return response
 
     else:  # 执行更新策略逻辑
-        strategy_id = DB.updateStrategy(strategy_id, strategy_name, userId, coin_category, init_balance, start_time, end_time)
+        strategy_id = DB.updateStrategy(strategy_id, strategy_name, userId, coin_category, init_balance, start_time,
+                                        end_time)
 
-        result = ResponseModel(data=strategy_id, code = '1', message= 'success')
+        result = ResponseModel(data=strategy_id, code='1', message='success')
 
         return result
 
@@ -150,14 +153,23 @@ def updateStrategy(strategy_name, userId, strategy_id, coin_category, init_balan
 def executeStrategy(userId, strategy_id):
     # 查询策略基本配置
     strategy_base_info = DB.getStrategyDetail(creator=userId, strategy_id=strategy_id)
-    print(strategy_base_info.start_time, strategy_base_info.end_time,
-          strategy_base_info.init_balance)
+
+    # 执行poc
     regression_result = strategyTool.strategy_poc(strategy_id, strategy_base_info.start_time,
                                                   strategy_base_info.end_time,
                                                   strategy_base_info.init_balance)
 
-    response = {"strategy_base_info": strategy_base_info.__dict__,
-                "regression_result": regression_result.__dict__}
+    # 记录插入 strategy_log  返回最新 strategy_log_id
+    strategy_log_id = DB.insertStrategyLog(strategy_id=strategy_id, start_time=strategy_base_info.start_time,
+                                           end_time=strategy_base_info.end_time,
+                                           userId=userId, coin_category=strategy_base_info.coin_category,
+                                           init_balance=strategy_base_info.init_balance)
+
+    response = {
+        "strategy_base_info": strategy_base_info.__dict__,
+        "regression_result": regression_result.__dict__,
+        "strategy_log_id": strategy_log_id
+    }
     result = ResponseModel(data=response, code='1', message='success')
     return result
 
@@ -171,12 +183,51 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, coin_category
     # 执行策略
     result = strategyTool.strategy_poc(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
                                        init_balance=init_balance)
+    print(result)
+
+    if result is True:
+        result = result.__dict__
+    else:
+        result = {}
+
+    # 记录插入 strategy_log  返回最新 strategy_log_id
+    strategy_log_id = DB.insertStrategyLog(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
+                                           userId=userId, coin_category=coin_category, init_balance=init_balance)
 
     # 策略基本信息
-    strategy_info = DB.getStrategyDetail(creator=userId, strategy_id=strategy_id)
+    # 这里如果没有该策略？
+    strategy_base_info = DB.getStrategyDetail(creator=userId, strategy_id=strategy_id)
 
-    data = {'regression_result': result.__dict__, 'strategy_info': strategy_info.__dict__}
+    # 策略没有配置相应 买卖条件； buy_signal and sell_signal
 
-    response = ResponseModel(data=data, code='0', message='success')
+    # 返回策略 trade_history 历史数据
+    # strategy_trade_history = DB.mob_trade_history(strategy_log_id=strategy_log_id)
+
+    data = {
+        'regression_result': result,
+        'strategy_base_info': strategy_base_info.__dict__,
+        'strategy_log_id': strategy_log_id,
+        # 'strategy_trade_history': strategy_trade_history.__dict__
+    }
+
+    response = ResponseModel(data=data, code='1', message='success')
     print(response)
     return response
+
+
+# update Strategy ; save Strategy
+def strategyOperation(strategy_id, strategy_name, userId, coin_category, init_balance, start_time, end_time,
+                      strategyConfItemlist, strategy_oper):
+    if strategy_oper == "save":
+        # update 并且更新
+        updateStrategy(strategy_id, strategy_name, userId, coin_category, init_balance, start_time, end_time)
+
+    elif strategy_oper == "submit":
+        result = saveStrategy(strategy_name, userId, coin_category, init_balance, start_time, end_time,
+                              strategyConfItemlist)
+
+        strategy_id = result.data
+
+    result = strategyTool.strategy_poc(strategy_id, start_time, end_time, init_balance)
+
+    return result

@@ -1,7 +1,8 @@
 import pymysql
 
-#connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
+# connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
+
 
 class StrategyLog:
     strategy_log_id = 0
@@ -242,6 +243,7 @@ class Strategy:
     creator = 0
     script_url = ""
     peroid = 0
+    method_name = ""
     coin_category = ""
     init_balance = 0
     start_time = ""
@@ -255,7 +257,8 @@ class Strategy:
     status = 0
 
     def __init__(self, strategy_id, strategy_name, description, create_time, update_time, loading_times, creator,
-                 script_url, peroid, coin_category, init_balance, start_time, end_time, last_run, run_times, duration,
+                 script_url, peroid, method_name, coin_category, init_balance, start_time, end_time, last_run,
+                 run_times, duration,
                  benchmark,
                  drawdown, status):
         self.strategy_id = strategy_id
@@ -267,6 +270,7 @@ class Strategy:
         self.creator = creator
         self.script_url = script_url
         self.peroid = peroid
+        self.method_name = method_name
         self.coin_category = coin_category
         self.init_balance = init_balance
         self.start_time = start_time
@@ -364,6 +368,9 @@ class Strategy:
 
     def set_peroid(self, peroid):
         self.peroid = peroid
+
+    def set_method_name(self, method_name):
+        self.method_name = method_name
 
     def set_init_balance(self, init_balance):
         self.init_balance = init_balance
@@ -667,6 +674,7 @@ def getALLStrategy(creator):
           " creator," \
           " script_url," \
           " peroid," \
+          " method_name," \
           " coin_category, " \
           " init_balance," \
           " start_time," \
@@ -683,7 +691,7 @@ def getALLStrategy(creator):
     for row in results:
         # 打印结果
         strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                            row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18])
+                            row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
         strategyList.append(strategy)
     cursor.close()
     return strategyList
@@ -701,6 +709,7 @@ def getStrategyDetail(creator, strategy_id):
           " creator," \
           " script_url," \
           " peroid," \
+          " method_name," \
           " coin_category, " \
           " init_balance," \
           " start_time," \
@@ -717,7 +726,7 @@ def getStrategyDetail(creator, strategy_id):
     # 获取所有记录列表
     row = cursor.fetchone()  # 打印结果
     strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                        row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18])
+                        row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
     cursor.close()
     return strategy
 
@@ -741,7 +750,7 @@ def getStrategyLogList(creator):
           " where creator=%s" \
           " order by create_time"
 
-    #print(sql)
+    # print(sql)
     # 执行SQL语句
     cursor.execute(sql, creator)
     # 获取所有记录列表
@@ -776,7 +785,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
 
     # 执行SQL语句
     param = (creator, strategy_id)
-    #print(sql)
+    # print(sql)
     cursor.execute(sql, param)
     # 获取所有记录列表
     results = cursor.fetchall()
@@ -854,6 +863,7 @@ def getStrategy(userId, strategyId):
           " creator," \
           " script_url," \
           " peroid," \
+          " method_name," \
           " coin_category,  " \
           " init_balance," \
           " start_time," \
@@ -870,7 +880,7 @@ def getStrategy(userId, strategyId):
     row = cursor.fetchone()
     # 打印结果
     strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                        row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18])
+                        row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
     # print(strategy)
     strategy.set_strategy_conf_items(getStrategyConfItem(row[0]))
     # strategyConf.printAll()
@@ -932,6 +942,20 @@ def checkStrategyName(strategy_name, creator):
     cursor.execute(sql, param)
     results = cursor.fetchall()
     if (len(results) > 0):
+        return True
+    else:
+        return False
+
+
+def checkPreviousStrategyName(strategy_id, creator, strategy_name):
+    cursor = connection.cursor()
+    # sql 查询语句
+    sql = "select strategy_name from strategy where strategy_id=%s and creator=%s"
+    params = (strategy_id, creator)
+    cursor.execute(sql, params)
+    result = cursor.fetchone()
+    print(result)
+    if (result[0] == strategy_name):
         return True
     else:
         return False
@@ -1011,6 +1035,43 @@ def mob_updateStrategy(strategy_id, userId, coin_category, init_balance, start_t
     sql = "update strategy set  coin_category = %s, init_balance = %s, start_time= %s, end_time = %s " \
           " where strategy_id = %s and creator = %s "
 
-    params = (strategy_id, userId, coin_category, init_balance, start_time, end_time)
+    params = (coin_category, init_balance, start_time, end_time, strategy_id, userId)
     cursor.execute(sql, params)
     connection.commit()
+
+
+def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_time, end_time):
+    cursor = connection.cursor()
+
+    sql = "insert into strategy_log(strategy_id, start_date, end_date, init_balance, coin_category,creator, create_time ) " \
+          " values(%s, %s, %s, %s, %s, %s, now()); "
+
+    params = (strategy_id, start_time, end_time, init_balance, coin_category, userId)
+    cursor.execute(sql, params)
+    cursor.execute('SELECT LAST_INSERT_ID();')
+    strategy_log_id = cursor.fetchone()
+    connection.commit()
+    return strategy_log_id
+
+
+def mob_trade_history(strategy_log_id):
+    trade_historys = []
+    cursor = connection.cursor()
+    sql = "select st.t, sa.signal, " \
+          "st.pre_position,  " \
+          "st.post_position, " \
+          "st.pre_balance," \
+          "st.post_balance," \
+          "sa.transaction_status from strategy_log sl " \
+          "inner join strategy_account sa on sl.strategy_log_id = sa.strategy_log_id " \
+          "inner join strategy_transaction  st on sa.strategy_account_id = st.strategy_account_id " \
+          "where sl.strategy_log_id = %s ;"
+
+    params = (strategy_log_id)
+    cursor.execute(sql, params)
+    results = cursor.fetchall()
+
+    for item in results:
+        trade_historys.append(item)
+    cursor.close()
+    return trade_historys

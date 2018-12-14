@@ -7,7 +7,6 @@ from strategy import main
 from facilties.functional import JsonExtendEncoder, HttpResponseModel
 from flask import Flask, Blueprint, render_template, request, redirect, jsonify
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
 
@@ -270,8 +269,15 @@ def executeStrategy():
     session.permant = True
     session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
+    start_time = request.json.get('start_time')
+    end_time = request.json.get('end_time')
+    coin_category = request.json.get('coin_category')
+    init_balance = request.json.get('init_balance')
 
-    result = controller.executeStrategy(userId=session['userId'], strategy_id=strategy_id)
+    result = controller.mob_executeStrategy(userId=session['userId'], strategy_id=strategy_id,
+                                                         start_time=start_time,
+                                                         end_time=end_time, init_balance=init_balance,
+                                                         coin_category=coin_category)
 
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
@@ -281,6 +287,7 @@ def executeStrategy():
     return response
 
 
+# 诗丽 手机端 调用 该接口， 执行poc 并返回相应历史数据；
 @app.route('/mob_executeStrategy', methods=['post'])
 def mob_executeStrategy():
     session.permant = True
