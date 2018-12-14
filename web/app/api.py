@@ -17,7 +17,7 @@ def startStrategy():
     endTime = request.json.get("endTime")
     initBalance = request.json.get("initBalance")
     coinCategory = request.json.get("coinCategory")
-    if initBalance <= 1000000 and initBalance >= 10000:
+    if 1000000 >= initBalance >= 10000:
         controller.startStartStrategy(strategyId, initBalance, startTime, endTime)
         return make_response(json.dumps({'result': 'strategy started'}))
     else:
@@ -186,7 +186,7 @@ def getStrategy():
 
         result = json.dumps({"result": strategy_confs.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
 
-        response = make_response(result);
+        response = make_response(result)
         response.status = "200"
         response.headers["Content-Type"] = "application/json"
 
@@ -203,7 +203,7 @@ def saveStrategy():
     strategy_id = request.json.get('strategy_id')
     print(strategy_id)
     if strategy_id is None:
-        strategy_id = 0;
+        strategy_id = 0
     strategy_name = request.json.get("strategy_name")
     start_time = request.json.get("start_time")
     end_time = request.json.get("end_time")
