@@ -52,6 +52,32 @@ def read_datas_1day_test(startTime, endTime):
     return df
 
 
+def read_datas_5min(startTime, endTime):
+    engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
+    # 变量输入表名 table = 'btc_kline_5min'
+    sql = '''
+        select * from quantcoin.btc_kline_5min
+        where id >= %(start)s 
+        and id <= %(endTime)s
+        '''
+    df = pd.read_sql_query(sql, params={'start': startTime, 'endTime': endTime}, con=engine,
+                           index_col='kline_id')
+    return df
+
+
+def read_datas_5min_test(startTime, endTime):
+    engine = create_engine('mysql+pymysql://root:@localhost:3306/qex_local_test?charset=utf8MB4')
+    # 变量输入表名 table = 'btc_kline_5min'
+    sql = '''
+        select * from btc_kline_5min
+        where id >= %(start)s 
+        and id <= %(endTime)s
+        '''
+    df = pd.read_sql_query(sql, params={'start': startTime, 'endTime': endTime}, con=engine,
+                           index_col='kline_id')
+    return df
+
+
 # todo 加入一个用户判断字段(需要连表查询确保记录唯一)
 def get_trade_info(time_stamp, strategy_id, flag):
     engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
