@@ -953,12 +953,15 @@ def checkPreviousStrategyName(strategy_id, creator, strategy_name):
     sql = "select strategy_name from strategy where strategy_id=%s and creator=%s"
     params = (strategy_id, creator)
     cursor.execute(sql, params)
-    result = cursor.fetchone()
-    print(result)
-    if (result[0] == strategy_name):
-        return True
-    else:
-        return False
+    while True:
+        result = cursor.fetchone()
+        connection.commit()
+        if result == None:
+            break
+        if result[0] == strategy_name:
+            return True
+        else:
+            return False
 
 
 def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
@@ -1005,6 +1008,9 @@ def deleteStrategyLogById(strategy_log_id):
 
 # 更新策略
 def updateStrategy(strategy_id, strategy_name, creator, coin_category, init_balance, start_time, end_time):
+    # param = (strategy_name, creator)
+    # cursor.execute(sql, param)
+    # results = cursor.fetchall()
     cursor = connection.cursor()
     strategyConfList = []
     # SQL update 语句
@@ -1013,7 +1019,7 @@ def updateStrategy(strategy_id, strategy_name, creator, coin_category, init_bala
     param = (strategy_name, coin_category, init_balance, start_time, end_time, strategy_id, creator)
     cursor.execute(sql, param)
     # cursor.execute('SELECT LAST_INSERT_ID();')
-    strategy_id = cursor.fetchone()
+    #strategy_id = cursor.fetchone()
     connection.commit()
     return strategy_id
 
