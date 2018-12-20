@@ -661,6 +661,46 @@ class StrategyTransaction:
         self.low = low
 
 
+class TradeHistory:
+    t = 0
+    signal = 0
+    pre_position = 0
+    post_position = 0
+    pre_balance = 0
+    post_balance = 0
+    transaction_status = 0
+
+    def __init__(self, t, signal, pre_position, post_position, pre_balance, post_balance, transaction_status):
+        self.t = t
+        self.signal = signal
+        self.pre_position = pre_position
+        self.post_position = post_position
+        self.pre_balance = pre_balance
+        self.post_balance = post_balance
+        self.transaction_status = transaction_status
+
+    def get_trade_history_t(self):
+        return self.t
+
+    def get_trade_history_signal(self):
+        return self.signal
+
+    def get_trade_history_pre_position(self):
+        return self.pre_position
+
+    def get_trade_hisoty_post_position(self):
+        return self.post_position
+
+    def get_trade_history_pre_balance(self):
+        return self.pre_balance
+
+    def get_trade_history_post_balance(self):
+        return self.post_balance
+
+    def get_trade_history_transaction_status(self):
+        return self.transaction_status
+
+
 def getALLStrategy(creator):
     cursor = connection.cursor()
     strategyList = []
@@ -1019,7 +1059,7 @@ def updateStrategy(strategy_id, strategy_name, creator, coin_category, init_bala
     param = (strategy_name, coin_category, init_balance, start_time, end_time, strategy_id, creator)
     cursor.execute(sql, param)
     # cursor.execute('SELECT LAST_INSERT_ID();')
-    #strategy_id = cursor.fetchone()
+    # strategy_id = cursor.fetchone()
     connection.commit()
     return strategy_id
 
@@ -1060,7 +1100,7 @@ def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_ti
     return strategy_log_id
 
 
-def mob_trade_history(strategy_log_id):
+def mob_trade_history(strategy_id, creator):
     trade_historys = []
     cursor = connection.cursor()
     sql = "select st.t, sa.signal, " \
@@ -1069,15 +1109,19 @@ def mob_trade_history(strategy_log_id):
           "st.pre_balance," \
           "st.post_balance," \
           "sa.transaction_status from strategy_log sl " \
-          "inner join strategy_account sa on sl.strategy_log_id = sa.strategy_log_id " \
+          "inner join strategy s on sl.strategy_id = s.strategy_id " \
+          "inner join  strategy_account sa on sl.strategy_log_id = sa.strategy_log_id " \
           "inner join strategy_transaction  st on sa.strategy_account_id = st.strategy_account_id " \
-          "where sl.strategy_log_id = %s ;"
+          "where  sl.strategy_id = %s  and s.creator = %s ;"
 
-    params = (strategy_log_id)
+    params = (strategy_id, creator)
+
     cursor.execute(sql, params)
     results = cursor.fetchall()
 
     for item in results:
-        trade_historys.append(item)
+        trade_history = TradeHistory(item[0], item[1], item[2], item[3], item[4], item[5], item[6])
+
+        trade_historys.append(trade_history)
     cursor.close()
     return trade_historys

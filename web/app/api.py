@@ -129,7 +129,8 @@ def checkStrategyName():
     if strategy_id is None:
         strategy_id = 0
     strategy_name = request.json.get("strategy_name")
-    is_strategy_name_exist = controller.checkStrategyName(strategy_name=strategy_name, creator=session['userId'],strategy_id=strategy_id)
+    is_strategy_name_exist = controller.checkStrategyName(strategy_name=strategy_name, creator=session['userId'],
+                                                          strategy_id=strategy_id)
 
     result = json.dumps({"result": is_strategy_name_exist.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
     response = make_response(result)
@@ -211,23 +212,24 @@ def saveStrategy():
     init_balance = request.json.get("init_balance")
     strategy_conf_item_list = request.json.get("strategyConfItemlist")
     coin_category = request.json.get("coin_category")
-    strategy_oper  = request.json.get("strategy_oper")
+    strategy_oper = request.json.get("strategy_oper")
 
     result = controller.saveStrategyConfOrUpdate(
-        strategy_id = strategy_id,
+        strategy_id=strategy_id,
         strategy_name=strategy_name,
         userId=session['userId'],
         init_balance=init_balance,
         start_time=start_time,
         end_time=end_time,
         coin_category=coin_category,
-        strategyConfItemlist=strategy_conf_item_list, strategy_oper = strategy_oper)
+        strategyConfItemlist=strategy_conf_item_list, strategy_oper=strategy_oper)
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
 
     return response
+
 
 @app.route('/executeStrategy', methods=['post'])
 def executeStrategy():
@@ -265,6 +267,24 @@ def mob_executeStrategy():
 
     result = controller.mob_executeStrategy(userId=session['userId'], strategy_id=strategy_id, start_time=start_time,
                                             end_time=end_time, init_balance=init_balance, coin_category=coin_category)
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+# 诗丽 手机端 调用 该接口， 获取策略 回测历史数据
+@app.route('/mob_strategytradehistory', methods=['post'])
+def mob_strategytradehistory():
+    session.permant = True
+    session['userId'] = 1
+
+    strategy_id = request.json.get('strategy_id')
+
+    result = controller.mob_strategy_trade_history(userId=session['userId'], strategy_id=strategy_id)
 
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)

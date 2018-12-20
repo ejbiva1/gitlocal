@@ -271,7 +271,7 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, coin_category
                           coin_category=coin_category, init_balance=init_balance)
 
     # 执行策略
-    print("strategy_poc: strategy_id ||",strategy_id)
+    print("strategy_poc: strategy_id ||", strategy_id)
     result = strategyTool.strategy_poc(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
                                        init_balance=init_balance)
 
@@ -307,3 +307,17 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, coin_category
         # 记录插入 strategy_log  返回最新 strategy_log_id
         # strategy_log_id = DB.insertStrategyLog(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
         #                                        userId=userId, coin_category=coin_category, init_balance=init_balance)
+
+
+# mobile 获取策略历史列表
+def mob_strategy_trade_history(userId, strategy_id):
+    trade_history_list = []
+
+    trade_historys = DB.mob_trade_history(strategy_id=strategy_id, creator=userId)
+
+    for trade_history in trade_historys:
+        trade_history_list.append(trade_history.__dict__)
+
+    response = ResponseModel(data=trade_history_list, code="1", message="success")
+
+    return response
