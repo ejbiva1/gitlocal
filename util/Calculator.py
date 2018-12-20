@@ -12,6 +12,7 @@ class Calculator:
         self.signal = signal
         self.position = position
         self.transaction_status = None
+        # todo transaction_status
         self.strategy_id = strategy_id
         self.strategy_account_id = strategy_account_id
 
@@ -184,8 +185,8 @@ class Calculator:
         balance_gap = Decimal(str(self.position.balance)) - pre_balance
 
         data = {
-            'strategy_account_id': [1],
-            # todo 'strategy_account_id': [self.strategy_account_id],
+            # 'strategy_account_id': [1],
+            'strategy_account_id': [self.strategy_account_id],
             't': [self.T],
             'cost': [cost],
             'volumn': [amount],
