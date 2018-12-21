@@ -701,6 +701,49 @@ class TradeHistory:
         return self.transaction_status
 
 
+class User:
+    user_id = 0
+    phone = 0
+    password = 0
+    nick_name = ""
+    open_id = ''
+    age = 0
+    gender = 0
+    avator = ''
+    levels = 0
+    strategy_amount = 0
+    history_amount = 0
+    style = 0
+    experience = 0
+
+    def __init__(self, user_id,
+                 phone,
+                 password,
+                 nick_name,
+                 open_id,
+                 age,
+                 gender,
+                 avator,
+                 levels,
+                 strategy_amount,
+                 history_amount,
+                 style,
+                 experience):
+        self.user_id = user_id
+        self.phone = phone
+        self.password = password
+        self.nick_name = nick_name
+        self.open_id = open_id
+        self.age = age
+        self.gender = gender
+        self.avator = avator
+        self.levels = levels
+        self.strategy_amount = strategy_amount
+        self.history_amount = history_amount
+        self.style = style
+        self.experience = experience
+
+
 def getALLStrategy(creator):
     cursor = connection.cursor()
     strategyList = []
@@ -1125,3 +1168,39 @@ def mob_trade_history(strategy_id, creator):
         trade_historys.append(trade_history)
     cursor.close()
     return trade_historys
+
+
+def getUser(phoneNo):
+    cursor = connection.cursor()
+    UserList = []
+    # SQL 查询语句
+    sql = " SELECT user_id,phone,password,nick_name,open_id,age,gender,avator,levels," \
+          "strategy_amount,history_amount,style,experience" \
+          " FROM user_info where phone=%s"
+
+    # 执行SQL语句
+    param = (phoneNo)
+    cursor.execute(sql, param)
+    # 获取所有记录列表
+    results = cursor.fetchall()
+    for row in results:
+        # 打印结果
+        item = User(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11],
+                    row[12])
+
+        UserList.append(item)
+    cursor.close()
+    return UserList
+
+
+def saveUserItem(phone, password, nick_name, open_id, age, gender, avator, levels,
+                 strategy_amount, history_amount, style, experience):
+    cursor = connection.cursor()
+    strategyConfList = []
+    # SQL  添加数据
+    sql = "INSERT INTO user_info(phone,password,nick_name,open_id,age,gender,avator,levels," \
+          "strategy_amount,history_amount,style,experience)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+    param = (phone, password, nick_name, open_id, age, gender, avator, levels,
+             strategy_amount, history_amount, style, experience)
+    cursor.execute(sql, param)
+    connection.commit()

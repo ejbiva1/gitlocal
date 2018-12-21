@@ -1,6 +1,6 @@
 import DB
 import sys
-from marshmallow import Schema, fields
+# from marshmallow import Schema, fields
 
 sys.path.append("../..")
 import strategy.main as strategyTool
@@ -228,7 +228,7 @@ def getStrategy(creator, strategyId):
     strategy_confs['strategy_conf_items'] = strategy_conf_list
 
     response = ResponseModel(data=strategy_confs, code='1', message='success')
-    return response;
+    return response
 
 
 # 删除strategy_log
