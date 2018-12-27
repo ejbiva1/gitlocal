@@ -25,6 +25,7 @@ class Log(Base):
     coin_category = Column(String(45))
     execution_result = Column(Integer)
     final_margin = Column(DECIMAL(10, 2))
+    benchmark = Column(DECIMAL(10, 2))
 
 
 # 初始化数据库连接:

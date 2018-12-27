@@ -43,12 +43,12 @@ def insert_2_strategy_account(new_account):
 # todo 更新结果数据
 def update_strategy_log(log2update):
     session = LogDBSession()
-    sql = 'UPDATE strategy_log SET final_margin = ' + str(log2update.final_margin) + ' WHERE strategy_log_id = ' + str(
+    sql = 'UPDATE strategy_log SET final_margin = ' + str(log2update.final_margin) + 'benchmark = ' + str(log2update.benchmark) + ' WHERE strategy_log_id = ' + str(
         log2update.strategy_log_id)
     # try:
     session.execute(sql)
     session.commit()
-    print('update final_margin to strategy_log successfully')
+    print('update final_margin,benchmark to strategy_log successfully')
 
     # except:
     #     发生错误时回滚

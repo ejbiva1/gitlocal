@@ -1,5 +1,6 @@
-import DB
+import web.app.DB as DB
 import sys
+
 # from marshmallow import Schema, fields
 
 sys.path.append("../..")
@@ -303,7 +304,6 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, coin_category
         print(response)
         return response
 
-
         # 记录插入 strategy_log  返回最新 strategy_log_id
         # strategy_log_id = DB.insertStrategyLog(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
         #                                        userId=userId, coin_category=coin_category, init_balance=init_balance)
@@ -320,4 +320,24 @@ def mob_strategy_trade_history(userId, strategy_id):
 
     response = ResponseModel(data=trade_history_list, code="1", message="success")
 
+    return response
+
+
+# mobile 获取我的 策略列表
+def mob_my_strategy_list(userId):
+    my_strategy_list = []
+    strategy_list = DB.mob_my_strategy_list(creator=userId)
+    for s in strategy_list:
+        my_strategy_list.append(s.__dict__)
+    response = ResponseModel(data=my_strategy_list, code="1", message="success")
+    return response
+
+
+# mobile 获取我的 策略回测历史列表
+def mob_get_strategy_log_list(strategy_id, user_id):
+    result_list = []
+    strategy_list = DB.mob_get_strategy_log_list(strategy_id=strategy_id, creator=user_id)
+    for s in strategy_list:
+        result_list.append(s.__dict__)
+    response = ResponseModel(data=result_list, code="1", message="success")
     return response

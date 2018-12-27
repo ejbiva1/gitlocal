@@ -7,8 +7,14 @@ import json
 from facilties.functional import JsonExtendEncoder, HttpResponseModel, ResponseModel
 import util.sms_chinese as sms
 
+# from cacheout import Cache
+# import time
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
+
+
+# cache = Cache(maxsize=256, ttl=60, timer=time.time)
 
 
 @app.route('/loginWithPwd', methods=['POST'])
@@ -20,6 +26,9 @@ def login_with_pwd():
     if user_list:
         user = user_list.pop()
         if pwd == user.password:
+            # session.permant = True
+            # session['userId'] = user.user_id
+            session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
             result = ResponseModel(data=data, code='1', message='登录成功！')
             response = makeResp(result)
@@ -40,9 +49,12 @@ def login_with_msg_code():
     code = request.json.get("msgCode")
     user_list = db.getUser(phone)
     if user_list:
-        # user = user_list.pop()
+        user = user_list.pop()
         cache_code = sms.cache.get(phone)
         if code == cache_code:
+            # session.permant = True
+            # session['userId'] = user.user_id
+            session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
             result = ResponseModel(data=data, code='1', message='登录成功！')
             response = makeResp(result)
@@ -123,21 +135,32 @@ def change_pwd():
     phone = request.json.get("phoneNo")
     pwd = request.json.get("password")
     code = request.json.get("msgCode")
-    user_list = db.getUser(phone)
-    if user_list:
-        # user = user_list.pop()
-        cache_code = sms.cache.get(phone)
-        if code == cache_code:
-            data = {'changePwd': 'Successed'}
-            result = ResponseModel(data=data, code='1', message='登录成功！')
-            response = makeResp(result)
+    phoneNo = session['phoneNo']
+    user_list = db.getUser(phoneNo)
+    if phone == phoneNo:
+        if user_list:
+            # user = user_list.pop()
+            cache_code = sms.cache.get(phone)
+            # userList = db.getUser(phone)
+            #         # user = userList.pop()
+            #         # user.user_id
+
+            if code == cache_code:
+                db.update_user_pwd(user_id=session['userId'], new_pwd=pwd)
+                data = {'changePwd': 'Successed'}
+                result = ResponseModel(data=data, code='1', message='密码修改成功！')
+                response = makeResp(result)
+            else:
+                data = {'changePwd': 'Failed'}
+                result = ResponseModel(data=data, code='0', message='密码修改失败,验证码不匹配！')
+                response = makeResp(result)
         else:
             data = {'changePwd': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='登录失败,验证码不匹配！')
+            result = ResponseModel(data=data, code='0', message='密码修改失败,内部错误')
             response = makeResp(result)
     else:
         data = {'changePwd': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='登录失败,该手机号未注册！')
+        result = ResponseModel(data=data, code='0', message='密码修改失败,该手机号与预留手机号不一致！')
         response = makeResp(result)
     return response
 

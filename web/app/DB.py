@@ -16,6 +16,7 @@ class StrategyLog:
     execution_result = ""
     strategy_name = ""
     final_margin = 0.0
+    benchmark = 0.0
 
     def __init__(self, strategy_log_id,
                  strategy_id,
@@ -27,7 +28,8 @@ class StrategyLog:
                  create_time,
                  execution_result,
                  strategy_name,
-                 final_margin):
+                 final_margin,
+                 benchmark):
         self.strategy_log_id = strategy_log_id
         self.strategy_id = strategy_id
         self.start_date = start_date
@@ -39,6 +41,7 @@ class StrategyLog:
         self.execution_result = execution_result
         self.strategy_name = strategy_name
         self.final_margin = final_margin
+        self.benchmark = benchmark
 
     def get_strategy_log_id(self):
         return self.strategy_log_id
@@ -744,6 +747,20 @@ class User:
         self.experience = experience
 
 
+# 用于myStrategy查询接口
+class MyStrategy:
+    strategy_id = 0
+    strategy_name = ""
+    create_time = ""
+    run_times = 0
+
+    def __init__(self, strategy_id, strategy_name, create_time, run_times):
+        self.strategy_id = strategy_id
+        self.strategy_name = strategy_name
+        self.create_time = create_time
+        self.run_times = run_times
+
+
 def getALLStrategy(creator):
     cursor = connection.cursor()
     strategyList = []
@@ -1170,6 +1187,33 @@ def mob_trade_history(strategy_id, creator):
     return trade_historys
 
 
+def mob_my_strategy_list(creator):
+    my_strategy_list = []
+    cursor = connection.cursor()
+    sql0 = "CREATE OR REPLACE VIEW MY_STRATEGY_LIST AS " \
+           "SELECT s.strategy_id, s.strategy_name, sl.create_time from strategy s " \
+           "inner join strategy_log sl on sl.strategy_id = s.strategy_id " \
+           "where s.creator = %s " \
+           "order by sl.create_time asc; "
+
+    sql1 = "select strategy_id,strategy_name,max(create_time),count(create_time)" \
+           " from MY_STRATEGY_LIST  " \
+           "group by strategy_id;"
+
+    sql2 = "DROP VIEW MY_STRATEGY_LIST"
+    params = (creator)
+    cursor.execute(sql0, params)
+    cursor.execute(sql1)
+    results = cursor.fetchall()
+    cursor.execute(sql2)
+
+    for item in results:
+        strategy = MyStrategy(strategy_id=item[0], strategy_name=item[1], create_time=item[2], run_times=item[3])
+        my_strategy_list.append(strategy)
+    cursor.close()
+    return my_strategy_list
+
+
 def getUser(phoneNo):
     cursor = connection.cursor()
     UserList = []
@@ -1204,3 +1248,35 @@ def saveUserItem(phone, password, nick_name, open_id, age, gender, avator, level
              strategy_amount, history_amount, style, experience)
     cursor.execute(sql, param)
     connection.commit()
+
+
+# 修改用户密码
+def update_user_pwd(user_id, new_pwd):
+    cursor = connection.cursor()
+    # SQL update 语句
+    sql = "update user_info set password=%s" \
+          " where user_id = %s"
+    param = (new_pwd, user_id)
+    cursor.execute(sql, param)
+    connection.commit()
+
+
+def mob_get_strategy_log_list(strategy_id, creator):
+    strategy_logs = []
+    cursor = connection.cursor()
+    sql = "select sl.create_time,s.strategy_name, " \
+          "sl.final_margin, " \
+          "sl.benchmark " \
+          "from strategy_log sl " \
+          "inner join strategy s on sl.strategy_id = s.strategy_id " \
+          "where  sl.strategy_id = %s  and s.creator = %s ;"
+
+    params = (strategy_id, creator)
+    cursor.execute(sql, params)
+    results = cursor.fetchall()
+
+    for item in results:
+        strategy_log = StrategyLog(create_time=item[0], strategy_name=item[1], final_margin=item[2], benchmark=item[3])
+        strategy_logs.append(strategy_log)
+    cursor.close()
+    return strategy_logs

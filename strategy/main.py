@@ -121,8 +121,8 @@ def account_insert(position, t, strategy_log_id, signal, transaction_status):
     return account_id
 
 
-def write_back2log(total, log_id):
-    log = Log(strategy_log_id=log_id, final_margin=total)
+def write_back2log(margin, benchmark, log_id):
+    log = Log(strategy_log_id=log_id, final_margin=margin, benchmark=benchmark)
     update_strategy_log(log)
 
 
@@ -235,8 +235,8 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
     new_balance += amount * Decimal(df_end.iat[0, 2])
     benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
 
-    # 回写策略执行后总资产到strategy_log表
-    write_back2log(balance, log_id)
+    # 回写策略执行后 收益率 到strategy_log表
+    write_back2log(total=strategy_profit, benchmark=benchmark_profit, log_id=log_id)
 
     return Poc_response(strategy_profit=Decimal(strategy_profit).quantize(Decimal('0.0000')),
                         benchmark_profit=Decimal(benchmark_profit).quantize(Decimal('0.0000')))
