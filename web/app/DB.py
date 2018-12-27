@@ -722,7 +722,7 @@ def getALLStrategy(creator):
           " (select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run," \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
           " duration,benchmark,drawdown,status FROM strategy s" \
-          " where creator=%s"
+          " where creator=%s and del_flag = 0"
 
     # 执行SQL语句
     cursor.execute(sql, creator)
@@ -787,7 +787,7 @@ def getStrategyLogList(creator):
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin " \
           " FROM strategy_log" \
-          " where creator=%s" \
+          " where creator=%s and del_flag = 0 " \
           " order by create_time"
 
     # print(sql)
@@ -820,7 +820,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin " \
           " FROM strategy_log" \
-          " where creator=%s and strategy_id =%s" \
+          " where creator=%s and strategy_id =%s and del_flag = 0 " \
           " order by create_time"
 
     # 执行SQL语句
@@ -854,7 +854,7 @@ def getLogDetail(strategyLogId, creator):
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin" \
           " FROM strategy_log" \
-          " where strategy_log_id=%s and creator=%s" % (strategyLogId, creator)
+          " where del_flag = 0 and  strategy_log_id=%s and creator=%s" % (strategyLogId, creator)
 
     # 执行SQL 语句
     cursor.execute(sql)
@@ -911,7 +911,7 @@ def getStrategy(userId, strategyId):
           " (select create_time from strategy_log sl where sl.strategy_id=s.strategy_id order by create_time desc limit 1) last_run," \
           " (select count(1) from strategy_log sl where sl.strategy_id=s.strategy_id) run_times," \
           " duration,benchmark,drawdown,status" \
-          " FROM strategy s where creator=%s and strategy_id=%s "
+          " FROM strategy s where creator=%s and strategy_id=%s and del_flag = 0 "
 
     # 执行SQL语句
     param = (userId, strategyId)
@@ -1015,32 +1015,42 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
     connection.commit()
 
 
-def deleteStrategyById(strategy_id):
+#
+# def deleteStrategyById(strategy_id):
+#     cursor = connection.cursor()
+#     strategyConfList = []
+#     # SQL 查询语句
+#     sql = " delete from strategy_conf_item where strategy_id=%s;"
+#     param = (strategy_id)
+#     cursor.execute(sql, param)
+#     sql = " delete from strategy_account where strategy_log_id in " \
+#           "       (select strategy_log_id from strategy_log where strategy_id=%s);"
+#     param = (strategy_id)
+#     cursor.execute(sql, param)
+#     sql = " delete from strategy_log where strategy_id=%s;"
+#     param = (strategy_id)
+#     cursor.execute(sql, param)
+#     sql = " delete from strategy where strategy_id=%s;"
+#     param = (strategy_id)
+#     cursor.execute(sql, param)
+#     connection.commit()
+
+
+def deleteStrategyById(strategy_id, userId):
     cursor = connection.cursor()
-    strategyConfList = []
-    # SQL 查询语句
-    sql = " delete from strategy_conf_item where strategy_id=%s;"
-    param = (strategy_id)
-    cursor.execute(sql, param)
-    sql = " delete from strategy_account where strategy_log_id in " \
-          "       (select strategy_log_id from strategy_log where strategy_id=%s);"
-    param = (strategy_id)
-    cursor.execute(sql, param)
-    sql = " delete from strategy_log where strategy_id=%s;"
-    param = (strategy_id)
-    cursor.execute(sql, param)
-    sql = " delete from strategy where strategy_id=%s;"
-    param = (strategy_id)
+    # sql 查询语句
+    sql = " update strategy set del_flag = 1 where strategy_id=%s and creator = %s"
+    param = (strategy_id, userId)
     cursor.execute(sql, param)
     connection.commit()
 
 
-# 删除strategy_log
+# 删除 指定 strategy_log
 def deleteStrategyLogById(strategy_log_id):
     cursor = connection.cursor()
-    strategyConfList = []
     # SQL 查询语句
-    sql = " delete from strategy_log where strategy_log_id = %s;"
+    #sql = " delete from strategy_log where strategy_log_id = %s;"
+    sql = "update strategy_log set del_flag = 1 where strategy_log_id = %s; "
     param = (strategy_log_id)
     cursor.execute(sql, param)
     connection.commit()

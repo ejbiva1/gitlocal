@@ -321,3 +321,11 @@ def mob_strategy_trade_history(userId, strategy_id):
     response = ResponseModel(data=trade_history_list, code="1", message="success")
 
     return response
+
+
+# 删除策略 del_strategy
+def deleteStrategyById(strategy_id, userId):
+    DB.deleteStrategyById(strategy_id, userId)
+
+    response = ResponseModel(data='',code = '1', message='delete Strategy  Operation  success')
+    return response

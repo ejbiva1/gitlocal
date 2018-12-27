@@ -294,5 +294,22 @@ def mob_strategytradehistory():
     return response
 
 
+# 删除策略 del_strategy
+@app.route('/delStrategy', methods=['post'])
+def delStrategy():
+    session.permant = True
+    session['userId'] = 1
+
+    strategy_id = request.json.get('strategy_id')
+    result = controller.deleteStrategyById(strategy_id=strategy_id, userId=session['userId'])
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
 if __name__ == "__main__":
     app.run(debug=True)
