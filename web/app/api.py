@@ -325,5 +325,21 @@ def mob_get_strategy_log_list():
     return response
 
 
+# 诗丽 手机端 调用 该接口， 获取回测图标数据
+@app.route('/mob_getDataArrays', methods=['post'])
+def mob_get_data_array():
+    # session.permant = True
+    # session['userId'] = 1
+    strategy_log_id = request.json.get('strategy_log_id')
+    result = controller.mob_get_strategy_account_list(strategy_log_id=strategy_log_id)
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
 if __name__ == "__main__":
     app.run(debug=True)

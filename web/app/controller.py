@@ -1,5 +1,6 @@
 import web.app.DB as DB
 import sys
+from decimal import Decimal
 
 # from marshmallow import Schema, fields
 
@@ -341,3 +342,31 @@ def mob_get_strategy_log_list(strategy_id, user_id):
         result_list.append(s.__dict__)
     response = ResponseModel(data=result_list, code="1", message="success")
     return response
+
+
+# mobile 获取我的 策略回测历史列表
+def mob_get_strategy_account_list(strategy_log_id):
+    strategy_account_list = DB.getStrategyAccountList(strategyLogId=strategy_log_id)
+    s0 = strategy_account_list[0]
+    init_price = s0.close
+
+    margin_list = []
+    benchmark_list = []
+    time_stamp_list = []
+
+    for s in strategy_account_list:
+        margin = s.current_total_margin_rate
+        margin = margin.quantize(Decimal('0.00'))
+        benchmark = Decimal(str(s.close)) / Decimal(str(init_price)) - Decimal('1')
+        benchmark = benchmark.quantize(Decimal('0.00'))
+        margin_list.append(margin)
+        benchmark_list.append(benchmark)
+        time_stamp_list.append(s.t)
+
+    response = {
+        "margin_list": margin_list,
+        "benchmark_list": benchmark_list,
+        "time_stamp_list": time_stamp_list
+    }
+    result = ResponseModel(data=response, code='1', message='success')
+    return result
