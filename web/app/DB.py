@@ -1265,7 +1265,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
     strategy_logs = []
     cursor = connection.cursor()
     sql = "select sl.create_time,s.strategy_name, " \
-          "sl.final_margin, " \
+          "sl.final_margin, sl.strategy_log_id," \
           "sl.benchmark " \
           "from strategy_log sl " \
           "inner join strategy s on sl.strategy_id = s.strategy_id " \
@@ -1276,7 +1276,53 @@ def mob_get_strategy_log_list(strategy_id, creator):
     results = cursor.fetchall()
 
     for item in results:
-        strategy_log = StrategyLog(create_time=item[0], strategy_name=item[1], final_margin=item[2], benchmark=item[3])
+        strategy_log = StrategyLog(strategy_log_id=item[3],
+                                   create_time=item[0], strategy_name=item[1],
+                                   final_margin=item[2], benchmark=item[4],
+                                   strategy_id=strategy_id, start_date=None, end_date=None, creator=creator,
+                                   coin_category=None, execution_result=None, init_balance=None)
         strategy_logs.append(strategy_log)
     cursor.close()
     return strategy_logs
+
+
+def mob_get_strategy_account(strategy_log_id):
+    strategy_accounts = []
+    cursor = connection.cursor()
+    sql = "select sa.t,sa.current_total_margin_rate,sa.close " \
+          ",sl.strategy_log_id," \
+          "sl.benchmark " \
+          "from strategy_account sa " \
+          "inner join strategy_log sl on sl.strategy_id = sa.strategy_id " \
+          "where sl.strategy_log_id = %s;"
+
+    params = (strategy_log_id)
+    cursor.execute(sql, params)
+    results = cursor.fetchall()
+
+    for item in results:
+        strategy_account = StrategyAccount(t=item[0], current_total_margin_rate=item[1],
+                                           close=item[2], final_margin=item[4],
+                                           strategy_id=strategy_id, start_date=None, end_date=None, creator=creator,
+                                           coin_category=None, execution_result=None, init_balance=None)
+        strategy_accounts.append(strategy_account)
+    cursor.close()
+    return strategy_accounts
+
+    strategy_account_id = 0
+    strategy_log_id = 0
+    current_cash_balance = 0.0
+    current_coin_balance = 0.0
+    cost = 0.0
+    total_net_balance = 0.0
+    current_net_value = 0.0
+    current_total_margin_rate = 0.0
+    current_margin_rate = 0.0
+    current_position = 0.0
+    signal = 0
+    transaction_status = 0
+    t = "'"
+    open = 0.0
+    close = 0.0
+    high = 0.0
+    low = 0.0
