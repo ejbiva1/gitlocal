@@ -1261,6 +1261,29 @@ def update_user_pwd(user_id, new_pwd):
     connection.commit()
 
 
+# 修改用户密码
+def update_user_phone_num(phone, user_id):
+    cursor = connection.cursor()
+    # SQL update 语句
+    sql = "update user_info set phone=%s" \
+          " where user_id = %s"
+    param = (phone, user_id)
+    cursor.execute(sql, param)
+    connection.commit()
+
+
+# 修改用户信息
+def update_user_info(user_id, nick_name, open_id, age, gender, avator, style, experience):
+    cursor = connection.cursor()
+    # SQL update 语句
+    sql = "update user_info set nick_name=%s,open_id=%s,age=%s,gender=%s," \
+          "avator=%s,style=%s,experience=%s" \
+          " where user_id = %s"
+    param = (nick_name, open_id, age, gender, avator, style, experience, user_id)
+    cursor.execute(sql, param)
+    connection.commit()
+
+
 def mob_get_strategy_log_list(strategy_id, creator):
     strategy_logs = []
     cursor = connection.cursor()
@@ -1284,4 +1307,3 @@ def mob_get_strategy_log_list(strategy_id, creator):
         strategy_logs.append(strategy_log)
     cursor.close()
     return strategy_logs
-

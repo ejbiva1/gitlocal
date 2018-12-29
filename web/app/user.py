@@ -27,7 +27,7 @@ def login_with_pwd():
         user = user_list.pop()
         if pwd == user.password:
             # session.permant = True
-            # session['userId'] = user.user_id
+            session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
             result = ResponseModel(data=data, code='1', message='登录成功！')
@@ -53,7 +53,7 @@ def login_with_msg_code():
         cache_code = sms.cache.get(phone)
         if code == cache_code:
             # session.permant = True
-            # session['userId'] = user.user_id
+            session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
             result = ResponseModel(data=data, code='1', message='登录成功！')
@@ -136,32 +136,40 @@ def change_pwd():
     pwd = request.json.get("password")
     code = request.json.get("msgCode")
     phoneNo = session['phoneNo']
-    user_list = db.getUser(phoneNo)
-    if phone == phoneNo:
-        if user_list:
-            # user = user_list.pop()
-            cache_code = sms.cache.get(phone)
-            # userList = db.getUser(phone)
-            #         # user = userList.pop()
-            #         # user.user_id
+    if not phoneNo:
+        data = {'changePwd': 'Failed'}
+        result = ResponseModel(data=data, code='0', message='session为空，无访问权限！')
+        response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+        response = make_response(response)
+        response.status = "403"
+        response.headers["Content-Type"] = "application/json"
+    else:
+        user_list = db.getUser(phoneNo)
+        if str(phone) == phoneNo:
+            if user_list:
+                # user = user_list.pop()
+                cache_code = sms.cache.get(phone)
+                # userList = db.getUser(phone)
+                #         # user = userList.pop()
+                #         # user.user_id
 
-            if code == cache_code:
-                db.update_user_pwd(user_id=session['userId'], new_pwd=pwd)
-                data = {'changePwd': 'Successed'}
-                result = ResponseModel(data=data, code='1', message='密码修改成功！')
-                response = makeResp(result)
+                if code == cache_code:
+                    db.update_user_pwd(user_id=session['userId'], new_pwd=pwd)
+                    data = {'changePwd': 'Successed'}
+                    result = ResponseModel(data=data, code='1', message='密码修改成功！')
+                    response = makeResp(result)
+                else:
+                    data = {'changePwd': 'Failed'}
+                    result = ResponseModel(data=data, code='0', message='密码修改失败,验证码不匹配！')
+                    response = makeResp(result)
             else:
                 data = {'changePwd': 'Failed'}
-                result = ResponseModel(data=data, code='0', message='密码修改失败,验证码不匹配！')
+                result = ResponseModel(data=data, code='0', message='密码修改失败,内部错误')
                 response = makeResp(result)
         else:
             data = {'changePwd': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='密码修改失败,内部错误')
+            result = ResponseModel(data=data, code='0', message='密码修改失败,该手机号与预留手机号不一致！')
             response = makeResp(result)
-    else:
-        data = {'changePwd': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='密码修改失败,该手机号与预留手机号不一致！')
-        response = makeResp(result)
     return response
 
 
@@ -174,6 +182,63 @@ def get_user_detail():
     response = make_response(result)
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/alterPersonalInfo', methods=['POST'])
+def alter_personal_info():
+    user_id = session['userId']
+
+    # phone = request.json.get("phoneNo")
+    # pwd = request.json.get("password")
+    # code = request.json.get("msgCode")
+    nick_name = request.json.get("nickName")
+    open_id = request.json.get("openId")
+    age = request.json.get("age")
+    gender = request.json.get("gender")
+    avator = request.json.get("avatar")
+    style = request.json.get("style")
+    experience = request.json.get("experience")
+
+    if user_id:
+        db.update_user_info(user_id, nick_name, open_id, age, gender, avator, style, experience)
+        data = {'signUp': 'Successed'}
+        result = ResponseModel(data=data, code='1', message='修改成功！')
+        response = makeResp(result)
+    else:
+        data = {'update': 'Failed'}
+        result = ResponseModel(data=data, code='0', message='修改失败，无访问权限！')
+        response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+        response = make_response(response)
+        response.status = "403"
+        response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/changePhoneNum', methods=['POST'])
+def change_phone_num():
+    user_id = session['userId']
+    phone = request.json.get("phoneNo")
+    code = request.json.get("msgCode")
+    cache_code = sms.cache.get(phone)
+
+    if user_id:
+        if code == cache_code:
+            db.update_user_phone_num(phone, user_id)
+            data = {'changePhoneNum': 'Successed'}
+            result = ResponseModel(data=data, code='1', message='修改成功！')
+            response = makeResp(result)
+        else:
+            data = {'update': 'Failed'}
+            result = ResponseModel(data=data, code='0', message='修改失败，验证码不匹配！')
+            response = makeResp(result)
+    else:
+        data = {'update': 'Failed'}
+        result = ResponseModel(data=data, code='0', message='修改失败，无访问权限！')
+        response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+        response = make_response(response)
+        response.status = "403"
+        response.headers["Content-Type"] = "application/json"
     return response
 
 
