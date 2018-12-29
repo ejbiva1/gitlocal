@@ -263,7 +263,7 @@ def print_signal(T, price, amount, reason):
 # sellB = SellB(1508997600, 1508990400, 1511481600, 200)
 # print(sellB.filter())
 # print(sellB.condition_filter())
-# print(sellB.test())
+# print(sellB.tester())
 # print(sellB.condition_1())
 # print(sellB.condition_b(1508994000))
 # print(sellB.run_strategy())

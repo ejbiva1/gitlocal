@@ -1,6 +1,7 @@
-import DB
+import web.app.DB as DB
 import sys
-from marshmallow import Schema, fields
+
+# from marshmallow import Schema, fields
 
 sys.path.append("../..")
 import strategy.main as strategyTool
@@ -228,7 +229,7 @@ def getStrategy(creator, strategyId):
     strategy_confs['strategy_conf_items'] = strategy_conf_list
 
     response = ResponseModel(data=strategy_confs, code='1', message='success')
-    return response;
+    return response
 
 
 # 删除strategy_log
@@ -328,4 +329,23 @@ def deleteStrategyById(strategy_id, userId):
     DB.deleteStrategyById(strategy_id, userId)
 
     response = ResponseModel(data='',code = '1', message='delete Strategy  Operation  success')
+    return response
+
+# mobile 获取我的 策略列表
+def mob_my_strategy_list(userId):
+    my_strategy_list = []
+    strategy_list = DB.mob_my_strategy_list(creator=userId)
+    for s in strategy_list:
+        my_strategy_list.append(s.__dict__)
+    response = ResponseModel(data=my_strategy_list, code="1", message="success")
+    return response
+
+
+# mobile 获取我的 策略回测历史列表
+def mob_get_strategy_log_list(strategy_id, user_id):
+    result_list = []
+    strategy_list = DB.mob_get_strategy_log_list(strategy_id=strategy_id, creator=user_id)
+    for s in strategy_list:
+        result_list.append(s.__dict__)
+    response = ResponseModel(data=result_list, code="1", message="success")
     return response

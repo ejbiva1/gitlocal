@@ -14,9 +14,11 @@ class Position:
             # todo 判断开始日期-12T是否存在
             self.datas = read_datas_1day_test(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
             # self.datas = read_datas_1day(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
-        else:
+        elif strategy_type == 3:
             # self.datas = read_datas_60min(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
             self.datas = read_datas_60min_test(start_date, end_date).sort_values(by='id', axis=0, ascending=True)
+        else:
+            self.datas = pd.DataFrame()
         self.price = Decimal(0.00)
         # 持币量
         self.coin_amount = Decimal('0.000000')

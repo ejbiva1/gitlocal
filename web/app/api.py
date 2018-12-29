@@ -18,7 +18,7 @@ def startStrategy():
     endTime = request.json.get("endTime")
     initBalance = request.json.get("initBalance")
     coinCategory = request.json.get("coinCategory")
-    if initBalance <= 1000000 and initBalance >= 10000:
+    if 1000000 >= initBalance >= 10000:
         controller.startStartStrategy(strategyId, initBalance, startTime, endTime)
         return make_response(json.dumps({'result': 'strategy started'}))
     else:
@@ -187,7 +187,7 @@ def getStrategy():
 
         result = json.dumps({"result": strategy_confs.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
 
-        response = make_response(result);
+        response = make_response(result)
         response.status = "200"
         response.headers["Content-Type"] = "application/json"
 
@@ -205,7 +205,7 @@ def saveStrategy():
     strategy_id = request.json.get('strategy_id')
     print(strategy_id)
     if strategy_id is None:
-        strategy_id = 0;
+        strategy_id = 0
     strategy_name = request.json.get("strategy_name")
     start_time = request.json.get("start_time")
     end_time = request.json.get("end_time")
@@ -285,6 +285,37 @@ def mob_strategytradehistory():
     strategy_id = request.json.get('strategy_id')
 
     result = controller.mob_strategy_trade_history(userId=session['userId'], strategy_id=strategy_id)
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+# 诗丽 手机端 调用 该接口， 获取我的策略列表 策略名称 最后一次调用时间 总的调用次数
+@app.route('/mob_getMyStrategyList', methods=['post'])
+def mob_get_my_strategy_list():
+    session.permant = True
+    session['userId'] = 1
+    result = controller.mob_my_strategy_list(userId=session['userId'])
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+# 诗丽 手机端 调用 该接口， 获取某个策略回测列表 每次执行的结果 （策略名称，回测时间，策略收益率，基准收益率，最大回撤）
+@app.route('/mob_getStrategyLogList', methods=['post'])
+def mob_get_strategy_log_list():
+    session.permant = True
+    session['userId'] = 1
+    strategy_id = request.json.get('strategy_id')
+    result = controller.mob_get_strategy_log_list(strategy_id=strategy_id, user_id=session['userId'])
 
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
