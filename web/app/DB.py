@@ -845,7 +845,8 @@ def getStrategyLogList(creator):
           " create_time," \
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin " \
+          " (final_margin - init_balance)/init_balance final_margin," \
+          " benchmark " \
           " FROM strategy_log" \
           " where creator=%s and del_flag = 0 " \
           " order by create_time"
@@ -857,7 +858,8 @@ def getStrategyLogList(creator):
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+        pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
+                          row[11])
         # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
     cursor.close()
@@ -878,7 +880,8 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
           " create_time," \
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin " \
+          " (final_margin - init_balance)/init_balance final_margin ," \
+          "benchmark " \
           " FROM strategy_log" \
           " where creator=%s and strategy_id =%s and del_flag = 0 " \
           " order by create_time"
@@ -891,7 +894,8 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
     results = cursor.fetchall()
     for row in results:
         # 打印结果
-        pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+        pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
+                          row[11])
         # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
     cursor.close()
@@ -912,7 +916,8 @@ def getLogDetail(strategyLogId, creator):
           " create_time," \
           " execution_result, " \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin" \
+          " (final_margin - init_balance)/init_balance final_margin," \
+          " benchmark" \
           " FROM strategy_log" \
           " where del_flag = 0 and  strategy_log_id=%s and creator=%s" % (strategyLogId, creator)
 
@@ -925,7 +930,7 @@ def getLogDetail(strategyLogId, creator):
     #
     #     log_details.append(pro)
     log_details = StrategyLog(results[0], results[1], results[2], results[3], results[4], results[5], results[6],
-                              results[7], results[8], results[9], results[10])
+                              results[7], results[8], results[9], results[10], results[11])
     cursor.close()
     return log_details
 
@@ -1109,7 +1114,7 @@ def deleteStrategyById(strategy_id, userId):
 def deleteStrategyLogById(strategy_log_id):
     cursor = connection.cursor()
     # SQL 查询语句
-    #sql = " delete from strategy_log where strategy_log_id = %s;"
+    # sql = " delete from strategy_log where strategy_log_id = %s;"
     sql = "update strategy_log set del_flag = 1 where strategy_log_id = %s; "
     param = (strategy_log_id)
     cursor.execute(sql, param)
@@ -1290,3 +1295,21 @@ def mob_get_strategy_log_list(strategy_id, creator):
         strategy_logs.append(strategy_log)
     cursor.close()
     return strategy_logs
+
+
+def get_all_strategy_name(creator):
+    cursor = connection.cursor()
+
+    strategy_name_list = []
+
+    sql = " SELECT strategy_name FROM strategy where  del_flag = 0  and creator = %s  " \
+          " order by strategy_name asc "
+
+    params = (creator)
+    cursor.execute(sql, params)
+    results = cursor.fetchall()
+
+    for item in results:
+        strategy_name_list.append(item[0])
+
+    return strategy_name_list
