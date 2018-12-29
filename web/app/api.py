@@ -6,6 +6,7 @@ import web.app.controller as controller
 from strategy import main
 from facilties.functional import JsonExtendEncoder, HttpResponseModel
 from flask import Flask, Blueprint, render_template, request, redirect, jsonify
+from facilties.functional import JsonExtendEncoder, HttpResponseModel, ResponseModel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
@@ -322,6 +323,95 @@ def mob_get_strategy_log_list():
     response.status = "200"
     response.headers["Content-Type"] = "application/json"
 
+    return response
+
+
+# 删除策略 del_strategy
+@app.route('/delStrategy', methods=['post'])
+def delStrategy():
+    session.permant = True
+    session['userId'] = 1
+
+    strategy_id = request.json.get('strategy_id')
+    result = controller.deleteStrategyById(strategy_id=strategy_id, userId=session['userId'])
+
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+# 用户模块
+@app.route('/loginWithPwd', methods=['POST'])
+def login_with_pwd():
+    phone = request.json.get("phoneNo")
+    pwd = request.json.get("password")
+    # code = request.json.get("msgCode")
+    user_list = db.getUser(phone)
+    if user_list:
+        user = user_list.pop()
+        if pwd == user.password:
+            # session.permant = True
+            # session['userId'] = user.user_id
+            session['phoneNo'] = user.phone
+            data = {'login': 'Successed'}
+            result = ResponseModel(data=data, code='1', message='登录成功！')
+            response = makeResp(result)
+        else:
+            data = {'login': 'Failed'}
+            result = ResponseModel(data=data, code='0', message='登录失败,用户密码不匹配！')
+            response = makeResp(result)
+    else:
+        data = {'login': 'Failed'}
+        result = ResponseModel(data=data, code='0', message='登录失败,该手机号未注册！')
+        response = makeResp(result)
+    return response
+
+
+@app.route('/getUserDetail', methods=['post'])
+def get_user_detail():
+    phone = request.json.get('phoneNo')
+    userList = db.getUser(phone)
+    user = userList.pop()
+    result = json.dumps({"result": user.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+def makeResp(result):
+    response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+    response = make_response(response)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/getAllStrategyName', methods=['post'])
+def getAllStrategyName():
+    session.permant = True
+    session['userId'] = 1
+    result = controller.get_all_strategy_name(creator=session['userId'])
+    result = json.dumps({"result": result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@app.route('/getDefaultStrategyName', methods=['post'])
+def getDefaultStrategyName():
+    session.permant = True
+    session['userId'] = 1
+    # set default strategy name
+    default_strategy_name = controller.set_default_strategy_name(creator=session['userId'])
+    result = json.dumps({"result": default_strategy_name.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+    response = make_response(result)
+    response.status = "200"
+    response.headers["Content-Type"] = "application/json"
     return response
 
 

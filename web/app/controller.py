@@ -305,6 +305,7 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, coin_category
         print(response)
         return response
 
+
         # 记录插入 strategy_log  返回最新 strategy_log_id
         # strategy_log_id = DB.insertStrategyLog(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
         #                                        userId=userId, coin_category=coin_category, init_balance=init_balance)
@@ -321,6 +322,14 @@ def mob_strategy_trade_history(userId, strategy_id):
 
     response = ResponseModel(data=trade_history_list, code="1", message="success")
 
+    return response
+
+
+# 删除策略 del_strategy
+def deleteStrategyById(strategy_id, userId):
+    DB.deleteStrategyById(strategy_id, userId)
+
+    response = ResponseModel(data='', code='1', message='delete Strategy  Operation  success')
     return response
 
 
@@ -341,6 +350,38 @@ def mob_get_strategy_log_list(strategy_id, user_id):
     for s in strategy_list:
         result_list.append(s.__dict__)
     response = ResponseModel(data=result_list, code="1", message="success")
+    return response
+
+
+# 获取 所有策略名称
+def get_all_strategy_name(creator):
+    strategy_name_list = DB.get_all_strategy_name(creator=creator)
+    print(len(strategy_name_list))
+    response = ResponseModel(data=strategy_name_list, code="1", message="success")
+    return response
+
+
+def set_default_strategy_name(creator):
+    strategy_name_list = DB.get_all_strategy_name(creator=creator)
+    default_name = 'My Strategy'
+    strategy_name_no = 0
+    strategy_name_mark = ''
+
+    # 默认策略命名规则是: My Strategy (1), My Strategy (2), My Strategy (3), My Strategy (4)
+
+    for strategy_name in strategy_name_list:
+        default_strategy_name = default_name + strategy_name_mark
+        print(default_strategy_name)
+
+        if default_strategy_name in strategy_name_list:
+            print(True)
+            strategy_name_no += 1
+            strategy_name_mark = '(' + str(strategy_name_no) + ')'
+        else:
+            continue
+
+    default_name = default_name + strategy_name_mark
+    response = ResponseModel(data=default_name, code="1", message="success")
     return response
 
 
