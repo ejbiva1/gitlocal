@@ -16,7 +16,6 @@ app.config['SECRET_KEY'] = '123456'
 
 # cache = Cache(maxsize=256, ttl=60, timer=time.time)
 
-
 @app.route('/loginWithPwd', methods=['POST'])
 def login_with_pwd():
     phone = request.json.get("phoneNo")
@@ -26,7 +25,7 @@ def login_with_pwd():
     if user_list:
         user = user_list.pop()
         if pwd == user.password:
-            # session.permant = True
+            # session.permanent  = True
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}

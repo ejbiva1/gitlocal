@@ -236,10 +236,10 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
     benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
 
     # 回写策略执行后 收益率 到strategy_log表
-    write_back2log(total=strategy_profit, benchmark=benchmark_profit, log_id=log_id)
+    write_back2log(margin=strategy_profit, benchmark=benchmark_profit, log_id=log_id)
 
-    return Poc_response(strategy_profit=Decimal(strategy_profit).quantize(Decimal('0.0000')),
-                        benchmark_profit=Decimal(benchmark_profit).quantize(Decimal('0.0000')))
+    return Poc_response(strategy_profit=Decimal(str(strategy_profit)).quantize(Decimal('0.0000')),
+                        benchmark_profit=Decimal(str(benchmark_profit)).quantize(Decimal('0.0000')))
 
 
 def get_strategy_conf_list(strategy_id):

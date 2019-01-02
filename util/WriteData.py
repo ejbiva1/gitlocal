@@ -2,15 +2,27 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy import func
 import pymysql
-from entity.Strategy_log import LogDBSession, Log
+from entity.Strategy_log import Log
 from entity.Strategy_account import AccountDBSession, Account
-
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session
 
 # from sqlalchemy.orm import sessionmaker
+engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4',
+                       max_overflow=0,  # 超过连接池大小外最多创建的连接
+                       pool_size=50,  # 连接池大小
+                       pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错
+                       pool_recycle=-1  # 多久之后对线程池中的线程进行一次连接的回收（重置）
+                       )
+# session = sessionmaker(bind=engine)
+SessionFactory = sessionmaker(bind=engine)
+# session = scoped_session(SessionFactory)
+session = SessionFactory()
 
 
 def insert_2_strategy_transaction(dataframe):
-    engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
+    # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     dataframe.to_sql('strategy_transaction', engine, index=False, if_exists='append')
     print('insert strategy_transaction successfully')
 
@@ -19,7 +31,7 @@ def insert_2_strategy_log(new_log):
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     # dataframe.to_sql('strategy_log', engine, index=False, if_exists='append')
     # new_log = Log()
-    session = LogDBSession()
+    # session = LogDBSession()
     session.add(new_log)
     session.commit()
     log_id = session.query(func.max(Log.strategy_log_id)).one()[0]
@@ -31,7 +43,7 @@ def insert_2_strategy_log(new_log):
 def insert_2_strategy_account(new_account):
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     # dataframe.to_sql('strategy_account', engine, index=False, if_exists='append')
-    session = AccountDBSession()
+    # session = AccountDBSession()
     session.add(new_account)
     session.commit()
     account_id = session.query(func.max(Account.strategy_account_id)).one()[0]
@@ -42,8 +54,9 @@ def insert_2_strategy_account(new_account):
 
 # todo 更新结果数据
 def update_strategy_log(log2update):
-    session = LogDBSession()
-    sql = 'UPDATE strategy_log SET final_margin = ' + str(log2update.final_margin) + 'benchmark = ' + str(log2update.benchmark) + ' WHERE strategy_log_id = ' + str(
+    # session = LogDBSession()
+    sql = 'UPDATE strategy_log SET final_margin = ' + str(log2update.final_margin) + ',benchmark = ' + str(
+        log2update.benchmark) + ' WHERE strategy_log_id = ' + str(
         log2update.strategy_log_id)
     # try:
     session.execute(sql)

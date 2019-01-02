@@ -1,7 +1,9 @@
 import pymysql
+import util.DBUtil as db
 
 # connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
+# connection = db.OPMysql.conn
 
 
 class StrategyLog:
