@@ -305,17 +305,16 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, coin_category
         print(response)
         return response
 
-
         # 记录插入 strategy_log  返回最新 strategy_log_id
         # strategy_log_id = DB.insertStrategyLog(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
         #                                        userId=userId, coin_category=coin_category, init_balance=init_balance)
 
 
 # mobile 获取策略历史列表
-def mob_strategy_trade_history(userId, strategy_id):
+def mob_strategy_trade_history(strategy_log_id):
     trade_history_list = []
 
-    trade_historys = DB.mob_trade_history(strategy_id=strategy_id, creator=userId)
+    trade_historys = DB.mob_trade_history(strategy_log_id=strategy_log_id)
 
     for trade_history in trade_historys:
         trade_history_list.append(trade_history.__dict__)

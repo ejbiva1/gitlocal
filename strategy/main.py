@@ -239,7 +239,8 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
     write_back2log(margin=strategy_profit, benchmark=benchmark_profit, log_id=log_id)
 
     return Poc_response(strategy_profit=Decimal(str(strategy_profit)).quantize(Decimal('0.0000')),
-                        benchmark_profit=Decimal(str(benchmark_profit)).quantize(Decimal('0.0000')))
+                        benchmark_profit=Decimal(str(benchmark_profit)).quantize(Decimal('0.0000')),
+                        log_id=log_id)
 
 
 def get_strategy_conf_list(strategy_id):
@@ -332,18 +333,20 @@ def get_formula(operator, price):
 
 if __name__ == '__main__':
     start_time = 1511107200
-    # start_time = 1508990400
+    # start_time = 1515600000
     # print(time())
     # start_time = 1517587200
     # end_time = 1510675200
     # end_time = 1509022800
     end_time = 1511539200
+    # end_time = 1516464000
     init_balance = 1000000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
     # strategy_combination_a(start_time=start_time, end_time=end_time, init_balance=init_balance)
     #
-    response = strategy_poc(strategy_id=18, start_time=start_time, end_time=end_time,
+    response = strategy_poc(strategy_id=1, start_time=start_time, end_time=end_time,
                             init_balance=init_balance)
-    # print('benchmark_profit=' + str(response.benchmark_profit))
-    # print('strategy_profit=' + str(response.strategy_profit))
+    print('benchmark_profit=' + str(response.benchmark_profit))
+    print('strategy_profit=' + str(response.strategy_profit))
     # print(time())
+    print('log_id= ' + str(response.strategy_log_id))

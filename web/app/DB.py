@@ -3,6 +3,8 @@ import util.DBUtil as db
 
 # connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
+
+
 # connection = db.OPMysql.conn
 
 
@@ -1177,7 +1179,7 @@ def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_ti
     return strategy_log_id
 
 
-def mob_trade_history(strategy_id, creator):
+def mob_trade_history(strategy_log_id):
     trade_historys = []
     cursor = connection.cursor()
     sql = "select st.t, sa.signal, " \
@@ -1189,9 +1191,9 @@ def mob_trade_history(strategy_id, creator):
           "inner join strategy s on sl.strategy_id = s.strategy_id " \
           "inner join  strategy_account sa on sl.strategy_log_id = sa.strategy_log_id " \
           "inner join strategy_transaction  st on sa.strategy_account_id = st.strategy_account_id " \
-          "where  sl.strategy_id = %s  and s.creator = %s ;"
+          "where  sl.strategy_log_id = %s;"
 
-    params = (strategy_id, creator)
+    params = (strategy_log_id)
 
     cursor.execute(sql, params)
     results = cursor.fetchall()

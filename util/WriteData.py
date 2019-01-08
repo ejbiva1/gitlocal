@@ -35,7 +35,7 @@ def insert_2_strategy_log(new_log):
     session.add(new_log)
     session.commit()
     log_id = session.query(func.max(Log.strategy_log_id)).one()[0]
-    session.close()
+    # session.close()
     print('insert to strategy_log successfully')
     return log_id
 
@@ -47,7 +47,7 @@ def insert_2_strategy_account(new_account):
     session.add(new_account)
     session.commit()
     account_id = session.query(func.max(Account.strategy_account_id)).one()[0]
-    session.close()
+    # session.close()
     print('insert to strategy_account successfully')
     return account_id
 
@@ -67,7 +67,7 @@ def update_strategy_log(log2update):
     #     发生错误时回滚
     # session.rollback()
     # 关闭数据库连接
-    session.close()
+    # session.close()
 
 
 if __name__ == '__main__':

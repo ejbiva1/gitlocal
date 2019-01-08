@@ -258,7 +258,7 @@ def executeStrategy():
 # 诗丽 手机端 调用 该接口， 执行poc 并返回相应历史数据；
 @app.route('/mob_executeStrategy', methods=['post'])
 def mob_executeStrategy():
-    session.permant = True
+    # session.permant = True
     session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
     start_time = request.json.get('start_time')
@@ -283,9 +283,9 @@ def mob_strategytradehistory():
     session.permant = True
     session['userId'] = 1
 
-    strategy_id = request.json.get('strategy_id')
+    strategy_log_id = request.json.get('strategy_log_id')
 
-    result = controller.mob_strategy_trade_history(userId=session['userId'], strategy_id=strategy_id)
+    result = controller.mob_strategy_trade_history(strategy_log_id=strategy_log_id)
 
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
