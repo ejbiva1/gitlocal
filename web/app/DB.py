@@ -888,7 +888,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
           "benchmark " \
           " FROM strategy_log" \
           " where creator=%s and strategy_id =%s and del_flag = 0 " \
-          " order by create_time"
+          " order by create_time desc"
 
     # 执行SQL语句
     param = (creator, strategy_id)
@@ -1213,7 +1213,7 @@ def mob_my_strategy_list(creator):
            "SELECT s.strategy_id, s.strategy_name, sl.create_time from strategy s " \
            "inner join strategy_log sl on sl.strategy_id = s.strategy_id " \
            "where s.creator = %s " \
-           "order by sl.create_time asc; "
+           "order by sl.create_time desc; "
 
     sql1 = "select strategy_id,strategy_name,max(create_time),count(create_time)" \
            " from MY_STRATEGY_LIST  " \
@@ -1311,7 +1311,8 @@ def mob_get_strategy_log_list(strategy_id, creator):
           "sl.benchmark " \
           "from strategy_log sl " \
           "inner join strategy s on sl.strategy_id = s.strategy_id " \
-          "where  sl.strategy_id = %s  and s.creator = %s ;"
+          "where  sl.strategy_id = %s  and s.creator = %s " \
+          "order by sl.create_time desc ;"
 
     params = (strategy_id, creator)
     cursor.execute(sql, params)
