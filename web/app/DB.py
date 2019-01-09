@@ -859,7 +859,7 @@ def getStrategyLogList(creator):
           " benchmark " \
           " FROM strategy_log" \
           " where creator=%s and del_flag = 0 " \
-          " order by create_time"
+          " order by create_time desc "
 
     # print(sql)
     # 执行SQL语句
