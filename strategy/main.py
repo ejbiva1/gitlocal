@@ -217,7 +217,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         #     init_balance)))
         # print('\n')
         balance = Decimal(str(balance)).quantize(Decimal('0.00'))
-        balance += Decimal(position) * Decimal(end_time_close)
+        balance += Decimal(position) * Decimal(close_t)
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
         pos.rate_of_return = strategy_profit
         pos.cur_rate_of_return = ((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
