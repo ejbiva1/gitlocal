@@ -24,7 +24,7 @@ session = SessionFactory()
 def insert_2_strategy_transaction(dataframe):
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     dataframe.to_sql('strategy_transaction', engine, index=False, if_exists='append')
-    print('insert strategy_transaction successfully')
+    # print('insert strategy_transaction successfully')
 
 
 def insert_2_strategy_log(new_log):
@@ -36,7 +36,7 @@ def insert_2_strategy_log(new_log):
     session.commit()
     log_id = session.query(func.max(Log.strategy_log_id)).one()[0]
     session.close()
-    print('insert to strategy_log successfully')
+    # print('insert to strategy_log successfully')
     return log_id
 
 
@@ -48,7 +48,7 @@ def insert_2_strategy_account(new_account):
     session.commit()
     account_id = session.query(func.max(Account.strategy_account_id)).one()[0]
     session.close()
-    print('insert to strategy_account successfully')
+    # print('insert to strategy_account successfully')
     return account_id
 
 
@@ -61,7 +61,7 @@ def update_strategy_log(log2update):
     try:
         session.execute(sql)
         session.commit()
-        print('update final_margin,benchmark to strategy_log successfully')
+        # print('update final_margin,benchmark to strategy_log successfully')
 
     except:
         # 发生错误时回滚

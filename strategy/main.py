@@ -180,13 +180,13 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
             calculator.transaction(flag=2, cost=close_t, amount=amount, pre_current_position=amount,
                                    pre_balance=pre_balance)
 
-        print('******************')
-        print('balance: ' + str(balance))
-        print('position: ' + str(position))
-        print('current profit: ' + str(
-            ((balance + Decimal(str(position)) * Decimal(str(close_t))) - Decimal(str(init_balance))) / Decimal(str(
-                init_balance))))
-        print('\n')
+        # print('******************')
+        # print('balance: ' + str(balance))
+        # print('position: ' + str(position))
+        # print('current profit: ' + str(
+        #     ((balance + Decimal(str(position)) * Decimal(str(close_t))) - Decimal(str(init_balance))) / Decimal(str(
+        #         init_balance))))
+        # print('\n')
 
         signal = buy_signal(t, buy_dict, data)
         if signal.signal == 1:
@@ -208,12 +208,12 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
             calculator.transaction(flag=1, cost=close_t, amount=amount, pre_current_position=0,
                                    pre_balance=pre_balance)
 
-        print('******************')
-        print('balance: ' + str(balance))
-        print('position: ' + str(position))
-        print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
-            init_balance)))
-        print('\n')
+        # print('******************')
+        # print('balance: ' + str(balance))
+        # print('position: ' + str(position))
+        # print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
+        #     init_balance)))
+        # print('\n')
 
     # 计算最后的收益率和基准收益率
     if position is 0:
