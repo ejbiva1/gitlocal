@@ -387,6 +387,9 @@ def set_default_strategy_name(creator):
 # mobile 获取我的 策略回测历史列表
 def mob_get_strategy_account_list(strategy_log_id):
     strategy_account_list = DB.getStrategyAccountList(strategyLogId=strategy_log_id)
+    if strategy_account_list.__len__() == 0:
+        result = ResponseModel(data='无对应的回测记录！', code='0', message='success')
+        return result
     s0 = strategy_account_list[0]
     init_price = s0.close
 

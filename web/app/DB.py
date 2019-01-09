@@ -1,6 +1,14 @@
 import pymysql
 import util.DBUtil as db
 
+from sqlalchemy import func
+import pymysql
+from entity.Strategy_log import Log
+# from entity.Strategy_account import AccountDBSession, Account
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from entity.Strategy_account import Account
+
 # connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
 connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
@@ -939,23 +947,41 @@ def getLogDetail(strategyLogId, creator):
     return log_details
 
 
-def getStrategyAccountList(strategyLogId):
-    cursor = connection.cursor()
-    strategyAccountList = []
-    # SQL 查询语句
-    sql = " SELECT strategy_account_id,strategy_log_id,current_cash_balance,current_coin_balance,cost,total_net_balance,current_net_value," \
-          " current_total_margin_rate,current_margin_rate,current_position,`signal`,transaction_status,t,open,close,high,low FROM strategy_account where strategy_log_id = %s"
+# def getStrategyAccountList(strategyLogId):
+#     cursor = connection.cursor()
+#     strategyAccountList = []
+#     # SQL 查询语句
+#     sql = " SELECT strategy_account_id,strategy_log_id,current_cash_balance,current_coin_balance,cost,total_net_balance,current_net_value," \
+#           " current_total_margin_rate,current_margin_rate,current_position,`signal`,transaction_status,t,open,close,high,low FROM strategy_account where strategy_log_id = %s"
+#
+#     # 执行SQL语句
+#     cursor.execute(sql, strategyLogId)
+#     # 获取所有记录列表
+#     results = cursor.fetchall()
+#     for row in results:
+#         # 打印结果
+#         pro = StrategyAccount(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
+#                               row[11], row[12], row[13], row[14], row[15], row[16])
+#         strategyAccountList.append(pro)
+#     cursor.close()
+#     return strategyAccountList
 
-    # 执行SQL语句
-    cursor.execute(sql, strategyLogId)
-    # 获取所有记录列表
-    results = cursor.fetchall()
+
+def getStrategyAccountList(strategyLogId):
+    engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4',
+                           max_overflow=0,  # 超过连接池大小外最多创建的连接
+                           pool_size=50,  # 连接池大小
+                           pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错
+                           pool_recycle=-1  # 多久之后对线程池中的线程进行一次连接的回收（重置）
+                           )
+    SessionFactory = sessionmaker(bind=engine)
+    session = SessionFactory()
+    strategyAccountList = []
+    results = session.query(Account).filter(Account.strategy_log_id == strategyLogId).all()
     for row in results:
         # 打印结果
-        pro = StrategyAccount(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                              row[11], row[12], row[13], row[14], row[15], row[16])
-        strategyAccountList.append(pro)
-    cursor.close()
+        strategyAccountList.append(row)
+    session.close()
     return strategyAccountList
 
 
