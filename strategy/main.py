@@ -153,6 +153,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
 
     end_time_close = data[data['id'] == end_time].iat[0, 2]
     id_list = data[data['id'] >= start_time]['id']
+    strategy_profit = 0.00
     for t in id_list:
 
         data_t = data[data['id'] == t]
@@ -162,6 +163,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         # 插入account表
         pos.current_position = position
         pos.balance = balance
+
         account_id = account_insert(position=pos, t=t, strategy_log_id=log_id,
                                     signal=int(signal.signal),
                                     transaction_status=signal.signal)
@@ -214,14 +216,20 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         # print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
         #     init_balance)))
         # print('\n')
-
-    # 计算最后的收益率和基准收益率
-    if position is 0:
-        strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
-    else:
         balance = Decimal(str(balance)).quantize(Decimal('0.00'))
         balance += Decimal(position) * Decimal(end_time_close)
         strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
+        pos.rate_of_return = strategy_profit
+        pos.cur_rate_of_return = ((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
+            init_balance)
+
+    #     # 计算最后的收益率和基准收益率
+    # if position is 0:
+    #     strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
+    # else:
+    #     balance = Decimal(str(balance)).quantize(Decimal('0.00'))
+    #     balance += Decimal(position) * Decimal(end_time_close)
+    #     strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
     df_start = data[data['id'] == start_time]
     df_end = data[data['id'] == end_time]
 
