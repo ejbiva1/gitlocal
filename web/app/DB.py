@@ -1334,7 +1334,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
     cursor = connection.cursor()
     sql = "select sl.create_time,s.strategy_name, " \
           "sl.final_margin, sl.strategy_log_id," \
-          "sl.benchmark " \
+          "sl.benchmark,sl.start_date,sl.end_date " \
           "from strategy_log sl " \
           "inner join strategy s on sl.strategy_id = s.strategy_id " \
           "where  sl.strategy_id = %s  and s.creator = %s " \
@@ -1348,7 +1348,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
         strategy_log = StrategyLog(strategy_log_id=item[3],
                                    create_time=item[0], strategy_name=item[1],
                                    final_margin=item[2], benchmark=item[4],
-                                   strategy_id=strategy_id, start_date=None, end_date=None, creator=creator,
+                                   strategy_id=strategy_id, start_date=item[5], end_date=item[6], creator=creator,
                                    coin_category=None, execution_result=None, init_balance=None)
         strategy_logs.append(strategy_log)
     cursor.close()
