@@ -124,8 +124,8 @@ def account_insert(position, t, strategy_log_id, signal, transaction_status):
     return account_id
 
 
-def account_update_total_margin(total_margin, strategy_log_id):
-    new_account = Account(strategy_log_id=strategy_log_id,
+def account_update_total_margin(total_margin, strategy_account_id):
+    new_account = Account(strategy_account_id=strategy_account_id,
                           current_total_margin_rate=total_margin)
     update_strategy_account(account=new_account)
 
@@ -229,7 +229,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         cal_balance += Decimal(position) * Decimal(close_t)
         strategy_profit = (cal_balance - Decimal(init_balance)) / Decimal(init_balance)
         # pos.rate_of_return = strategy_profit
-        account_update_total_margin(strategy_profit, log_id)
+        account_update_total_margin(strategy_profit, account_id)
 
     #     # 计算最后的收益率和基准收益率
     # if position is 0:

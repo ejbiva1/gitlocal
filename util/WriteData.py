@@ -75,7 +75,7 @@ def update_strategy_log(log2update):
 def update_strategy_account(account):
     # session = LogDBSession()
     sql = 'UPDATE strategy_account SET current_total_margin_rate = ' + str(account.current_total_margin_rate) +\
-          ' WHERE strategy_log_id = ' + str(account.strategy_log_id)
+          ' WHERE strategy_account_id = ' + str(account.strategy_account_id)
     try:
         session.execute(sql)
         session.commit()
