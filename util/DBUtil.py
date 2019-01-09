@@ -1,3 +1,5 @@
+# coding:utf-8
+
 import pymysql
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine

@@ -1,12 +1,13 @@
-import pandas as pd
-from sqlalchemy import create_engine
+# coding:utf-8
+
 from sqlalchemy import func
-import pymysql
-from entity.Strategy_log import Log
-from entity.Strategy_account import AccountDBSession, Account
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session
+import sys
+sys.path.append("..")
+from entity.Strategy_log import Log
+from entity.Strategy_account import AccountDBSession, Account
 
 # from sqlalchemy.orm import sessionmaker
 engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4',
@@ -58,6 +59,23 @@ def update_strategy_log(log2update):
     sql = 'UPDATE strategy_log SET final_margin = ' + str(log2update.final_margin) + ',benchmark = ' + str(
         log2update.benchmark) + ' WHERE strategy_log_id = ' + str(
         log2update.strategy_log_id)
+    try:
+        session.execute(sql)
+        session.commit()
+        # print('update final_margin,benchmark to strategy_log successfully')
+
+    except:
+        # 发生错误时回滚
+        session.rollback()
+    # 关闭数据库连接
+    session.close()
+
+
+# todo 更新account数据
+def update_strategy_account(account):
+    # session = LogDBSession()
+    sql = 'UPDATE strategy_account SET current_total_margin_rate = ' + str(account.current_total_margin_rate) +\
+          ' WHERE strategy_log_id = ' + str(account.strategy_log_id)
     try:
         session.execute(sql)
         session.commit()

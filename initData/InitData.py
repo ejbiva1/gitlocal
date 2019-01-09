@@ -1,4 +1,4 @@
-
+# coding:utf-8
 # #
 # strategy_id = 0
 # strategy_name = ""

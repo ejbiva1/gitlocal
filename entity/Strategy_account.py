@@ -1,3 +1,5 @@
+
+# coding:utf-8
 # 导入:
 from sqlalchemy import Column, create_engine
 from sqlalchemy.types import *

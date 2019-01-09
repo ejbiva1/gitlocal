@@ -1,3 +1,8 @@
+# coding:utf-8
+import sys
+
+sys.path.append('../..')
+
 from util.Position import Position
 from util.Trader import *
 from entity.Signal import Signal

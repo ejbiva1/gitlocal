@@ -1,6 +1,8 @@
-from util.ReadData import *
+# coding:utf-8
+
 from decimal import Decimal
 
+from util.ReadData import *
 
 class Position:
     # todo 暂时使用strategy_id来确定到底读取什么维度的数据库

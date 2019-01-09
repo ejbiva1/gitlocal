@@ -1,7 +1,10 @@
-from entity.Poc_signal import Poc_signal
+# coding:utf-8
+
 from decimal import Decimal
+import sys
 
-
+sys.path.append('../..')
+from entity.Poc_signal import Poc_signal
 # def poc_strategy(t, sell_dict, buy_dict, data):
 
 

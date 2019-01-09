@@ -1,5 +1,10 @@
+# coding:utf-8
 import pandas as pd
 from decimal import Decimal
+
+import sys
+
+sys.path.append('..')
 from util.WriteData import insert_2_strategy_transaction
 
 

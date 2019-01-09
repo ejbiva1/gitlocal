@@ -1,12 +1,10 @@
+# coding:utf-8
 import pymysql
-import util.DBUtil as db
-
-from sqlalchemy import func
-import pymysql
-from entity.Strategy_log import Log
-# from entity.Strategy_account import AccountDBSession, Account
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+import sys
+
+sys.path.append("../..")
 from entity.Strategy_account import Account
 
 # connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')

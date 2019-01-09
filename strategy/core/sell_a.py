@@ -1,5 +1,10 @@
+# coding:utf-8
 from util.ReadData import *
 from decimal import Decimal
+
+import sys
+
+sys.path.append('../..')
 from util.Trader import *
 from entity.Signal import Signal
 

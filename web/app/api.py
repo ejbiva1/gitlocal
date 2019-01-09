@@ -1,3 +1,5 @@
+# coding:utf-8
+
 from flask import Flask, request, session, make_response
 import DB as db
 import json

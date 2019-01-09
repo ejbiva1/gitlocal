@@ -1,17 +1,20 @@
+# coding:utf-8
+from decimal import Decimal
+import pandas as pd
+from math import floor
+import sys
+
+sys.path.append("..")
+from util.ReadData import read_datas_1day_test
 from util.Position import Position
+from strategy.core.poc import sell_signal, buy_signal
 from strategy.core.sell_a import SellA
 from strategy.core.sell_b import SellB
 from strategy.core.buy_b import BuyB
 from strategy.core.buy_a import BuyA
-from util.WriteData import *
-from decimal import Decimal
-from util.ReadData import read_datas_1day_test
-from strategy.core.poc import sell_signal, buy_signal
 from web.app.DB import getStrategyConfItem
-import pandas as pd
 from entity.Poc_response import Poc_response
-from time import time
-from math import floor
+from util.WriteData import *
 import util.Calculator as Calculator
 
 
@@ -121,6 +124,12 @@ def account_insert(position, t, strategy_log_id, signal, transaction_status):
     return account_id
 
 
+def account_update_total_margin(total_margin, strategy_log_id):
+    new_account = Account(strategy_log_id=strategy_log_id,
+                          current_total_margin_rate=total_margin)
+    update_strategy_account(account=new_account)
+
+
 def write_back2log(margin, benchmark, log_id):
     log = Log(strategy_log_id=log_id, final_margin=margin, benchmark=benchmark)
     update_strategy_log(log)
@@ -219,9 +228,8 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance):
         cal_balance = Decimal(str(balance)).quantize(Decimal('0.00'))
         cal_balance += Decimal(position) * Decimal(close_t)
         strategy_profit = (cal_balance - Decimal(init_balance)) / Decimal(init_balance)
-        pos.rate_of_return = strategy_profit
-        pos.cur_rate_of_return = ((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
-            init_balance)
+        # pos.rate_of_return = strategy_profit
+        account_update_total_margin(strategy_profit, log_id)
 
     #     # 计算最后的收益率和基准收益率
     # if position is 0:

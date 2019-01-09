@@ -1,3 +1,4 @@
+# coding:utf-8
 import web.app.DB as DB
 import sys
 from decimal import Decimal
