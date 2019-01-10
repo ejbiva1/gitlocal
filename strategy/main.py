@@ -7,15 +7,20 @@ import sys
 sys.path.append("..")
 from util.ReadData import read_datas_1day_test
 from util.Position import Position
+from util.WriteData import *
+import util.Calculator as Calculator
+
+# sys.path.append("../entity")
+from entity.Poc_response import Poc_response
+
+# sys.path.append("../strategy/core")
 from strategy.core.poc import sell_signal, buy_signal
 from strategy.core.sell_a import SellA
 from strategy.core.sell_b import SellB
 from strategy.core.buy_b import BuyB
 from strategy.core.buy_a import BuyA
+
 from web.app.DB import getStrategyConfItem
-from entity.Poc_response import Poc_response
-from util.WriteData import *
-import util.Calculator as Calculator
 
 
 # todo type define

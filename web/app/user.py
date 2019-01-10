@@ -1,11 +1,15 @@
 # coding:utf-8
 from flask import Flask, request, session, make_response
-import web.app.DB as db
+
 import json
 # import os
 # import web.app.controller as controller
 # from strategy import main
+import DB as db
 from facilties.functional import JsonExtendEncoder, HttpResponseModel, ResponseModel
+import sys
+
+sys.path.append('../../util')
 import util.sms_chinese as sms
 
 # from cacheout import Cache

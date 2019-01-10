@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import sys
 
-sys.path.append('../..')
+sys.path.append('..')
 from util.Trader import *
 from entity.Signal import Signal
 

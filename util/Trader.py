@@ -1,6 +1,8 @@
 # coding:utf-8
 
 from decimal import Decimal
+import sys
+sys.path.append('..')
 from util.Calculator import Calculator
 
 

@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import sys
 
-sys.path.append('../..')
+sys.path.append('..')
 import util.ReadData as ReadData
 
 

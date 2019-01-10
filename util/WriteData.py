@@ -5,7 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import sys
-sys.path.append("..")
+sys.path.append('..')
 from entity.Strategy_log import Log
 from entity.Strategy_account import AccountDBSession, Account
 

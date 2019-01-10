@@ -1,17 +1,16 @@
 # coding:utf-8
-import web.app.DB as DB
+
 import sys
 from decimal import Decimal
 
 # from marshmallow import Schema, fields
+import DB as DB
 
 sys.path.append("../..")
 import strategy.main as strategyTool
+
+sys.path.append("..")
 from facilties.functional import ResponseModel
-
-
-def getStrategy():
-    return DB.getStrategy()
 
 
 # 启动策略

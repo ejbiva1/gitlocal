@@ -3,7 +3,7 @@ import decimal
 
 import sys
 
-sys.path.append('../..')
+sys.path.append('..')
 from util.ReadData import *
 from util.Trader import *
 from entity.Signal import Signal

@@ -1,7 +1,6 @@
 # coding:utf-8
 
 from decimal import Decimal
-
 from util.ReadData import *
 
 class Position:
