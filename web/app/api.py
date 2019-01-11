@@ -380,17 +380,17 @@ def login_with_pwd():
         response = makeResp(result)
     return response
 
-
-@app.route('/getUserDetail', methods=['post'])
-def get_user_detail():
-    phone = request.json.get('phoneNo')
-    userList = db.getUser(phone)
-    user = userList.pop()
-    result = json.dumps({"result": user.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
-    response = make_response(result)
-    response.status = "200"
-    response.headers["Content-Type"] = "application/json"
-    return response
+#
+# @app.route('/getUserDetail', methods=['post'])
+# def get_user_detail():
+#     phone = request.json.get('phoneNo')
+#     userList = db.getUser(phone)
+#     user = userList.pop()
+#     result = json.dumps({"result": user.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
+#     response = make_response(result)
+#     response.status = "200"
+#     response.headers["Content-Type"] = "application/json"
+#     return response
 
 
 def makeResp(result):
@@ -441,32 +441,32 @@ def mob_get_data_array():
 
     return response
 
-
-# 用户模块
-@app.route('/loginWithPwd', methods=['POST'])
-def login_with_pwd():
-    phone = request.json.get("phoneNo")
-    pwd = request.json.get("password")
-    # code = request.json.get("msgCode")
-    user_list = db.getUser(phone)
-    if user_list:
-        user = user_list.pop()
-        if pwd == user.password:
-            # session.permanent  = True
-            session['userId'] = user.user_id
-            session['phoneNo'] = user.phone
-            data = {'login': 'Successed'}
-            result = ResponseModel(data=data, code='1', message='登录成功！')
-            response = makeResp(result)
-        else:
-            data = {'login': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='登录失败,用户密码不匹配！')
-            response = makeResp(result)
-    else:
-        data = {'login': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='登录失败,该手机号未注册！')
-        response = makeResp(result)
-    return response
+#
+# # 用户模块
+# @app.route('/loginWithPwd', methods=['POST'])
+# def login_with_pwd():
+#     phone = request.json.get("phoneNo")
+#     pwd = request.json.get("password")
+#     # code = request.json.get("msgCode")
+#     user_list = db.getUser(phone)
+#     if user_list:
+#         user = user_list.pop()
+#         if pwd == user.password:
+#             # session.permanent  = True
+#             session['userId'] = user.user_id
+#             session['phoneNo'] = user.phone
+#             data = {'login': 'Successed'}
+#             result = ResponseModel(data=data, code='1', message='登录成功！')
+#             response = makeResp(result)
+#         else:
+#             data = {'login': 'Failed'}
+#             result = ResponseModel(data=data, code='0', message='登录失败,用户密码不匹配！')
+#             response = makeResp(result)
+#     else:
+#         data = {'login': 'Failed'}
+#         result = ResponseModel(data=data, code='0', message='登录失败,该手机号未注册！')
+#         response = makeResp(result)
+#     return response
 
 
 @app.route('/loginWithMsgCode', methods=['POST'])
