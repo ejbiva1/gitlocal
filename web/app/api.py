@@ -250,11 +250,12 @@ def executeStrategy():
     strategy_id = request.json.get('strategy_id')
     start_time = request.json.get('start_time')
     end_time = request.json.get('end_time')
+    create_time = request.json.get('create_time')
     coin_category = request.json.get('coin_category')
     init_balance = request.json.get('init_balance')
 
     result = controller.mob_executeStrategy(userId=session['userId'], strategy_id=strategy_id,
-                                            start_time=start_time,
+                                            start_time=start_time,create_time=create_time,
                                             end_time=end_time, init_balance=init_balance,
                                             coin_category=coin_category)
 
@@ -272,13 +273,15 @@ def mob_executeStrategy():
     # session.permant = True
     session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
+    create_time = request.json.get('create_time')
     start_time = request.json.get('start_time')
     end_time = request.json.get('end_time')
     init_balance = request.json.get('init_balance')
     coin_category = request.json.get('coin_category')
 
     result = controller.mob_executeStrategy(userId=session['userId'], strategy_id=strategy_id, start_time=start_time,
-                                            end_time=end_time, init_balance=init_balance, coin_category=coin_category)
+                                            end_time=end_time, create_time=create_time, init_balance=init_balance,
+                                            coin_category=coin_category)
 
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
     response = make_response(response)
@@ -380,6 +383,7 @@ def login_with_pwd():
         response = makeResp(result)
     return response
 
+
 #
 # @app.route('/getUserDetail', methods=['post'])
 # def get_user_detail():
@@ -440,6 +444,7 @@ def mob_get_data_array():
     response.headers["Content-Type"] = "application/json"
 
     return response
+
 
 #
 # # 用户模块

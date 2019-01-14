@@ -1179,12 +1179,12 @@ def updateStrategyConf(strategy_id):
     return strategy_id
 
 
-def mob_updateStrategy(strategy_id, userId, coin_category, init_balance, start_time, end_time):
+def mob_updateStrategy(strategy_id, userId, coin_category, init_balance, start_time, end_time, create_time):
     cursor = connection.cursor()
-    sql = "update strategy set  coin_category = %s, init_balance = %s, start_time= %s, end_time = %s " \
+    sql = "update strategy set  coin_category = %s, init_balance = %s, start_time= %s, end_time = %s , create_time = %s " \
           " where strategy_id = %s and creator = %s "
 
-    params = (coin_category, init_balance, start_time, end_time, strategy_id, userId)
+    params = (coin_category, init_balance, start_time, end_time, create_time, strategy_id, userId)
     cursor.execute(sql, params)
     connection.commit()
 
