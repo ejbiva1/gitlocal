@@ -140,9 +140,10 @@ def write_back2log(margin, benchmark, log_id):
     update_strategy_log(log)
 
 
-def strategy_poc(strategy_id, start_time, end_time, init_balance):
+def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
     print('strategy_id' + str(strategy_id))
-    new_log = Log(strategy_id=strategy_id, start_date=start_time, end_date=end_time, init_balance=init_balance,
+    new_log = Log(strategy_id=strategy_id, start_date=start_time, end_date=end_time, create_time=create_time,
+                  init_balance=init_balance,
                   coin_category='btc', creator=1)
     log_id = insert_2_strategy_log(new_log)
     balance = init_balance

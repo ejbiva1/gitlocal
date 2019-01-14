@@ -275,6 +275,7 @@ def mob_executeStrategy(userId, strategy_id, start_time, end_time, create_time, 
     # 执行策略
     print("strategy_poc: strategy_id ||", strategy_id)
     result = strategyTool.strategy_poc(strategy_id=strategy_id, start_time=start_time, end_time=end_time,
+                                       create_time=create_time,
                                        init_balance=init_balance)
 
     if result is False:
