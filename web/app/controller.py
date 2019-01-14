@@ -270,7 +270,7 @@ def executeStrategy(userId, strategy_id):
 def mob_executeStrategy(userId, strategy_id, start_time, end_time, create_time, coin_category, init_balance):
     # 更新策略
     DB.mob_updateStrategy(userId=userId, strategy_id=strategy_id, start_time=start_time, end_time=end_time,
-                          create_time=create_time, coin_category=coin_category, init_balance=init_balance)
+                          coin_category=coin_category, init_balance=init_balance)
 
     # 执行策略
     print("strategy_poc: strategy_id ||", strategy_id)

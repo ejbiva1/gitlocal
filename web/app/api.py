@@ -255,7 +255,7 @@ def executeStrategy():
     init_balance = request.json.get('init_balance')
 
     result = controller.mob_executeStrategy(userId=session['userId'], strategy_id=strategy_id,
-                                            start_time=start_time,create_time=create_time,
+                                            start_time=start_time, create_time=create_time,
                                             end_time=end_time, init_balance=init_balance,
                                             coin_category=coin_category)
 
