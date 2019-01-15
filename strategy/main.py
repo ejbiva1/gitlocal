@@ -168,7 +168,8 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
     # todo 初始化持仓
 
     end_time_close = data[data['id'] == end_time].iat[0, 2]
-    id_list = data[data['id'] >= start_time]['id']
+    id_list = data[data['id'] >= start_time]
+    id_list = id_list[id_list['id'] <= end_time]['id']
     strategy_profit = 0.00
     for t in id_list:
 
