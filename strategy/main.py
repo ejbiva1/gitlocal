@@ -148,7 +148,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
                   coin_category='btc', creator=1)
     log_id = insert_2_strategy_log(new_log)
     balance = init_balance
-    data = read_datas_1day_test(start_time - 777600, end_time)
+    data = read_datas_1day_test(start_time - 777600, end_time + 86400)
 
     if data.empty:
         print('load data error!')
@@ -236,7 +236,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
         # print('\n')
         cal_balance = Decimal(str(balance)).quantize(Decimal('0.00'))
         cal_balance += Decimal(position) * Decimal(next_close_t)
-        # todo 这个地方的closet是当前时间的t所以不对，应该是下一个t的才对
+        # 策略收益率计算
         strategy_profit = (cal_balance - Decimal(init_balance)) / Decimal(init_balance)
         # pos.rate_of_return = strategy_profit
         account_update_total_margin(strategy_profit, account_id)
