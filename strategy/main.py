@@ -3,6 +3,7 @@ from decimal import Decimal
 import pandas as pd
 from math import floor
 import sys
+import time
 
 sys.path.append("..")
 from util.ReadData import read_datas_1day_test
@@ -172,7 +173,9 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
     for t in id_list:
 
         data_t = data[data['id'] == t]
+        next_data_t = data[data['id'] == t + 86400]
         close_t = data_t.iat[0, 2]
+        next_close_t = next_data_t.iat[0, 2]
         # 返回价钱和数量signal
         signal = sell_signal(t, sell_dict, data)
         # 插入account表
@@ -232,7 +235,8 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
         #     init_balance)))
         # print('\n')
         cal_balance = Decimal(str(balance)).quantize(Decimal('0.00'))
-        cal_balance += Decimal(position) * Decimal(close_t)
+        cal_balance += Decimal(position) * Decimal(next_close_t)
+        # todo 这个地方的closet是当前时间的t所以不对，应该是下一个t的才对
         strategy_profit = (cal_balance - Decimal(init_balance)) / Decimal(init_balance)
         # pos.rate_of_return = strategy_profit
         account_update_total_margin(strategy_profit, account_id)
@@ -367,7 +371,7 @@ if __name__ == '__main__':
     # strategy_combination_a(start_time=start_time, end_time=end_time, init_balance=init_balance)
     #
     response = strategy_poc(strategy_id=1, start_time=start_time, end_time=end_time,
-                            init_balance=init_balance)
+                            init_balance=init_balance, create_time=int(round(time.time() * 1000)))
     print('benchmark_profit=' + str(response.benchmark_profit))
     print('strategy_profit=' + str(response.strategy_profit))
     # print(time())
