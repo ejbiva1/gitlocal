@@ -171,6 +171,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
     id_list = data[data['id'] >= start_time]
     id_list = id_list[id_list['id'] <= end_time]['id']
     strategy_profit = 0.00
+    benchmark_profit = 0.00
     for t in id_list:
 
         data_t = data[data['id'] == t]
@@ -181,12 +182,13 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
         signal = sell_signal(t, sell_dict, data)
         # 插入account表
         pos.current_position = position
+        # print(str(position))
         pos.balance = balance
 
         account_id = account_insert(position=pos, t=t, strategy_log_id=log_id,
                                     signal=int(signal.signal),
                                     transaction_status=signal.signal)
-        if signal.signal == 2:
+        if signal.signal == 2 and position != 0:
             # 卖出并返回余额
             amount = position
             pre_balance = balance
@@ -201,7 +203,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
             calculator.transaction(flag=2, cost=close_t, amount=amount, pre_current_position=amount,
                                    pre_balance=pre_balance)
 
-        # print('******************')
+        # print('********sell*********')
         # print('balance: ' + str(balance))
         # print('position: ' + str(position))
         # print('current profit: ' + str(
@@ -210,7 +212,7 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
         # print('\n')
 
         signal = buy_signal(t, buy_dict, data)
-        if signal.signal == 1:
+        if signal.signal == 1 and balance != 0:
             # 买入并返回余额，买入数量
             amount = (Decimal(str(balance)) / Decimal(str(close_t)))
             amount *= 100000000
@@ -229,38 +231,28 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
             calculator.transaction(flag=1, cost=close_t, amount=amount, pre_current_position=0,
                                    pre_balance=pre_balance)
 
-        # print('******************')
+        # print('********buy********')
         # print('balance: ' + str(balance))
         # print('position: ' + str(position))
         # print('current profit: ' + str(((balance + position * Decimal(close_t)) - Decimal(init_balance)) / Decimal(
         #     init_balance)))
         # print('\n')
         cal_balance = Decimal(str(balance)).quantize(Decimal('0.00'))
-        cal_balance += Decimal(position) * Decimal(next_close_t)
+        cal_balance += Decimal(position) * Decimal(close_t)
         # 策略收益率计算
         strategy_profit = (cal_balance - Decimal(init_balance)) / Decimal(init_balance)
+        # print('strategy_profit='+str(strategy_profit))
+        # 基准收益率
+        df_start = data[data['id'] == start_time]
+        df_end = data[data['id'] == end_time]
+        close_start_t = Decimal(df_start.iat[0, 2])
+        benchmark_profit = (Decimal(str(close_t)) - close_start_t) / close_start_t
+        # print('benchmark_profit=' + str(benchmark_profit))
         # pos.rate_of_return = strategy_profit
+
         account_update_total_margin(strategy_profit, account_id)
 
-    #     # 计算最后的收益率和基准收益率
-    # if position is 0:
-    #     strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
-    # else:
-    #     balance = Decimal(str(balance)).quantize(Decimal('0.00'))
-    #     balance += Decimal(position) * Decimal(end_time_close)
-    #     strategy_profit = (balance - Decimal(init_balance)) / Decimal(init_balance)
-    df_start = data[data['id'] == start_time]
-    df_end = data[data['id'] == end_time]
 
-    new_balance = init_balance
-    if df_start.iat[0, 2] is not 0:
-        amount = Decimal(init_balance) / Decimal(df_start.iat[0, 2])
-    else:
-        amount = 0
-    new_balance = Decimal(str(new_balance)).quantize(Decimal('0.00'))
-    new_balance -= Decimal(amount) * Decimal(df_start.iat[0, 2])
-    new_balance += amount * Decimal(df_end.iat[0, 2])
-    benchmark_profit = (new_balance - Decimal(init_balance)) / Decimal(init_balance)
 
     # 回写策略执行后 收益率 到strategy_log表
     write_back2log(margin=strategy_profit, benchmark=benchmark_profit, log_id=log_id)
@@ -344,6 +336,24 @@ def create_conditions_dictionary(df):
         elif technical_index == 42:
             formula = get_formula(operator, price)
             dictionary['low(T-2)'] = formula
+        elif technical_index == 10:
+            formula = get_formula(operator, price)
+            dictionary['close(T)'] = formula
+        elif technical_index == 20:
+            formula = get_formula(operator, price)
+            dictionary['open(T)'] = formula
+        elif technical_index == 30:
+            formula = get_formula(operator, price)
+            dictionary['high(T)'] = formula
+        elif technical_index == 40:
+            formula = get_formula(operator, price)
+            dictionary['low(T)'] = formula
+        elif technical_index == 51:
+            formula = get_formula(operator, price)
+            dictionary['ma5(T)'] = formula
+        elif technical_index == 61:
+            formula = get_formula(operator, price)
+            dictionary['ma10(T)'] = formula
     return dictionary
 
 
@@ -362,17 +372,17 @@ if __name__ == '__main__':
     start_time = 1511107200
     # start_time = 1515600000
     # print(time())
-    # start_time = 1517587200
+    # start_time = 1517587200k
     # end_time = 1510675200
     # end_time = 1509022800
     end_time = 1511539200
     # end_time = 1516464000
-    init_balance = 1000000
+    init_balance = 99999999
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
     # strategy_combination_a(start_time=start_time, end_time=end_time, init_balance=init_balance)
     #
     response = strategy_poc(strategy_id=1, start_time=start_time, end_time=end_time,
-                            init_balance=init_balance, create_time=int(round(time.time() * 1000)))
+                            init_balance=init_balance, create_time=int(round(time.time())))
     print('benchmark_profit=' + str(response.benchmark_profit))
     print('strategy_profit=' + str(response.strategy_profit))
     # print(time())
