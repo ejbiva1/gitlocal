@@ -757,6 +757,43 @@ class User:
         self.experience = experience
 
 
+class UserByPhone:
+    user_id = 0
+    phone = 0
+    password = 0
+    nick_name = ""
+    open_id = ''
+    age = 0
+    gender = 0
+    avator = ''
+    levels = 0
+    style = 0
+    experience = 0
+
+    def __init__(self, user_id,
+                 phone,
+                 password,
+                 nick_name,
+                 open_id,
+                 age,
+                 gender,
+                 avator,
+                 levels,
+                 style,
+                 experience):
+        self.user_id = user_id
+        self.phone = phone
+        self.password = password
+        self.nick_name = nick_name
+        self.open_id = open_id
+        self.age = age
+        self.gender = gender
+        self.avator = avator
+        self.levels = levels
+        self.style = style
+        self.experience = experience
+
+
 # 用于myStrategy查询接口
 class MyStrategy:
     strategy_id = 0
@@ -1257,16 +1294,18 @@ def mob_my_strategy_list(creator):
     return my_strategy_list
 
 
-def getUser(phoneNo):
+def getUser(user_id):
     cursor = connection.cursor()
     UserList = []
     # SQL 查询语句
-    sql = " SELECT user_id,phone,password,nick_name,open_id,age,gender,avator,levels," \
-          "strategy_amount,history_amount,style,experience" \
-          " FROM user_info where phone=%s"
+    sql = "SELECT u.user_id,u.phone,u.password,u.nick_name,u.open_id,u.age,u.gender," \
+          "u.avator,u.levels," \
+          "(SELECT COUNT(s.strategy_id) FROM strategy s WHERE s.creator = u.user_id and s.del_flag = 0) strategy_amount," \
+          "(SELECT COUNT(sl.strategy_log_id) FROM strategy_log sl WHERE sl.creator = u.user_id and sl.del_flag = 0) history_amount," \
+          "style,experience FROM user_info u WHERE u.user_id = %s"
 
     # 执行SQL语句
-    param = (phoneNo)
+    param = (user_id)
     cursor.execute(sql, param)
     # 获取所有记录列表
     results = cursor.fetchall()
@@ -1274,6 +1313,28 @@ def getUser(phoneNo):
         # 打印结果
         item = User(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11],
                     row[12])
+
+        UserList.append(item)
+    cursor.close()
+    return UserList
+
+
+def getUserByPhone(phone):
+    cursor = connection.cursor()
+    UserList = []
+    # SQL 查询语句
+    sql = "SELECT u.user_id,u.phone,u.password,u.nick_name,u.open_id,u.age,u.gender," \
+          "u.avator,u.levels," \
+          "style,experience FROM user_info u WHERE u.phone = %s"
+
+    # 执行SQL语句
+    param = (phone)
+    cursor.execute(sql, param)
+    # 获取所有记录列表
+    results = cursor.fetchall()
+    for row in results:
+        # 打印结果
+        item = UserByPhone(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
 
         UserList.append(item)
     cursor.close()

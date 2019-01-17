@@ -363,7 +363,7 @@ def login_with_pwd():
     phone = request.json.get("phoneNo")
     pwd = request.json.get("password")
     # code = request.json.get("msgCode")
-    user_list = db.getUser(phone)
+    user_list = db.getUserByPhone(phone)
     if user_list:
         user = user_list.pop()
         if pwd == user.password:
@@ -478,7 +478,7 @@ def mob_get_data_array():
 def login_with_msg_code():
     phone = request.json.get("phoneNo")
     code = request.json.get("msgCode")
-    user_list = db.getUser(phone)
+    user_list = db.getUserByPhone(phone)
     if user_list:
         user = user_list.pop()
         cache_code = sms.cache.get(phone)
@@ -539,7 +539,7 @@ def sign_up():
     style = request.json.get("style")
     experience = request.json.get("experience")
 
-    user_list = db.getUser(phone)
+    user_list = db.getUserByPhone(phone)
     if not user_list:
         # user = user_list.pop()
         cache_code = sms.cache.get(phone)
@@ -575,7 +575,10 @@ def change_pwd():
         response.status = "403"
         response.headers["Content-Type"] = "application/json"
     else:
-        user_list = db.getUser(phoneNo)
+        user_id = session['userId']
+        if user_id is None:
+            user_id = 1
+        user_list = db.getUser(user_id)
         if str(phone) == phoneNo:
             if user_list:
                 # user = user_list.pop()
@@ -606,8 +609,11 @@ def change_pwd():
 
 @app.route('/getUserDetail', methods=['post'])
 def get_user_detail():
-    phone = request.json.get('phoneNo')
-    userList = db.getUser(phone)
+    # phone = request.json.get('user_id')
+    user_id = session['userId']
+    if user_id is None:
+        user_id = 1
+    userList = db.getUser(user_id)
     user = userList.pop()
     result = json.dumps({"result": user.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
     response = make_response(result)
