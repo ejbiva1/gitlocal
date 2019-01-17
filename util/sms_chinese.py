@@ -5,7 +5,7 @@ import random
 import time
 from cacheout import Cache
 
-cache = Cache(maxsize=256, ttl=60, timer=time.time)
+cache = Cache(maxsize=256, ttl=300, timer=time.time)
 
 
 def send_sms(phone_no):
