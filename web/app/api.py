@@ -368,7 +368,7 @@ def login_with_pwd():
         user = user_list.pop()
         if pwd == user.password:
             # session.permant = True
-            # session['userId'] = user.user_id
+            session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
             result = ResponseModel(data=data, code='1', message='登录成功！')
