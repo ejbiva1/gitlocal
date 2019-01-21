@@ -3,23 +3,21 @@ import pymysql
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import sys
+from DBUtils.PooledDB import PooledDB
+
+import web.app.db_setting as db
 
 sys.path.append("../..")
 from entity.Strategy_account import Account
 
-connection = pymysql.connect("localhost", "root", "Quant123", "quantcoin", charset='utf8')
 
+# connection = pymysql.connect("localhost", "root", "Quant123", "quantcoin", charset='utf8')
 
 # connection = pymysql.connect("52.163.218.233", "root", "Quant123", "quantcoin", charset='utf8')
 # connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
 
 # connection = db.OPMysql.conn
-def reConnect(connection):
-    try:
-        connection.ping()
-    except:
-        connection()
 
 
 class StrategyLog:
@@ -817,8 +815,6 @@ class MyStrategy:
 
 
 def getALLStrategy(creator):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyList = []
     # SQL 查询语句
     sql = "SELECT strategy_id," \
@@ -841,21 +837,17 @@ def getALLStrategy(creator):
           " where creator=%s and del_flag = 0"
 
     # 执行SQL语句
-    cursor.execute(sql, creator)
     # 获取所有记录列表
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, creator)
     for row in results:
         # 打印结果
         strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                             row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
         strategyList.append(strategy)
-    cursor.close()
     return strategyList
 
 
 def getStrategyDetail(creator, strategy_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     # SQL 查询语句
     sql = "SELECT strategy_id," \
           " strategy_name," \
@@ -878,19 +870,14 @@ def getStrategyDetail(creator, strategy_id):
 
     # 执行SQL语句
     param = (creator, strategy_id)
-    cursor.execute(sql, param)
-
+    row = db.fetch_db_with_param(sql, param)
     # 获取所有记录列表
-    row = cursor.fetchone()  # 打印结果
     strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                         row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
-    cursor.close()
     return strategy
 
 
 def getStrategyLogList(creator):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyLogList = []
     # SQL 查询语句
     sql = " SELECT strategy_log_id," \
@@ -911,22 +898,18 @@ def getStrategyLogList(creator):
 
     # print(sql)
     # 执行SQL语句
-    cursor.execute(sql, creator)
+    results = db.fetch_db_with_param(sql, creator)
     # 获取所有记录列表
-    results = cursor.fetchall()
     for row in results:
         # 打印结果
         pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                           row[11])
         # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
-    cursor.close()
     return strategyLogList
 
 
 def getStrategyLogsByStrategyId(creator, strategy_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyLogList = []
     # SQL 查询语句
     sql = " SELECT strategy_log_id," \
@@ -948,22 +931,17 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
     # 执行SQL语句
     param = (creator, strategy_id)
     # print(sql)
-    cursor.execute(sql, param)
-    # 获取所有记录列表
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, param)
     for row in results:
         # 打印结果
         pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                           row[11])
         # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
-    cursor.close()
     return strategyLogList
 
 
 def getLogDetail(strategyLogId, creator):
-    reConnect(connection)
-    cursor = connection.cursor()
     log_details = []
     #   SQL 查询语句
     sql = " SELECT strategy_log_id," \
@@ -982,16 +960,13 @@ def getLogDetail(strategyLogId, creator):
           " where del_flag = 0 and  strategy_log_id=%s and creator=%s" % (strategyLogId, creator)
 
     # 执行SQL 语句
-    cursor.execute(sql)
-
-    results = cursor.fetchone()
+    results = db.fetch_db(sql)
     # for row in results:
     #     pro = StrategyLog(row[0], row[a], row[b], row[3], row[4], row[5], row[6], row[7], row[8])
     #
     #     log_details.append(pro)
     log_details = StrategyLog(results[0], results[1], results[2], results[3], results[4], results[5], results[6],
                               results[7], results[8], results[9], results[10], results[11])
-    cursor.close()
     return log_details
 
 
@@ -1040,8 +1015,6 @@ def getStrategyAccountList(strategyLogId):
 
 
 def getStrategy(userId, strategyId):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyList = []
     # SQL 查询语句
     sql = " SELECT strategy_id," \
@@ -1065,22 +1038,18 @@ def getStrategy(userId, strategyId):
 
     # 执行SQL语句
     param = (userId, strategyId)
-    cursor.execute(sql, param)
+    row = db.fetch_db_with_param(sql, param)
     # 获取所有记录列表
-    row = cursor.fetchone()
     # 打印结果
     strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                         row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
     # print(strategy)
     strategy.set_strategy_conf_items(getStrategyConfItem(row[0]))
     # strategyConf.printAll()
-    cursor.close()
     return strategy
 
 
 def getStrategyConfItem(strategy_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfItemList = []
     # SQL 查询语句
     sql = " SELECT strategy_conf_item_id,strategy_id,index_label,formular,price,direction" \
@@ -1088,53 +1057,41 @@ def getStrategyConfItem(strategy_id):
 
     # 执行SQL语句
     param = (strategy_id)
-    cursor.execute(sql, param)
+    results = db.fetch_db_with_param(sql, param)
     # 获取所有记录列表
-    results = cursor.fetchall()
     for row in results:
         # 打印结果
         item = StrategyConfItem(row[0], row[1], row[2], row[3], row[4], row[5])
 
         strategyConfItemList.append(item)
-    cursor.close()
     return strategyConfItemList
 
 
 def saveStrategy(strategy_name, creator, coin_category, init_balance, start_time, end_time):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
     sql = " INSERT INTO strategy(strategy_name,creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s,%s, %s);"
     param = (strategy_name, creator, coin_category, init_balance, start_time, end_time)
-    cursor.execute(sql, param)
-    cursor.execute('SELECT LAST_INSERT_ID();')
-    strategy_id = cursor.fetchone()
-    connection.commit()
+    db.update_db_with_params(sql, param)
+    strategy_id = db.fetch_one('SELECT LAST_INSERT_ID();')
     return strategy_id
 
 
 # 保存策略名称
 def saveStrategyName(strategy_id, strategy_name, creator):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
     sql = " update strategy set strategy_name=%s where strategy_id=%s and creator=%s"
     param = (strategy_name, strategy_id, creator)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(param)
 
 
 def checkStrategyName(strategy_name, creator):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
     sql = " select * from strategy where strategy_name=%s and creator=%s"
     param = (strategy_name, creator)
-    cursor.execute(sql, param)
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, param)
     if (len(results) > 0):
         return True
     else:
@@ -1142,15 +1099,11 @@ def checkStrategyName(strategy_name, creator):
 
 
 def checkPreviousStrategyName(strategy_id, creator, strategy_name):
-    reConnect(connection)
-    cursor = connection.cursor()
     # sql 查询语句
     sql = "select strategy_name from strategy where strategy_id=%s and creator=%s"
     params = (strategy_id, creator)
-    cursor.execute(sql, params)
     while True:
-        result = cursor.fetchone()
-        connection.commit()
+        result = db.fetch_one(sql, params)
         if result == None:
             break
         if result[0] == strategy_name:
@@ -1160,15 +1113,12 @@ def checkPreviousStrategyName(strategy_id, creator, strategy_name):
 
 
 def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
 
     # SQL 查询语句  添加数据
     sql = " INSERT INTO strategy_conf_item(strategy_id,index_label,formular,price, direction)VALUES(%s,%s,%s,%s, %s);"
     param = (strategy_id, index_label, formular, price, direction)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 #
@@ -1193,25 +1143,19 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
 
 
 def deleteStrategyById(strategy_id, userId):
-    reConnect(connection)
-    cursor = connection.cursor()
     # sql 查询语句
     sql = " update strategy set del_flag = 1 where strategy_id=%s and creator = %s"
     param = (strategy_id, userId)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 # 删除 指定 strategy_log
 def deleteStrategyLogById(strategy_log_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     # SQL 查询语句
     # sql = " delete from strategy_log where strategy_log_id = %s;"
     sql = "update strategy_log set del_flag = 1 where strategy_log_id = %s; "
     param = (strategy_log_id)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 # 更新策略
@@ -1219,63 +1163,48 @@ def updateStrategy(strategy_id, strategy_name, creator, coin_category, init_bala
     # param = (strategy_name, creator)
     # cursor.execute(sql, param)
     # results = cursor.fetchall()
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
     # SQL update 语句
     sql = "update strategy set strategy_name=%s, coin_category = %s, init_balance = %s, start_time= %s, end_time = %s " \
           " where strategy_id = %s and creator = %s "
     param = (strategy_name, coin_category, init_balance, start_time, end_time, strategy_id, creator)
-    cursor.execute(sql, param)
+    db.update_db_with_params(sql, param)
     # cursor.execute('SELECT LAST_INSERT_ID();')
     # strategy_id = cursor.fetchone()
-    connection.commit()
+
     return strategy_id
 
 
 # 更新策略 conf
 def updateStrategyConf(strategy_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
     #  首先删除 之前配置的conf
     sql = "delete from strategy_conf_item where strategy_id= %s "
-    cursor.execute(sql, strategy_id)
+    db.update_db_with_params(sql, strategy_id)
     # strategy_id = cursor.fetchone()
-    connection.commit()
     return strategy_id
 
 
 def mob_updateStrategy(strategy_id, userId, coin_category, init_balance, start_time, end_time):
-    reConnect(connection)
-    cursor = connection.cursor()
     sql = "update strategy set  coin_category = %s, init_balance = %s, start_time= %s, end_time = %s" \
           " where strategy_id = %s and creator = %s "
 
     params = (coin_category, init_balance, start_time, end_time, strategy_id, userId)
-    cursor.execute(sql, params)
-    connection.commit()
+    db.update_db_with_params(sql, params)
 
 
 def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_time, end_time):
-    reConnect(connection)
-    cursor = connection.cursor()
-
     sql = "insert into strategy_log(strategy_id, start_date, end_date, init_balance, coin_category,creator, create_time ) " \
           " values(%s, %s, %s, %s, %s, %s, now()); "
 
     params = (strategy_id, start_time, end_time, init_balance, coin_category, userId)
-    cursor.execute(sql, params)
-    cursor.execute('SELECT LAST_INSERT_ID();')
-    strategy_log_id = cursor.fetchone()
-    connection.commit()
+    db.update_db_with_params(sql, params)
+    strategy_log_id = db.fetch_one('SELECT LAST_INSERT_ID();')
     return strategy_log_id
 
 
 def mob_trade_history(strategy_log_id):
-    reConnect(connection)
     trade_historys = []
-    cursor = connection.cursor()
     sql = "select st.t, sa.signal, " \
           "st.pre_position,  " \
           "st.post_position, " \
@@ -1288,22 +1217,17 @@ def mob_trade_history(strategy_log_id):
           "where  sl.strategy_log_id = %s;"
 
     params = (strategy_log_id)
-
-    cursor.execute(sql, params)
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, params)
 
     for item in results:
         trade_history = TradeHistory(item[0], item[1], item[2], item[3], item[4], item[5], item[6])
 
         trade_historys.append(trade_history)
-    cursor.close()
     return trade_historys
 
 
 def mob_my_strategy_list(creator):
-    reConnect(connection)
     my_strategy_list = []
-    cursor = connection.cursor()
     sql0 = "CREATE OR REPLACE VIEW MY_STRATEGY_LIST AS " \
            "SELECT s.strategy_id, s.strategy_name, sl.create_time from strategy s " \
            "inner join strategy_log sl on sl.strategy_id = s.strategy_id " \
@@ -1316,21 +1240,17 @@ def mob_my_strategy_list(creator):
 
     sql2 = "DROP VIEW MY_STRATEGY_LIST"
     params = (creator)
-    cursor.execute(sql0, params)
-    cursor.execute(sql1)
-    results = cursor.fetchall()
-    cursor.execute(sql2)
+    db.fetch_db_with_param(sql0, params)
+    results = db.fetch_db(sql1)
+    db.update_db(sql2)
 
     for item in results:
         strategy = MyStrategy(strategy_id=item[0], strategy_name=item[1], create_time=item[2], run_times=item[3])
         my_strategy_list.append(strategy)
-    cursor.close()
     return my_strategy_list
 
 
 def getUser(user_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     UserList = []
     # SQL 查询语句
     sql = "SELECT u.user_id,u.phone,u.password,u.nick_name,u.open_id,u.age,u.gender," \
@@ -1341,22 +1261,17 @@ def getUser(user_id):
 
     # 执行SQL语句
     param = (user_id)
-    cursor.execute(sql, param)
-    # 获取所有记录列表
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, param)
     for row in results:
         # 打印结果
         item = User(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11],
                     row[12])
 
         UserList.append(item)
-    cursor.close()
     return UserList
 
 
 def getUserByPhone(phone):
-    reConnect(connection)
-    cursor = connection.cursor()
     UserList = []
     # SQL 查询语句
     sql = "SELECT u.user_id,u.phone,u.password,u.nick_name,u.open_id,u.age,u.gender," \
@@ -1365,73 +1280,56 @@ def getUserByPhone(phone):
 
     # 执行SQL语句
     param = (phone)
-    cursor.execute(sql, param)
-    # 获取所有记录列表
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, param)
     for row in results:
         # 打印结果
         item = UserByPhone(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
 
         UserList.append(item)
-    cursor.close()
     return UserList
 
 
 def saveUserItem(phone, password, nick_name, open_id, age, gender, avator, levels,
                  strategy_amount, history_amount, style, experience):
-    reConnect(connection)
-    cursor = connection.cursor()
     strategyConfList = []
     # SQL  添加数据
     sql = "INSERT INTO user_info(phone,password,nick_name,open_id,age,gender,avator,levels," \
           "strategy_amount,history_amount,style,experience)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
     param = (phone, password, nick_name, open_id, age, gender, avator, levels,
              strategy_amount, history_amount, style, experience)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 # 修改用户密码
 def update_user_pwd(user_id, new_pwd):
-    reConnect(connection)
-    cursor = connection.cursor()
     # SQL update 语句
     sql = "update user_info set password=%s" \
           " where user_id = %s"
     param = (new_pwd, user_id)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 # 修改用户密码
 def update_user_phone_num(phone, user_id):
-    reConnect(connection)
-    cursor = connection.cursor()
     # SQL update 语句
     sql = "update user_info set phone=%s" \
           " where user_id = %s"
     param = (phone, user_id)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 # 修改用户信息
 def update_user_info(user_id, nick_name, open_id, age, gender, avator, style, experience):
-    reConnect(connection)
-    cursor = connection.cursor()
     # SQL update 语句
     sql = "update user_info set nick_name=%s,open_id=%s,age=%s,gender=%s," \
           "avator=%s,style=%s,experience=%s" \
           " where user_id = %s"
     param = (nick_name, open_id, age, gender, avator, style, experience, user_id)
-    cursor.execute(sql, param)
-    connection.commit()
+    db.update_db_with_params(sql, param)
 
 
 def mob_get_strategy_log_list(strategy_id, creator):
-    reConnect(connection)
     strategy_logs = []
-    cursor = connection.cursor()
     sql = "select sl.create_time,s.strategy_name, " \
           "sl.final_margin, sl.strategy_log_id," \
           "sl.benchmark,sl.start_date,sl.end_date " \
@@ -1441,8 +1339,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
           "order by sl.create_time desc ;"
 
     params = (strategy_id, creator)
-    cursor.execute(sql, params)
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, params)
 
     for item in results:
         strategy_log = StrategyLog(strategy_log_id=item[3],
@@ -1451,22 +1348,17 @@ def mob_get_strategy_log_list(strategy_id, creator):
                                    strategy_id=strategy_id, start_date=item[5], end_date=item[6], creator=creator,
                                    coin_category=None, execution_result=None, init_balance=None)
         strategy_logs.append(strategy_log)
-    cursor.close()
     return strategy_logs
 
 
 def get_all_strategy_name(creator):
-    reConnect(connection)
-    cursor = connection.cursor()
-
     strategy_name_list = []
 
     sql = " SELECT strategy_name FROM strategy where  del_flag = 0  and creator = %s  " \
           " order by strategy_name asc "
 
     params = (creator)
-    cursor.execute(sql, params)
-    results = cursor.fetchall()
+    results = db.fetch_db_with_param(sql, params)
 
     for item in results:
         strategy_name_list.append(item[0])
