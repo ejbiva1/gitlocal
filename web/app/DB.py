@@ -7,8 +7,8 @@ import sys
 sys.path.append("../..")
 from entity.Strategy_account import Account
 
-# connection = pymysql.connect("localhost", "root", "root", "quant_coin", charset='utf8')
-connection = pymysql.connect("52.163.218.233", "root", "Quant123", "quantcoin", charset='utf8')
+connection = pymysql.connect("localhost", "root", "Quant123", "quant_coin", charset='utf8')
+# connection = pymysql.connect("52.163.218.233", "root", "Quant123", "quantcoin", charset='utf8')
 # connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
 
@@ -1010,7 +1010,7 @@ def getStrategyAccountList(strategyLogId):
     #                        pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错
     #                        pool_recycle=-1  # 多久之后对线程池中的线程进行一次连接的回收（重置）
     #                        )
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4',
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4',
                            max_overflow=0,  # 超过连接池大小外最多创建的连接
                            pool_size=50,  # 连接池大小
                            pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错

@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 
 def read_datas_60min(startTime, endTime):
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4')
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4')
     # 变量输入表名 table = 'btc_kline_60min'
     sql = '''
         select * from quantcoin.btc_kline_60min
@@ -17,7 +17,7 @@ def read_datas_60min(startTime, endTime):
 
 
 def read_datas_60min_test(startTime, endTime):
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4')
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4')
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     # 变量输入表名 table = 'btc_kline_60min'
     sql = '''
@@ -31,7 +31,7 @@ def read_datas_60min_test(startTime, endTime):
 
 def read_datas_1day(startTime, endTime):
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4')
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4')
     # 变量输入表名 table = 'btc_kline_1day'
     sql = '''
         select * from quantcoin.btc_kline_1day
@@ -44,7 +44,7 @@ def read_datas_1day(startTime, endTime):
 
 
 def read_datas_1day_test(startTime, endTime):
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4')
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4')
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     # 变量输入表名 table = 'btc_kline_1day'
     sql = '''
@@ -58,7 +58,7 @@ def read_datas_1day_test(startTime, endTime):
 
 
 def read_datas_5min(startTime, endTime):
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4')
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4')
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
     # 变量输入表名 table = 'btc_kline_5min'
     sql = '''
@@ -87,7 +87,7 @@ def read_datas_5min_test(startTime, endTime):
 # todo 加入一个用户判断字段(需要连表查询确保记录唯一)
 def get_trade_info(time_stamp, strategy_id, flag):
     # engine = create_engine('mysql+pymysql://root:Quant123@35.162.98.89:3306/quantcoin?charset=utf8MB4')
-    engine = create_engine('mysql+pymysql://root:Quant123@52.163.218.233:3306/quantcoin?charset=utf8MB4')
+    engine = create_engine('mysql+pymysql://root:Quant123@localhost:3306/quantcoin?charset=utf8MB4')
     # todo 变量输入表名 table = 'strategy_transaction'
     sql = '''
            select * from quantcoin.strategy_transaction
