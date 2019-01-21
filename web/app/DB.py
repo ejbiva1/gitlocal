@@ -7,7 +7,7 @@ import sys
 sys.path.append("../..")
 from entity.Strategy_account import Account
 
-connection = pymysql.connect("localhost", "root", "Quant123", "quant_coin", charset='utf8')
+connection = pymysql.connect("localhost", "root", "Quant123", "quantcoin", charset='utf8')
 # connection = pymysql.connect("52.163.218.233", "root", "Quant123", "quantcoin", charset='utf8')
 # connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
