@@ -8,11 +8,18 @@ sys.path.append("../..")
 from entity.Strategy_account import Account
 
 connection = pymysql.connect("localhost", "root", "Quant123", "quantcoin", charset='utf8')
+
+
 # connection = pymysql.connect("52.163.218.233", "root", "Quant123", "quantcoin", charset='utf8')
 # connection = pymysql.connect("35.162.98.89", "root", "Quant123", "quantcoin", charset='utf8')
 
 
 # connection = db.OPMysql.conn
+def reConnect(connection):
+    try:
+        connection.ping()
+    except:
+        connection()
 
 
 class StrategyLog:
@@ -810,6 +817,7 @@ class MyStrategy:
 
 
 def getALLStrategy(creator):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyList = []
     # SQL 查询语句
@@ -846,6 +854,7 @@ def getALLStrategy(creator):
 
 
 def getStrategyDetail(creator, strategy_id):
+    reConnect(connection)
     cursor = connection.cursor()
     # SQL 查询语句
     sql = "SELECT strategy_id," \
@@ -880,6 +889,7 @@ def getStrategyDetail(creator, strategy_id):
 
 
 def getStrategyLogList(creator):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyLogList = []
     # SQL 查询语句
@@ -915,6 +925,7 @@ def getStrategyLogList(creator):
 
 
 def getStrategyLogsByStrategyId(creator, strategy_id):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyLogList = []
     # SQL 查询语句
@@ -951,6 +962,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
 
 
 def getLogDetail(strategyLogId, creator):
+    reConnect(connection)
     cursor = connection.cursor()
     log_details = []
     #   SQL 查询语句
@@ -1028,6 +1040,7 @@ def getStrategyAccountList(strategyLogId):
 
 
 def getStrategy(userId, strategyId):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyList = []
     # SQL 查询语句
@@ -1066,6 +1079,7 @@ def getStrategy(userId, strategyId):
 
 
 def getStrategyConfItem(strategy_id):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfItemList = []
     # SQL 查询语句
@@ -1087,6 +1101,7 @@ def getStrategyConfItem(strategy_id):
 
 
 def saveStrategy(strategy_name, creator, coin_category, init_balance, start_time, end_time):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
@@ -1101,6 +1116,7 @@ def saveStrategy(strategy_name, creator, coin_category, init_balance, start_time
 
 # 保存策略名称
 def saveStrategyName(strategy_id, strategy_name, creator):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
@@ -1111,6 +1127,7 @@ def saveStrategyName(strategy_id, strategy_name, creator):
 
 
 def checkStrategyName(strategy_name, creator):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
     # SQL 查询语句
@@ -1125,6 +1142,7 @@ def checkStrategyName(strategy_name, creator):
 
 
 def checkPreviousStrategyName(strategy_id, creator, strategy_name):
+    reConnect(connection)
     cursor = connection.cursor()
     # sql 查询语句
     sql = "select strategy_name from strategy where strategy_id=%s and creator=%s"
@@ -1142,6 +1160,7 @@ def checkPreviousStrategyName(strategy_id, creator, strategy_name):
 
 
 def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
 
@@ -1174,6 +1193,7 @@ def saveStrategyConfItem(strategy_id, index_label, formular, price, direction):
 
 
 def deleteStrategyById(strategy_id, userId):
+    reConnect(connection)
     cursor = connection.cursor()
     # sql 查询语句
     sql = " update strategy set del_flag = 1 where strategy_id=%s and creator = %s"
@@ -1184,6 +1204,7 @@ def deleteStrategyById(strategy_id, userId):
 
 # 删除 指定 strategy_log
 def deleteStrategyLogById(strategy_log_id):
+    reConnect(connection)
     cursor = connection.cursor()
     # SQL 查询语句
     # sql = " delete from strategy_log where strategy_log_id = %s;"
@@ -1198,6 +1219,7 @@ def updateStrategy(strategy_id, strategy_name, creator, coin_category, init_bala
     # param = (strategy_name, creator)
     # cursor.execute(sql, param)
     # results = cursor.fetchall()
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
     # SQL update 语句
@@ -1213,6 +1235,7 @@ def updateStrategy(strategy_id, strategy_name, creator, coin_category, init_bala
 
 # 更新策略 conf
 def updateStrategyConf(strategy_id):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
     #  首先删除 之前配置的conf
@@ -1224,6 +1247,7 @@ def updateStrategyConf(strategy_id):
 
 
 def mob_updateStrategy(strategy_id, userId, coin_category, init_balance, start_time, end_time):
+    reConnect(connection)
     cursor = connection.cursor()
     sql = "update strategy set  coin_category = %s, init_balance = %s, start_time= %s, end_time = %s" \
           " where strategy_id = %s and creator = %s "
@@ -1234,6 +1258,7 @@ def mob_updateStrategy(strategy_id, userId, coin_category, init_balance, start_t
 
 
 def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_time, end_time):
+    reConnect(connection)
     cursor = connection.cursor()
 
     sql = "insert into strategy_log(strategy_id, start_date, end_date, init_balance, coin_category,creator, create_time ) " \
@@ -1248,6 +1273,7 @@ def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_ti
 
 
 def mob_trade_history(strategy_log_id):
+    reConnect(connection)
     trade_historys = []
     cursor = connection.cursor()
     sql = "select st.t, sa.signal, " \
@@ -1275,6 +1301,7 @@ def mob_trade_history(strategy_log_id):
 
 
 def mob_my_strategy_list(creator):
+    reConnect(connection)
     my_strategy_list = []
     cursor = connection.cursor()
     sql0 = "CREATE OR REPLACE VIEW MY_STRATEGY_LIST AS " \
@@ -1302,6 +1329,7 @@ def mob_my_strategy_list(creator):
 
 
 def getUser(user_id):
+    reConnect(connection)
     cursor = connection.cursor()
     UserList = []
     # SQL 查询语句
@@ -1327,6 +1355,7 @@ def getUser(user_id):
 
 
 def getUserByPhone(phone):
+    reConnect(connection)
     cursor = connection.cursor()
     UserList = []
     # SQL 查询语句
@@ -1350,6 +1379,7 @@ def getUserByPhone(phone):
 
 def saveUserItem(phone, password, nick_name, open_id, age, gender, avator, levels,
                  strategy_amount, history_amount, style, experience):
+    reConnect(connection)
     cursor = connection.cursor()
     strategyConfList = []
     # SQL  添加数据
@@ -1363,6 +1393,7 @@ def saveUserItem(phone, password, nick_name, open_id, age, gender, avator, level
 
 # 修改用户密码
 def update_user_pwd(user_id, new_pwd):
+    reConnect(connection)
     cursor = connection.cursor()
     # SQL update 语句
     sql = "update user_info set password=%s" \
@@ -1374,6 +1405,7 @@ def update_user_pwd(user_id, new_pwd):
 
 # 修改用户密码
 def update_user_phone_num(phone, user_id):
+    reConnect(connection)
     cursor = connection.cursor()
     # SQL update 语句
     sql = "update user_info set phone=%s" \
@@ -1385,6 +1417,7 @@ def update_user_phone_num(phone, user_id):
 
 # 修改用户信息
 def update_user_info(user_id, nick_name, open_id, age, gender, avator, style, experience):
+    reConnect(connection)
     cursor = connection.cursor()
     # SQL update 语句
     sql = "update user_info set nick_name=%s,open_id=%s,age=%s,gender=%s," \
@@ -1396,6 +1429,7 @@ def update_user_info(user_id, nick_name, open_id, age, gender, avator, style, ex
 
 
 def mob_get_strategy_log_list(strategy_id, creator):
+    reConnect(connection)
     strategy_logs = []
     cursor = connection.cursor()
     sql = "select sl.create_time,s.strategy_name, " \
@@ -1422,6 +1456,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
 
 
 def get_all_strategy_name(creator):
+    reConnect(connection)
     cursor = connection.cursor()
 
     strategy_name_list = []
