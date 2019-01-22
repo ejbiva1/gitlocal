@@ -1071,8 +1071,7 @@ def saveStrategy(strategy_name, creator, coin_category, init_balance, start_time
     # SQL 查询语句
     sql = " INSERT INTO strategy(strategy_name,creator, coin_category,init_balance,start_time,end_time)VALUES(%s,%s,%s,%s,%s, %s);"
     param = (strategy_name, creator, coin_category, init_balance, start_time, end_time)
-    db.update_db_with_params(sql, param)
-    strategy_id = db.fetch_db('SELECT LAST_INSERT_ID();')
+    strategy_id = db.update_db_with_params(sql, param)
     return strategy_id
 
 
@@ -1197,8 +1196,7 @@ def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_ti
           " values(%s, %s, %s, %s, %s, %s, now()); "
 
     params = (strategy_id, start_time, end_time, init_balance, coin_category, userId)
-    db.update_db_with_params(sql, params)
-    strategy_log_id = db.fetch_db('SELECT LAST_INSERT_ID();')
+    strategy_log_id = db.update_db_with_params(sql, params)
     return strategy_log_id
 
 

@@ -87,8 +87,8 @@ def insert_db(sql):
     cursor.execute(sql)
     result = conn.commit()
     conn.close()
-
-    return result
+    new_id = cursor.lastrowid
+    return new_id
 
 
 def update_db_with_params(sql, params):
@@ -97,5 +97,5 @@ def update_db_with_params(sql, params):
     cursor.execute(sql, params)
     result = conn.commit()
     conn.close()
-
-    return result
+    new_id = cursor.lastrowid
+    return new_id
