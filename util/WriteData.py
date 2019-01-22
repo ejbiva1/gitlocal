@@ -40,7 +40,10 @@ def insert_2_strategy_log(new_log):
     # new_log = Log()
     # session = LogDBSession()
     session.add(new_log)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     log_id = session.query(func.max(Log.strategy_log_id)).one()[0]
     session.close()
     # print('insert to strategy_log successfully')
@@ -52,7 +55,10 @@ def insert_2_strategy_account(new_account):
     # dataframe.to_sql('strategy_account', engine, index=False, if_exists='append')
     # session = AccountDBSession()
     session.add(new_account)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     account_id = session.query(func.max(Account.strategy_account_id)).one()[0]
     session.close()
     # print('insert to strategy_account successfully')
