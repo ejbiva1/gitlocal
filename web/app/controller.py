@@ -119,8 +119,11 @@ def strategyOperation(strategy_id, strategy_name, userId, coin_category, init_ba
     if strategy_oper == "save":
         # update 并且更新
         print("strategyOperation: update Strategy")
-        updateStrategy(strategy_id=strategy_id, strategy_name=strategy_name, userId=userId, coin_category=coin_category,
-                       init_balance=init_balance, start_time=start_time, end_time=end_time, strategy_oper=strategy_oper)
+        result = updateStrategy(strategy_id=strategy_id, strategy_name=strategy_name, userId=userId,
+                                coin_category=coin_category,
+                                init_balance=init_balance, start_time=start_time, end_time=end_time,
+                                strategy_oper=strategy_oper)
+        strategy_id = result.data
 
     elif strategy_oper == "submit":
         print("strategyOperation: Save Strategy")
@@ -131,7 +134,8 @@ def strategyOperation(strategy_id, strategy_name, userId, coin_category, init_ba
                               init_balance=init_balance, start_time=start_time, end_time=end_time,
                               strategyConfItemlist=strategyConfItemlist, strategy_oper=strategy_oper)
         strategy_id = result.data
-
+    if isinstance(strategy_id, (dict)):
+        strategy_id = strategy_id.get('strategy_id')
     strategy_base_info = DB.getStrategyDetail(userId, strategy_id)
 
     response = {
