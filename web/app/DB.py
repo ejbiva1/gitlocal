@@ -962,12 +962,9 @@ def getLogDetail(strategyLogId, creator):
 
     # 执行SQL 语句
     results = db.fetch_db(sql)
-    # for row in results:
-    #     pro = StrategyLog(row[0], row[a], row[b], row[3], row[4], row[5], row[6], row[7], row[8])
-    #
-    #     log_details.append(pro)
-    log_details = StrategyLog(results[0], results[1], results[2], results[3], results[4], results[5], results[6],
-                              results[7], results[8], results[9], results[10], results[11])
+    row = results[0]
+    log_details = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                              row[7], row[8], row[9], row[10], row[11])
     return log_details
 
 
