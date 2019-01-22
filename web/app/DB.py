@@ -870,8 +870,9 @@ def getStrategyDetail(creator, strategy_id):
 
     # 执行SQL语句
     param = (creator, strategy_id)
-    row = db.fetch_db_with_param(sql, param)
+    rows = db.fetch_db_with_param(sql, param)
     # 获取所有记录列表
+    row = rows[0]
     strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                         row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
     return strategy
@@ -1038,9 +1039,10 @@ def getStrategy(userId, strategyId):
 
     # 执行SQL语句
     param = (userId, strategyId)
-    row = db.fetch_db_with_param(sql, param)
+    rows = db.fetch_db_with_param(sql, param)
     # 获取所有记录列表
     # 打印结果
+    row = rows[0]
     strategy = Strategy(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                         row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19])
     # print(strategy)
@@ -1103,10 +1105,10 @@ def checkPreviousStrategyName(strategy_id, creator, strategy_name):
     sql = "select strategy_name from strategy where strategy_id=%s and creator=%s"
     params = (strategy_id, creator)
     while True:
-        result = db.fetch_one(sql, params)
+        result = db.fetch_db_with_param(sql, params)
         if result == None:
             break
-        if result[0] == strategy_name:
+        if result[0][0] == strategy_name:
             return True
         else:
             return False
