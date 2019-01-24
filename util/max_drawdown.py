@@ -1,4 +1,5 @@
 import numpy as np
+from decimal import Decimal
 
 
 def max_drawdown(timeseries):
@@ -11,7 +12,7 @@ def max_drawdown(timeseries):
     i = np.argmax(np.maximum.accumulate(timeseries) - timeseries)
     # 回撤开始的时间点
     j = np.argmax(timeseries[:i])
-    return (float(timeseries[i]) / timeseries[j]) - 1.
+    return (Decimal(str(timeseries[i])) / Decimal(str(timeseries[j]))) - 1.
 
 #
 # import numpy as np
