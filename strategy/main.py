@@ -146,10 +146,10 @@ def write_max_drawdown_back2log(log_id):
     # 查询并计算最大回撤率
     profit_list = get_strategy_profit_list(log_id)
     max_drawdown = max_drawdown_cal.max_drawdown(profit_list)
-    if not isinstance(max_drawdown, float) or not isinstance(max_drawdown, int):
+    if not isinstance(max_drawdown, Decimal):
         max_drawdown = 0.00
     log = Log(strategy_log_id=log_id, max_drawdown=max_drawdown)
-    update_strategy_log(log)
+    update_strategy_log_max_drawdown(log)
 
 
 def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):

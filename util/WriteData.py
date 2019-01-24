@@ -5,6 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import sys
+
 sys.path.append('..')
 from entity.Strategy_log import Log
 from entity.Strategy_account import AccountDBSession, Account
@@ -83,10 +84,28 @@ def update_strategy_log(log2update):
     session.close()
 
 
+# todo 更新结果数据
+def update_strategy_log_max_drawdown(log2update):
+    # session = LogDBSession()
+    sql = 'UPDATE strategy_log SET max_drawdown = ' + str(
+        log2update.max_drawdown) + ' WHERE strategy_log_id = ' + str(
+        log2update.strategy_log_id)
+    try:
+        session.execute(sql)
+        session.commit()
+        # print('update final_margin,benchmark to strategy_log successfully')
+
+    except:
+        # 发生错误时回滚
+        session.rollback()
+    # 关闭数据库连接
+    session.close()
+
+
 # todo 更新account数据
 def update_strategy_account(account):
     # session = LogDBSession()
-    sql = 'UPDATE strategy_account SET current_total_margin_rate = ' + str(account.current_total_margin_rate) +\
+    sql = 'UPDATE strategy_account SET current_total_margin_rate = ' + str(account.current_total_margin_rate) + \
           ' WHERE strategy_account_id = ' + str(account.strategy_account_id)
     try:
         session.execute(sql)
