@@ -11,8 +11,12 @@ def max_drawdown(timeseries):
     # 回撤结束时间点
     i = np.argmax(np.maximum.accumulate(timeseries) - timeseries)
     # 回撤开始的时间点
+    if i == 0:
+        return 0.00
     j = np.argmax(timeseries[:i])
-    return (Decimal(str(timeseries[i])) / Decimal(str(timeseries[j]))) - Decimal('1.0')
+
+    return Decimal('1.0') - (Decimal(str(timeseries[i])) / Decimal(str(timeseries[j])))
+
 
 #
 # import numpy as np
@@ -32,3 +36,8 @@ def max_drawdown(timeseries):
 # plt.plot([i, j], [x[i], x[j]],
 #          'o', color='Red', markersize=10)
 # plt.show()
+
+if __name__ == "__main__":
+    list = [5, 5, 35, 35]
+    max_drawdown = max_drawdown(list)
+    print(str(max_drawdown))
