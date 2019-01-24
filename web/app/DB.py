@@ -1205,7 +1205,7 @@ def insertStrategyLog(strategy_id, userId, coin_category, init_balance, start_ti
 
 def mob_trade_history(strategy_log_id):
     trade_historys = []
-    sql = "select st.t, sa.signal, " \
+    sql = "select st.t, st.flag, " \
           "st.pre_position,  " \
           "st.post_position, " \
           "st.pre_balance," \
