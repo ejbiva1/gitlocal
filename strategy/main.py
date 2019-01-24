@@ -10,6 +10,7 @@ from util.ReadData import read_datas_1day_test
 from util.Position import Position
 from util.WriteData import *
 import util.Calculator as Calculator
+import util.max_drawdown as max_drawdown_cal
 
 # sys.path.append("../entity")
 from entity.Poc_response import Poc_response
@@ -21,7 +22,7 @@ from strategy.core.sell_b import SellB
 from strategy.core.buy_b import BuyB
 from strategy.core.buy_a import BuyA
 
-from web.app.DB import getStrategyConfItem
+from web.app.DB import getStrategyConfItem, get_strategy_profit_list
 
 
 # todo type define
@@ -141,6 +142,16 @@ def write_back2log(margin, benchmark, log_id):
     update_strategy_log(log)
 
 
+def write_max_drawdown_back2log(log_id):
+    # 查询并计算最大回撤率
+    profit_list = get_strategy_profit_list(log_id)
+    max_drawdown = max_drawdown_cal.max_drawdown(profit_list)
+    if not isinstance(max_drawdown, float) or not isinstance(max_drawdown, int):
+        max_drawdown = 0.00
+    log = Log(strategy_log_id=log_id, max_drawdown=max_drawdown)
+    update_strategy_log(log)
+
+
 def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
     print('strategy_id' + str(strategy_id))
     new_log = Log(strategy_id=strategy_id, start_date=start_time, end_date=end_time, create_time=create_time,
@@ -252,10 +263,10 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
 
         account_update_total_margin(strategy_profit, account_id)
 
-
-
     # 回写策略执行后 收益率 到strategy_log表
     write_back2log(margin=strategy_profit, benchmark=benchmark_profit, log_id=log_id)
+    # 计算并回写 最大回撤率 到strategy_log表
+    write_max_drawdown_back2log(log_id=log_id)
 
     return Poc_response(strategy_profit=Decimal(str(strategy_profit)).quantize(Decimal('0.0000')),
                         benchmark_profit=Decimal(str(benchmark_profit)).quantize(Decimal('0.0000')),
@@ -377,7 +388,7 @@ if __name__ == '__main__':
     # end_time = 1509022800
     end_time = 1511539200
     # end_time = 1516464000
-    init_balance = 99999999
+    init_balance = 1000000
     # strategy_combination_b(start_time=start_time, end_time=end_time, init_balance=init_balance)
     # strategy_combination_a(start_time=start_time, end_time=end_time, init_balance=init_balance)
     #

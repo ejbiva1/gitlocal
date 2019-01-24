@@ -33,6 +33,7 @@ class StrategyLog:
     strategy_name = ""
     final_margin = 0.0
     benchmark = 0.0
+    max_drawdown = 0.0
 
     def __init__(self, strategy_log_id,
                  strategy_id,
@@ -45,7 +46,8 @@ class StrategyLog:
                  execution_result,
                  strategy_name,
                  final_margin,
-                 benchmark):
+                 benchmark,
+                 max_drawdown):
         self.strategy_log_id = strategy_log_id
         self.strategy_id = strategy_id
         self.start_date = start_date
@@ -58,6 +60,7 @@ class StrategyLog:
         self.strategy_name = strategy_name
         self.final_margin = final_margin
         self.benchmark = benchmark
+        self.max_drawdown = max_drawdown
 
     def get_strategy_log_id(self):
         return self.strategy_log_id
@@ -892,7 +895,7 @@ def getStrategyLogList(creator):
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin," \
-          " benchmark " \
+          " benchmark,max_drawdown " \
           " FROM strategy_log" \
           " where creator=%s and del_flag = 0 " \
           " order by create_time desc "
@@ -904,7 +907,7 @@ def getStrategyLogList(creator):
     for row in results:
         # 打印结果
         pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                          row[11])
+                          row[11], row[12])
         # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
     return strategyLogList
@@ -924,7 +927,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin ," \
-          "benchmark " \
+          "benchmark,max_drawdown " \
           " FROM strategy_log" \
           " where creator=%s and strategy_id =%s and del_flag = 0 " \
           " order by create_time desc"
@@ -936,7 +939,7 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
     for row in results:
         # 打印结果
         pro = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
-                          row[11])
+                          row[11], row[12])
         # print("row[0]:"+str(row[0])+"|row[a]:"+row[a]+"|row[b]:"+str(row[b])+"|row[3]:"+str(row[3])+"|row[4]:"+row[4]+"|row[5]:"+str(row[5])+"|row[6]:"+row[6]+"|row[7]:"+str(row[7]))
         strategyLogList.append(pro)
     return strategyLogList
@@ -956,7 +959,7 @@ def getLogDetail(strategyLogId, creator):
           " execution_result, " \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
           " (final_margin - init_balance)/init_balance final_margin," \
-          " benchmark" \
+          " benchmark,max_drawdown" \
           " FROM strategy_log" \
           " where del_flag = 0 and  strategy_log_id=%s and creator=%s" % (strategyLogId, creator)
 
@@ -964,7 +967,7 @@ def getLogDetail(strategyLogId, creator):
     results = db.fetch_db(sql)
     row = results[0]
     log_details = StrategyLog(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
-                              row[7], row[8], row[9], row[10], row[11])
+                              row[7], row[8], row[9], row[10], row[11], row[12])
     return log_details
 
 
@@ -1329,7 +1332,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
     strategy_logs = []
     sql = "select sl.create_time,s.strategy_name, " \
           "sl.final_margin, sl.strategy_log_id," \
-          "sl.benchmark,sl.start_date,sl.end_date " \
+          "sl.benchmark,sl.start_date,sl.end_date,sl.max_drawdown " \
           "from strategy_log sl " \
           "inner join strategy s on sl.strategy_id = s.strategy_id " \
           "where  sl.strategy_id = %s  and s.creator = %s " \
@@ -1343,7 +1346,7 @@ def mob_get_strategy_log_list(strategy_id, creator):
                                    create_time=item[0], strategy_name=item[1],
                                    final_margin=item[2], benchmark=item[4],
                                    strategy_id=strategy_id, start_date=item[5], end_date=item[6], creator=creator,
-                                   coin_category=None, execution_result=None, init_balance=None)
+                                   coin_category=None, execution_result=None, init_balance=None, max_drawdown=item[7])
         strategy_logs.append(strategy_log)
     return strategy_logs
 
@@ -1361,3 +1364,18 @@ def get_all_strategy_name(creator):
         strategy_name_list.append(item[0])
 
     return strategy_name_list
+
+
+def get_strategy_profit_list(strategy_log_id):
+    strategy_profit_list = []
+
+    sql = " SELECT current_total_margin_rate FROM strategy_account where  strategy_log_id = %s  " \
+          " order by strategy_account_id asc "
+
+    params = (strategy_log_id)
+    results = db.fetch_db_with_param(sql, params)
+
+    for item in results:
+        strategy_profit_list.append(item[0])
+
+    return strategy_profit_list

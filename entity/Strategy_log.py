@@ -27,6 +27,7 @@ class Log(Base):
     execution_result = Column(Integer)
     final_margin = Column(DECIMAL(10, 2))
     benchmark = Column(DECIMAL(10, 2))
+    max_drawdown = Column(DECIMAL(10, 2))
 
 
 # # 初始化数据库连接:
