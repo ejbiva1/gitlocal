@@ -14,6 +14,7 @@ import util.max_drawdown as max_drawdown_cal
 
 # sys.path.append("../entity")
 from entity.Poc_response import Poc_response
+from entity.Poc_signal import Poc_signal
 
 # sys.path.append("../strategy/core")
 from strategy.core.poc import sell_signal, buy_signal
@@ -199,6 +200,10 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
         account_id = account_insert(position=pos, t=t, strategy_log_id=log_id,
                                     signal=int(signal.signal),
                                     transaction_status=signal.signal)
+        # 最后一次t卖出
+        if t == end_time:
+            signal = Poc_signal(signal=2, price=Decimal(end_time_close).quantize(Decimal('0.000000')))
+
         if signal.signal == 2 and position != 0:
             # 卖出并返回余额
             amount = position
