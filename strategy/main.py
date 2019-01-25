@@ -231,6 +231,9 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
         # print('\n')
 
         signal = buy_signal(t, buy_dict, data)
+        # 最后一t不买
+        if t == end_time:
+            signal.signal = 0
         if signal.signal == 1 and balance != 0:
             # 买入并返回余额，买入数量
             amount = (Decimal(str(balance)) / Decimal(str(close_t)))
