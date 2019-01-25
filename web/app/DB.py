@@ -894,7 +894,7 @@ def getStrategyLogList(creator):
           " create_time," \
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin," \
+          " final_margin," \
           " benchmark,max_drawdown " \
           " FROM strategy_log" \
           " where creator=%s and del_flag = 0 " \
@@ -926,8 +926,8 @@ def getStrategyLogsByStrategyId(creator, strategy_id):
           " create_time," \
           " execution_result," \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin ," \
-          "benchmark,max_drawdown " \
+          " final_margin ," \
+          " benchmark,max_drawdown " \
           " FROM strategy_log" \
           " where creator=%s and strategy_id =%s and del_flag = 0 " \
           " order by create_time desc"
