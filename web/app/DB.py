@@ -958,7 +958,7 @@ def getLogDetail(strategyLogId, creator):
           " create_time," \
           " execution_result, " \
           " (select strategy_name from strategy where strategy.strategy_id = strategy_log.strategy_id) strategy_name," \
-          " (final_margin - init_balance)/init_balance final_margin," \
+          " final_margin," \
           " benchmark,max_drawdown" \
           " FROM strategy_log" \
           " where del_flag = 0 and  strategy_log_id=%s and creator=%s" % (strategyLogId, creator)
@@ -1210,7 +1210,7 @@ def mob_trade_history(strategy_log_id):
           "st.post_position, " \
           "st.pre_balance," \
           "st.post_balance," \
-          "sa.transaction_status from strategy_log sl " \
+          "st.flag from strategy_log sl " \
           "inner join strategy s on sl.strategy_id = s.strategy_id " \
           "inner join  strategy_account sa on sl.strategy_log_id = sa.strategy_log_id " \
           "inner join strategy_transaction  st on sa.strategy_account_id = st.strategy_account_id " \

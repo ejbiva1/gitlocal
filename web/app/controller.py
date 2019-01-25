@@ -404,9 +404,9 @@ def mob_get_strategy_account_list(strategy_log_id):
 
     for s in strategy_account_list:
         margin = s.current_total_margin_rate
-        margin = margin.quantize(Decimal('0.00'))
+        margin = margin.quantize(Decimal('0.0000'))
         benchmark = Decimal(str(s.close)) / Decimal(str(init_price)) - Decimal('1')
-        benchmark = benchmark.quantize(Decimal('0.00'))
+        benchmark = benchmark.quantize(Decimal('0.0000'))
         margin_list.append(margin)
         benchmark_list.append(benchmark)
         time_stamp_list.append(s.t)

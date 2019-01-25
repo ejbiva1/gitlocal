@@ -208,6 +208,9 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
             position = 0
             balance = Decimal(str(balance)).quantize(Decimal('0.00'))
 
+            # position对象更新
+            pos.balance = balance
+            pos.current_position = position
             # todo 初始化运算器
             calculator = Calculator.Calculator(pos, t, signal=0, strategy_id=strategy_id,
                                                strategy_account_id=account_id)
@@ -236,6 +239,9 @@ def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
             balance = Decimal(str(balance)).quantize(Decimal('0.00'))
             # balance = 0
 
+            # position对象更新
+            pos.balance = balance
+            pos.current_position = position
             # todo 初始化运算器
             calculator = Calculator.Calculator(pos, t, signal=0, strategy_id=strategy_id,
                                                strategy_account_id=account_id)
