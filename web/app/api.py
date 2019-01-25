@@ -371,15 +371,15 @@ def login_with_pwd():
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
-            result = ResponseModel(data=data, code='1', message='登录成功！')
+            result = ResponseModel(data=data, code='1', message='login success！')
             response = makeResp(result)
         else:
             data = {'login': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='登录失败,用户密码不匹配！')
+            result = ResponseModel(data=data, code='0', message='login failed,password and username not match！')
             response = makeResp(result)
     else:
         data = {'login': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='登录失败,该手机号未注册！')
+        result = ResponseModel(data=data, code='0', message='login failed,this phone number is not exist！')
         response = makeResp(result)
     return response
 
@@ -487,15 +487,15 @@ def login_with_msg_code():
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
-            result = ResponseModel(data=data, code='1', message='登录成功！')
+            result = ResponseModel(data=data, code='1', message='login success！')
             response = makeResp(result)
         else:
             data = {'login': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='登录失败,验证码不匹配！')
+            result = ResponseModel(data=data, code='0', message='login failed,msgCode not match！')
             response = makeResp(result)
     else:
         data = {'login': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='登录失败,该手机号未注册！')
+        result = ResponseModel(data=data, code='0', message='login failed,this phone number is not exist！')
         response = makeResp(result)
     return response
 
@@ -505,11 +505,11 @@ def send_msg():
     phone = request.json.get("phoneNo")
     if sms.send_sms(phone) != 0:
         data = {'sendMsg': 'Successed'}
-        result = ResponseModel(data=data, code='1', message='发送成功！请在1分钟内完成验证。')
+        result = ResponseModel(data=data, code='1', message='sent success！please finish matching in 1 min。')
         response = makeResp(result)
     else:
         data = {'sendMsg': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='发送失败，请稍后再试。')
+        result = ResponseModel(data=data, code='0', message='send failed，please try later。')
         response = makeResp(result)
 
     return response
@@ -547,15 +547,15 @@ def sign_up():
             db.saveUserItem(phone, pwd, nick_name, open_id, age, gender, avator, levels,
                             strategy_amount, history_amount, style, experience)
             data = {'signUp': 'Successed'}
-            result = ResponseModel(data=data, code='1', message='注册成功！')
+            result = ResponseModel(data=data, code='1', message='register success！')
             response = makeResp(result)
         else:
             data = {'signUp': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='注册失败,验证码不匹配！')
+            result = ResponseModel(data=data, code='0', message='register failed, msgCode is not match！')
             response = makeResp(result)
     else:
         data = {'signUp': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='注册失败,该手机号已存在！')
+        result = ResponseModel(data=data, code='0', message='register failed, this phone has been registered！')
         response = makeResp(result)
     return response
 
@@ -569,7 +569,7 @@ def change_pwd():
     phoneNo = session['phoneNo']
     if not phoneNo:
         data = {'changePwd': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='session为空，无访问权限！')
+        result = ResponseModel(data=data, code='0', message='session is null，permission deny！')
         response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
         response = make_response(response)
         response.status = "403"
@@ -590,19 +590,19 @@ def change_pwd():
                 if code == cache_code:
                     db.update_user_pwd(user_id=session['userId'], new_pwd=pwd)
                     data = {'changePwd': 'Successed'}
-                    result = ResponseModel(data=data, code='1', message='密码修改成功！')
+                    result = ResponseModel(data=data, code='1', message='password change success！')
                     response = makeResp(result)
                 else:
                     data = {'changePwd': 'Failed'}
-                    result = ResponseModel(data=data, code='0', message='密码修改失败,验证码不匹配！')
+                    result = ResponseModel(data=data, code='0', message='password change failed,magCode not match！')
                     response = makeResp(result)
             else:
                 data = {'changePwd': 'Failed'}
-                result = ResponseModel(data=data, code='0', message='密码修改失败,内部错误')
+                result = ResponseModel(data=data, code='0', message='password change failed, inner error')
                 response = makeResp(result)
         else:
             data = {'changePwd': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='密码修改失败,该手机号与预留手机号不一致！')
+            result = ResponseModel(data=data, code='0', message='password change failed, phone number is not match！')
             response = makeResp(result)
     return response
 
@@ -640,11 +640,11 @@ def alter_personal_info():
     if user_id:
         db.update_user_info(user_id, nick_name, open_id, age, gender, avator, style, experience)
         data = {'signUp': 'Successed'}
-        result = ResponseModel(data=data, code='1', message='修改成功！')
+        result = ResponseModel(data=data, code='1', message='changed success！')
         response = makeResp(result)
     else:
         data = {'update': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='修改失败，无访问权限！')
+        result = ResponseModel(data=data, code='0', message='failed ，permission deny')
         response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
         response = make_response(response)
         response.status = "403"
@@ -663,15 +663,15 @@ def change_phone_num():
         if code == cache_code:
             db.update_user_phone_num(phone, user_id)
             data = {'changePhoneNum': 'Successed'}
-            result = ResponseModel(data=data, code='1', message='修改成功！')
+            result = ResponseModel(data=data, code='1', message='success！')
             response = makeResp(result)
         else:
             data = {'update': 'Failed'}
-            result = ResponseModel(data=data, code='0', message='修改失败，验证码不匹配！')
+            result = ResponseModel(data=data, code='0', message='failed，msgCode is not match！')
             response = makeResp(result)
     else:
         data = {'update': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='修改失败，无访问权限！')
+        result = ResponseModel(data=data, code='0', message='failed，permission deny！')
         response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
         response = make_response(response)
         response.status = "403"
