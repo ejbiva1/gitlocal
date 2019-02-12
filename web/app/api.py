@@ -40,8 +40,8 @@ def startStrategy():
 @app.route('/loadLogList', methods=['POST'])
 def loadLogList():
     strategy_log_list = []
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
 
     strategy_id = request.json.get('strategy_id')
     if strategy_id is None:
@@ -59,8 +59,8 @@ def loadLogList():
 
 @app.route('/getLogDetail/<int:strategyLogId>', methods=['post'])
 def getLogDetail(strategyLogId):
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
     log_details = controller.getLogDetail(strategyLogId, session['userId'])
 
     result = json.dumps({'list': log_details.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
@@ -73,8 +73,8 @@ def getLogDetail(strategyLogId):
 # 保存并执行 策略
 @app.route('/saveStrategyConf', methods=['post'])
 def saveStrategyConf():
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
 
     strategy_name = request.json.get("strategy_name")
     strategy_id = request.json.get("strategy_id")
@@ -106,8 +106,8 @@ def saveStrategyConf():
 @app.route('/getALLStrategy', methods=['post'])
 def getALLStrategy():
     strategy_list = []
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
     strategyList = controller.getALLStrategy(session['userId'])
     for item in strategyList:
         strategy_list.append(item.__dict__)
@@ -121,8 +121,8 @@ def getALLStrategy():
 @app.route('/getStrategyDetail', methods=['post'])
 def getStrategyDetail():
     strategy_id = request.json.get('strategy_id')
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
     strategy = controller.getStrategyDetail(creator=session['userId'], strategy_id=strategy_id)
 
     result = json.dumps({"result": strategy.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
@@ -134,8 +134,8 @@ def getStrategyDetail():
 
 @app.route('/checkStrategyName', methods=['post'])
 def checkStrategyName():
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
 
     strategy_id = request.json.get("strategy_id")
     if strategy_id is None:
@@ -153,8 +153,8 @@ def checkStrategyName():
 
 @app.route('/saveStrategyName', methods=['post'])
 def saveStrategyName():
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
 
     strategy_name = request.json.get("strategy_name")
     strategy_id = request.json.get("strategy_id")
@@ -190,8 +190,8 @@ def deleteStrategyLogById():
 @app.route('/getStrategy', methods=['post'])
 def getStrategy():
     strategy_id = request.json.get('strategy_id')
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
 
     try:
 
@@ -212,8 +212,8 @@ def getStrategy():
 # 暂存 或  新添加 策略
 @app.route('/saveStrategyConfOrUpdate', methods=['post'])
 def saveStrategy():
-    session.permanent = True
-    session['userId'] = 1
+    # session.permanent = True
+    # session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
     print(strategy_id)
     if strategy_id is None:
@@ -245,8 +245,8 @@ def saveStrategy():
 
 @app.route('/executeStrategy', methods=['post'])
 def executeStrategy():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
     start_time = request.json.get('start_time')
     end_time = request.json.get('end_time')
@@ -271,7 +271,7 @@ def executeStrategy():
 @app.route('/mob_executeStrategy', methods=['post'])
 def mob_executeStrategy():
     # session.permant = True
-    session['userId'] = 1
+    # session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
     create_time = request.json.get('create_time')
     start_time = request.json.get('start_time')
@@ -294,8 +294,8 @@ def mob_executeStrategy():
 # 诗丽 手机端 调用 该接口， 获取策略 回测历史数据
 @app.route('/mob_strategytradehistory', methods=['post'])
 def mob_strategytradehistory():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
 
     strategy_log_id = request.json.get('strategy_log_id')
 
@@ -312,8 +312,8 @@ def mob_strategytradehistory():
 # 诗丽 手机端 调用 该接口， 获取我的策略列表 策略名称 最后一次调用时间 总的调用次数
 @app.route('/mob_getMyStrategyList', methods=['post'])
 def mob_get_my_strategy_list():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
     result = controller.mob_my_strategy_list(userId=session['userId'])
 
     response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
@@ -327,8 +327,8 @@ def mob_get_my_strategy_list():
 # 诗丽 手机端 调用 该接口， 获取某个策略回测列表 每次执行的结果 （策略名称，回测时间，策略收益率，基准收益率，最大回撤）
 @app.route('/mob_getStrategyLogList', methods=['post'])
 def mob_get_strategy_log_list():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
     strategy_id = request.json.get('strategy_id')
     result = controller.mob_get_strategy_log_list(strategy_id=strategy_id, user_id=session['userId'])
 
@@ -343,8 +343,8 @@ def mob_get_strategy_log_list():
 # 删除策略 del_strategy
 @app.route('/delStrategy', methods=['post'])
 def delStrategy():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
 
     strategy_id = request.json.get('strategy_id')
     result = controller.deleteStrategyById(strategy_id=strategy_id, userId=session['userId'])
@@ -407,8 +407,8 @@ def makeResp(result):
 
 @app.route('/getAllStrategyName', methods=['post'])
 def getAllStrategyName():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
     result = controller.get_all_strategy_name(creator=session['userId'])
     result = json.dumps({"result": result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
     response = make_response(result)
@@ -419,8 +419,8 @@ def getAllStrategyName():
 
 @app.route('/getDefaultStrategyName', methods=['post'])
 def getDefaultStrategyName():
-    session.permant = True
-    session['userId'] = 1
+    # session.permant = True
+    # session['userId'] = 1
     # set default strategy name
     default_strategy_name = controller.set_default_strategy_name(creator=session['userId'])
     result = json.dumps({"result": default_strategy_name.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder)
