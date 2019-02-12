@@ -1,6 +1,7 @@
 # coding:utf-8
 
 from flask import Flask, request, session, make_response
+from datetime import timedelta
 import DB as db
 import json
 import os
@@ -367,7 +368,8 @@ def login_with_pwd():
     if user_list:
         user = user_list.pop()
         if pwd == user.password:
-            # session.permant = True
+            session.permant = True
+            app.permanent_session_lifetime = timedelta(minutes=1)
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
@@ -484,6 +486,8 @@ def login_with_msg_code():
         cache_code = sms.cache.get(phone)
         if code == cache_code:
             # session.permant = True
+            session.permant = True
+            app.permanent_session_lifetime = timedelta(minutes=1)
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
@@ -505,11 +509,11 @@ def send_msg():
     phone = request.json.get("phoneNo")
     if sms.send_sms(phone) != 0:
         data = {'sendMsg': 'Successed'}
-        result = ResponseModel(data=data, code='1', message='sent success！please finish matching in 1 min。')
+        result = ResponseModel(data=data, code='1', message='Sent successfully')
         response = makeResp(result)
     else:
         data = {'sendMsg': 'Failed'}
-        result = ResponseModel(data=data, code='0', message='send failed，please try later。')
+        result = ResponseModel(data=data, code='0', message='send failed,please try later')
         response = makeResp(result)
 
     return response
