@@ -679,5 +679,31 @@ def change_phone_num():
     return response
 
 
+@app.route('/loginJudger', methods=['POST'])
+def loginJudger():
+    if not session:
+        data = {'update': 'Failed'}
+        result = ResponseModel(data=data, code='0', message='failed，session is not exist！')
+        response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+        response = make_response(response)
+        response.status = "403"
+        response.headers["Content-Type"] = "application/json"
+    else:
+        user_id = session['userId']
+        if user_id:
+            data = {'loginJudge': 'Successed'}
+            result = ResponseModel(data=data, code='1', message='success！')
+            response = makeResp(result)
+
+        else:
+            data = {'update': 'Failed'}
+            result = ResponseModel(data=data, code='0', message='failed，userid is not exist！')
+            response = make_response(json.dumps({'result': result.__dict__}, ensure_ascii=False, cls=JsonExtendEncoder))
+            response = make_response(response)
+            response.status = "403"
+            response.headers["Content-Type"] = "application/json"
+    return response
+
+
 if __name__ == "__main__":
     app.run(debug=True)
