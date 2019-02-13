@@ -369,7 +369,7 @@ def login_with_pwd():
         user = user_list.pop()
         if pwd == user.password:
             session.permant = True
-            app.permanent_session_lifetime = timedelta(minutes=1)
+            app.permanent_session_lifetime = timedelta(minutes=60)
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
@@ -487,7 +487,7 @@ def login_with_msg_code():
         if code == cache_code:
             # session.permant = True
             session.permant = True
-            app.permanent_session_lifetime = timedelta(minutes=1)
+            app.permanent_session_lifetime = timedelta(minutes=60)
             session['userId'] = user.user_id
             session['phoneNo'] = user.phone
             data = {'login': 'Successed'}
