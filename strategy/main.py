@@ -153,11 +153,12 @@ def write_max_drawdown_back2log(log_id):
     update_strategy_log_max_drawdown(log)
 
 
-def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time):
+def strategy_poc(strategy_id, start_time, end_time, init_balance, create_time, creator):
     print('strategy_id' + str(strategy_id))
+    print('creator' + str(creator))
     new_log = Log(strategy_id=strategy_id, start_date=start_time, end_date=end_time, create_time=create_time,
                   init_balance=init_balance,
-                  coin_category='btc', creator=1)
+                  coin_category='btc', creator=creator)
     log_id = insert_2_strategy_log(new_log)
     balance = init_balance
     data = read_datas_1day_test(start_time - 777600, end_time + 86400)
